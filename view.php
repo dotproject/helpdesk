@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.9 2004/01/23 19:35:46 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.10 2004/01/23 21:13:52 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -16,7 +16,8 @@ SELECT hi.*,
 	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
 	u1.user_email,
   p.project_id,
-  p.project_name
+  p.project_name,
+  p.project_color_identifier
 FROM helpdesk_items hi
 LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
 LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
@@ -110,7 +111,7 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
     <tr>
       <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
-      <td class="hilite" width="100%"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
+      <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
     </tr>
 		</table>
 
