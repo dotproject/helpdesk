@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.32 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.33 2004/05/05 19:50:51 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -7,7 +7,7 @@ $config['mod_version'] = '0.2';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
-$config['mod_config'] = true;
+$config['mod_config'] = false;
 $config['mod_ui_name'] = 'Help Desk';
 $config['mod_ui_icon'] = 'helpdesk.png';
 $config['mod_description'] = 'Help Desk is a bug, feature request, '
@@ -215,6 +215,6 @@ class CSetupHelpDesk {
 
     return true;
   }
-}
 */
+}
 ?>
