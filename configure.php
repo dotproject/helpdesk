@@ -39,8 +39,8 @@ $config_options = array(
 		"value" => 15,
 		'type' => 'text'
 	),
-	"pages_per_set" => array(
-		"description" => $AppUI->_('Number of pages to display per page set.'),
+	"pages_per_side" => array(
+		"description" => $AppUI->_('Number of pages to display on each side of current page.'),
 		"value" => 5,
 		'type' => 'text'
 	),

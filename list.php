@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.45 2004/05/17 18:18:16 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.46 2004/05/20 17:01:02 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -429,55 +429,49 @@ print "$s\n";
 // Pagination
 
 if ($total_results > $items_per_page) {
-  $pages_per_set = $HELPDESK_CONFIG['pages_per_set'];
+  $pages_per_side = $HELPDESK_CONFIG['pages_per_side'];
   $pages = ceil($total_results / $items_per_page);
-  $set_start = intval($page / $pages_per_set) * $pages_per_set;
-  $set_end = min(($set_start + $pages_per_set), $pages);
+
+  if ($page < $pages_per_side) {
+    $start = 0;
+  } else {
+    $start = $page - $pages_per_side;
+  }
+
+  if ($page > ($pages - $pages_per_side)) {
+    $end = ($pages - 1);
+  } else {
+    $end = $page + $pages_per_side;
+  }
 
   print "<tr><td colspan=\"8\" align=\"center\">";
-
-  if ($set_start > 0) {
-    print "<a href=\"?m=helpdesk&a=list&page="
-        . ($set_start - 1)
-        . "\">"
-        . dPshowImage("./images/navfirst.gif", 14, 15, "edit")
-        . "</a> ";
-  }
 
   if ($page > 0) {
     print "<a href=\"?m=helpdesk&a=list&page="
         . ($page - 1)
-        . "\">"
-        . dPshowImage("./images/navleft.gif", 14, 15, "edit")
-        . "</a>&nbsp;&nbsp;";
+        . "\">&larr; Prev</a>&nbsp;&nbsp;";
   }
 
-  for ($i = $set_start; $i < $set_end; $i++) {
+  for ($i = $start; $i <= $end; $i++) {
     if ($i == $page) {
-      print " [<b>".($i + 1)."</b>] ";
+      print " <b>".($i + 1)."</b> ";
     } else {
-      print " [<a href=\"?m=helpdesk&a=list&page=$i\">"
+      print " <a href=\"?m=helpdesk&a=list&page=$i\">"
           . ($i + 1)
-          . "</a>] ";
+          . "</a> ";
     }
   }
 
   if ($page < ($pages - 1)) {
     print "&nbsp;&nbsp;<a href=\"?m=helpdesk&a=list&page="
         . ($page + 1)
-        . "\">"
-        . dPshowImage("./images/navright.gif", 14, 15, "edit")
-        . "</a>";
+        . "\">Next &rarr;</a>";
   }
 
-  if ($set_end < $pages) {
-    print " <a href=\"?m=helpdesk&a=list&page=$set_end\">"
-        . dPshowImage("./images/navlast.gif", 14, 15, "edit")
-        . "</a>&nbsp;&nbsp;";
-  }
-
+  /*
   print "<br>$total_results ".(($total_results == 1) ? "item" : "items").", ";
   print "$pages ".(($pages == 1) ? "page" : "pages"); 
+  */
   print "</td></tr>";
 }
 ?>
