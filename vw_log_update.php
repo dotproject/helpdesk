@@ -1,4 +1,4 @@
-<?php /* $Id: HELPDESK vw_log_update.php,v 1.3 2004/04/27 17:07:11 bloaterpaste Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.4 2004/04/29 14:12:07 agorski Exp $ */
 GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
@@ -11,6 +11,16 @@ $task_log_id = intval( dPgetParam( $_GET, 'task_log_id', 0 ) );
 $log = new CTaskLog();
 if ($task_log_id) {
 	$log->load( $task_log_id );
+
+	//Prevent users from editing other ppls timecards.
+	$can_edit_other_timesheets = $HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type;
+	if (!$can_edit_other_timesheets)
+	{
+		if($log->task_log_creator!= $AppUI->user_id)
+		{
+			$AppUI->redirect( "m=public&a=access_denied" );
+		}
+	}
 } else {
 	$log->task_log_help_desk_id = $item_id;
 	$log->task_log_name = $hditem['item_title'];

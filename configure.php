@@ -35,6 +35,9 @@ while ($row = db_fetch_assoc($res)) {
   $companies[$row['company_id']] = $row['company_name'];
 }
 
+//define user type list
+$user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
+
 //All config options, their descriptions and their default values are defined here.  
 //Add new config options here.  type can be "checkbox", "text", or "select".  If it's "select"
 //then be sure to include a 'list' entry with the options.
@@ -143,6 +146,12 @@ $config_options = array(
 		"description" => $AppUI->_('Operation System'),
 		"value" => 1,
 		'type' => 'checkbox'
+	),
+	'minimum_edit_level' => array(
+		'description' => $AppUI->_('Minimum user level to edit others logs.'),
+		'value' => 0,
+		'type' => 'select',
+		'list' => @$user_types
 	)
 
 );
