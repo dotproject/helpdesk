@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.11 2004/01/23 22:00:04 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.12 2004/04/05 19:15:45 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -121,8 +121,12 @@ if (!db_loadHash( $sql, $hditem )) {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Opened');?>:</td>
-			<td class="hilite" width="100%"><?php echo $tc;?></td>
+			<td class="hilite" width="100%"><?=$tc;?></td>
 		</tr>
+    <tr>
+      <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Last Modified');?>:</td>
+      <td class="hilite" width="100%"><?=$tm;?></td>
+    </tr>
 
 		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>
 
@@ -175,11 +179,6 @@ if (!db_loadHash( $sql, $hditem )) {
 			//echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
 		?>
 -->
-	</td>
-</tr>
-<tr>
-	<td colspan="2" align="right">
-		<?php echo $AppUI->_('Last Modified').' '.$tm;?>
 	</td>
 </tr>
 </table>
