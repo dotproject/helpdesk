@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.28 2004/04/29 00:17:47 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.29 2004/04/29 14:12:07 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -354,8 +354,8 @@ class CTaskLog extends CDpObject {
 // Function to build a where clause to be appended to any sql that will narrow
 // down the returned data to only permitted entities
 
-function getPermsWhereClause($mod, $field){
-	GLOBAL $perms;
+function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_created_by"){
+	GLOBAL $AppUI, $perms;
 
   // Figure out the module and field
 	switch($mod){
@@ -410,6 +410,6 @@ function getPermsWhereClause($mod, $field){
 
 	$list = array_unique($list);
 
-	return " $field in (".implode(",",$list).")";
+	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id.") ";
 }
 ?>
