@@ -1,18 +1,15 @@
-<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.4 2004/04/19 17:55:36 adam Exp $*/
+<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.5 2004/04/19 18:51:28 adam Exp $*/
 global $m, $ipr;
 
 /*  select items created today with 'closed' status
- *  
  *  unassigned = 0, open = 1, closed = 2, on hold = 3
  */
-$sql = "
-SELECT item_id, item_title, item_created, user_username
-FROM helpdesk_items
-LEFT JOIN users ON user_id = item_assigned_to
-WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
-AND (item_status = 2)
-ORDER BY item_id DESC
-";
+$sql = "SELECT item_id, item_title, item_created, user_username
+        FROM helpdesk_items
+        LEFT JOIN users ON user_id = item_assigned_to
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
+        AND (item_status = 2)
+        ORDER BY item_id DESC";
 
 $newitems = db_loadList( $sql );
 ?>
@@ -29,7 +26,15 @@ $newitems = db_loadList( $sql );
 <?php
 	$s = '';
 	foreach ($newitems as $row) {
-    $name = $row["item_requestor_id"] ? $row["user_fullname"] : $row["item_requestor"];
+    /* We need to check if the user who requested the item is still in the
+       system. Just because we have a requestor id does not mean we'll be
+       able to retrieve a full name */
+    if ($row["item_requestor_id"]) {
+      $name = $row["user_fullname"] ? $row["user_fullname"] : $row["item_requestor"];
+    } else {
+      $name = $row['item_requestor'];
+    }
+
     $email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
 
 		$df = $AppUI->getPref( 'SHDATEFORMAT' );
