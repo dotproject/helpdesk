@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.40 2004/04/26 21:09:51 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.41 2004/04/26 23:42:17 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -29,9 +29,10 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->show();
 } else {
   $sql = "SELECT *,
-          TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by, u.user_email as email
+          TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by,
+          u.user_email as email
           FROM helpdesk_item_status h
-          LEFT JOIN users u ON u.user_id = h.status_modified_by
+          LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
           WHERE h.status_item_id='{$hditem['item_id']}'
           ORDER BY h.status_date";
 

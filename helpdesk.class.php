@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.22 2004/04/26 23:42:17 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.23 2004/04/27 00:17:39 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -167,129 +167,139 @@ class CHelpDeskItem extends CDpObject {
   }
   
   function log_status_changes() {
-    global $ist, $ict, $ics, $ios, $iap, $ipr, $isv, $ist, $isa, $field_event_map, $AppUI;
+    global $ist, $ict, $ics, $ios, $iap, $ipr, $isv, $ist, $isa,
+    $field_event_map, $AppUI;
 
+	  if(dPgetParam( $_POST, "item_id")){
+      $hditem = new CHelpDeskItem();
+      $hditem->load( dPgetParam( $_POST, "item_id") );
+      foreach($field_event_map as $key => $value){
+        if(!eval("return \$hditem->$value == \$this->$value;")){
+          $old = $new = "";
+          switch($value){
+            // Create the comments here
+            case 'item_assigned_to':
+              $sql = "
+                SELECT 
+                  user_id, concat(user_first_name,' ',user_last_name) as user_name
+                FROM 
+                  users
+                WHERE 
+                  user_id in (".
+                  ($hditem->$value?$hditem->$value:"").
+                  ($this->$value&&$hditem->$value?", ":"").
+                  ($this->$value?$this->$value:"").
+                  ")
+              ";
 
+              $ids = db_loadList($sql);
+              foreach ($ids as $row){
+                if($row["user_id"]==$this->$value){
+                  $new = $row["user_name"];
+                } else if($row["user_id"]==$hditem->$value){
+                  $old = $row["user_name"];
+                }
+              }
+              break;
+            case 'item_company_id':
+              $sql = "
+                SELECT 
+                  company_id, company_name
+                FROM 
+                  companies
+                WHERE 
+                  company_id in (".
+                  ($hditem->$value?$hditem->$value:"").
+                  ($this->$value&&$hditem->$value?", ":"").
+                  ($this->$value?$this->$value:"").
+                  ")
+              ";
+                  
+              $ids = db_loadList($sql);
 
-	if(dPgetParam( $_POST, "item_id")){
-		$hditem = new CHelpDeskItem();
-		$hditem->load( dPgetParam( $_POST, "item_id") );
-		foreach($field_event_map as $key => $value){
-			if(!eval("return \$hditem->$value == \$this->$value;")){
-				$old_name = $new_name = "";
-				switch($value){
-					// Create the comments here
-					case 'item_assigned_to':
-						$sql = "
-							SELECT 
-								user_id, concat(user_first_name,' ',user_last_name) as user_name
-							FROM 
-								users
-							WHERE 
-								user_id in (".
-								($hditem->$value?$hditem->$value:"").
-								($this->$value&&$hditem->$value?", ":"").
-								($this->$value?$this->$value:"").
-								")
-						";
+              foreach ($ids as $row){
+                if($row["company_id"]==$this->$value){
+                  $new = $row["company_name"];
+                } else if($row["company_id"]==$hditem->$value){
+                  $old = $row["company_name"];
+                }
+              }
 
-						$ids = db_loadList($sql);
-						foreach ($ids as $row){
-							if($row["user_id"]==$this->$value){
-								$new_name = $row["user_name"];
-							} else if($row["user_id"]==$hditem->$value){
-								$old_name = $row["user_name"];
-							}
-						}
-						break;
-					case 'item_company_id':
-						$sql = "
-							SELECT 
-								company_id, company_name
-							FROM 
-								companies
-							WHERE 
-								company_id in (".
-								($hditem->$value?$hditem->$value:"").
-								($this->$value&&$hditem->$value?", ":"").
-								($this->$value?$this->$value:"").
-								")
-						";
+              break;
+            case 'item_project_id':
+              $sql = "
+                SELECT 
+                  project_id, project_name
+                FROM 
+                  projects
+                WHERE 
+                  project_id in (".
+                  ($hditem->$value?$hditem->$value:"").
+                  ($this->$value&&$hditem->$value?", ":"").
+                  ($this->$value?$this->$value:"").
+                  ")
+              ";
 
-						$ids = db_loadList($sql);
-						foreach ($ids as $row){
-							if($row["company_id"]==$this->$value){
-								$new_name = $row["company_name"];
-							} else if($row["company_id"]==$hditem->$value){
-								$old_name = $row["company_name"];
-							}
-						}
-						break;
-					case 'item_project_id':
-						$sql = "
-							SELECT 
-								project_id, project_name
-							FROM 
-								projects
-							WHERE 
-								project_id in (".
-								($hditem->$value?$hditem->$value:"").
-								($this->$value&&$hditem->$value?", ":"").
-								($this->$value?$this->$value:"").
-								")
-						";
+              $ids = db_loadList($sql);
+              foreach ($ids as $row){
+                if($row["project_id"]==$this->$value){
+                  $new = $row["project_name"];
+                } else if($row["project_id"]==$hditem->$value){
+                  $old = $row["project_name"];
+                }
+              }
+              break;
+            case 'item_calltype':
+              $old = $ict[$hditem->$value];
+              $new = $ict[$this->$value];
+              break;
+            case 'item_source':
+              $old = $ics[$hditem->$value];
+              $new = $ics[$this->$value];
+              break;
+            case 'item_status':
+              $old = $ist[$hditem->$value];
+              $new = $ist[$this->$value];
+              break;
+            case 'item_priority':
+              $old = $ipr[$hditem->$value];
+              $new = $ipr[$this->$value];
+              break;
+            case 'item_severity':
+              $old = $isv[$hditem->$value];
+              $new = $isv[$this->$value];
+              break;
+            case 'item_os':
+              $old = $ios[$hditem->$value];
+              $new = $ios[$this->$value];
+              break;
+            case 'item_application':
+              $old = $iap[$hditem->$value];
+              $new = $iap[$this->$value];
+              break;
+            case 'item_notify':
+              $old = $hditem->$value ? "on" : "off";
+              $new = $this->$value ? "on" : "off";
+              break;
+            default:
+              $old = $hditem->$value;
+              $new = $this->$value;
+              break;
+				  }
 
-						$ids = db_loadList($sql);
-						foreach ($ids as $row){
-							if($row["project_id"]==$this->$value){
-								$new_name = $row["project_name"];
-							} else if($row["project_id"]==$hditem->$value){
-								$old_name = $row["project_name"];
-							}
-						}
-						break;
-					case 'item_calltype':
-						$old_name = $ict[$hditem->$value];
-						$new_name = $ict[$this->$value];
-						break;
-					case 'item_source':
-						$old_name = $ics[$hditem->$value];
-						$new_name = $ics[$this->$value];
-						break;
-					case 'item_status':
-						$old_name = $ist[$hditem->$value];
-						$new_name = $ist[$this->$value];
-						break;
-					case 'item_priority':
-						$old_name = $ipr[$hditem->$value];
-						$new_name = $ipr[$this->$value];
-						break;
-					case 'item_severity':
-						$old_name = $isv[$hditem->$value];
-						$new_name = $isv[$this->$value];
-						break;
-					case 'item_os':
-						$old_name = $ios[$hditem->$value];
-						$new_name = $ios[$this->$value];
-						break;
-					case 'item_application':
-						$old_name = $iap[$hditem->$value];
-						$new_name = $iap[$this->$value];
-						break;
-					default:
-						$old_name = $hditem->$value;
-						$new_name = $this->$value;
-					break;
-
-				}
-				$this->log_status($key, "changed from \"".$old_name."\" to \"".$new_name."\"");
-			}
-		}
-	}
-}
+				  $this->log_status($key, "changed from \""
+                                  .addslashes($old)
+                                  ."\" to \""
+                                  .addslashes($new)
+                                  ."\"");
+			  }
+		  }
+	  }
+  }
   
   function log_status ($audit_code, $comment="") {
   	global $AppUI;
+
     $sql = "
       INSERT INTO helpdesk_item_status
       (status_item_id,status_code,status_date,status_modified_by,status_comment)
