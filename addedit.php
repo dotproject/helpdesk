@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.22 2004/04/21 19:21:24 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.23 2004/04/21 21:04:06 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -19,12 +19,16 @@ $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
 
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
-$sql = "SELECT project_id, CONCAT(companies.company_name, ': ', project_name) as proj 
+$sql = "SELECT project_id, project_name, company_name, company_id
         FROM projects
         LEFT JOIN companies ON company_id = projects.project_company
-        ORDER BY proj";
+        ORDER BY project_name";
+$company_project_list = db_loadList( $sql );
 
-$projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+//build array of company/projects for output to javascript
+foreach($company_project_list as $row){
+	$projects[] = "[{$row['company_id']},{$row['project_id']},'{$row['project_name']}']";
+}
 
 $sql = "SELECT company_id, company_name
         FROM companies
@@ -132,6 +136,69 @@ function updateStatus(obj){
 	}
 }
 
+<?php 
+$ua = $_SERVER['HTTP_USER_AGENT'];
+$isMoz = strpos( $ua, 'Gecko' ) !== false;
+
+print "\nvar projects = new Array(".implode( ",\n", $projects ).")"; 
+?>
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// List Handling Functions
+function emptyList( list ) {
+<?php if ($isMoz) { ?>
+	list.options.length = 0;
+<?php } else { ?>
+	while( list.options.length > 0 )
+		list.options.remove(0);
+<?php } ?>
+}
+
+function addToList( list, text, value ) {
+	//alert( list+','+text+','+value );
+<?php if ($isMoz) { ?>
+	list.options[list.options.length] = new Option(text, value);
+<?php } else { ?>
+	var newOption = document.createElement("OPTION");
+	newOption.text = text;
+	newOption.value = value;
+	list.add( newOption, 0 );
+<?php } ?>
+}
+
+function changeList( listName, source, target ) {
+	//alert(listName+','+source+','+target);return;
+	var f = document.frmHelpDeskItem;
+	var list = eval( 'f.'+listName );
+	
+// clear the options
+	emptyList( list );
+	
+// refill the list based on the target
+// add a blank first to force a change
+	addToList( list, '', '0' );
+	for (var i=0, n = source.length; i < n; i++) {
+		if( source[i][0] == target ) {
+			addToList( list, source[i][2], source[i][1] );
+		}
+	}
+}
+
+// select an item in the list by target value
+function selectList( listName, target ) {
+	var f = document.frmHelpDeskItem;
+	var list = eval( 'f.'+listName );
+
+	for (var i=0, n = list.options.length; i < n; i++) {
+//alert(listName+','+target+','+list.options[i].value);
+		if( list.options[i].value == target ) {
+			list.options.selectedIndex = i;
+			return;
+		}
+	}
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 </script>
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
@@ -197,15 +264,18 @@ function updateStatus(obj){
 
     <tr>
       <td align="right"><?=$AppUI->_('Company')?>:</td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large"',
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
                           @$hditem["item_company_id"] )?></td>
     </tr>
 
     <tr>
       <td align="right"><?=$AppUI->_('Project')?>:</td>
+      <td><select name="item_project_id" size="1" class="text" id="large"></select></td>
+<!--
       <td><?=arraySelect( $projects, 'item_project_id', 'size="1" class="text" id="large"',
                           @$hditem["item_project_id"] )?></td>
-    </tr>
+ -->
+ </tr>
 
     <?php /* Do we want to use this?
 		<tr>
@@ -300,3 +370,7 @@ function updateStatus(obj){
 </table>
 
 <p>&nbsp;</p>
+<script language="javascript">
+changeList('item_project_id', projects, <?php echo @$hditem['item_company_id'] ? $hditem['item_company_id'] : 0;?>);
+selectList( 'item_project_id', <?php echo @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;?> );
+</script>
