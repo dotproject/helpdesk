@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.8 2004/01/23 16:19:40 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.9 2004/01/23 16:24:19 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -47,7 +47,7 @@ $sql = "
 SELECT hi.*,
 	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
 	u1.user_email,
-	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname
+	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
   p.project_id,
   p.project_name
 FROM helpdesk_items hi
