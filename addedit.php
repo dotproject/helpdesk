@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.43 2004/05/13 00:16:37 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.44 2004/05/17 13:48:21 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -262,7 +262,7 @@ function selectList( listName, target ) {
     </tr>
     <?php } ?>
     <tr>
-      <td align="right"><font color="red"><label for="it"><?=$AppUI->_('* Title')?>:</label></font></td>
+      <td align="right"><font color="red"><label for="it">* <?=$AppUI->_('Title')?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
                               value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
     </tr>
