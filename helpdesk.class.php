@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.36 2004/05/06 20:07:06 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.37 2004/05/19 17:02:18 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -372,7 +372,10 @@ class CTaskLog extends CDpObject {
 // Function to build a where clause to be appended to any sql that will narrow
 // down the returned data to only permitted entities
 
-function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_created_by"){
+function getPermsWhereClause($mod,
+                             $mod_id_field,
+                             $created_by_id_field="item_created_by",
+                             $the_company=NULL){
 	GLOBAL $AppUI, $perms;
 
   // Figure out the module and field
@@ -393,8 +396,9 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 			return null;
 	}
 
-	if((isset($perms[$mod]['-1']) && ($perms[$mod]['-1']=='1' || $perms[$mod]['-1']=='-1')) || 
-     (isset($perms["all"]['-1']) && ($perms["all"]['-1']=='1' || $perms["all"]['-1']==-'1'))) {
+  // Check for the "ALL" permission
+	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
+     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
 		$sql = "SELECT $id_field FROM $mod";
 		$list = db_loadColumn( $sql );
 	} else {
@@ -405,20 +409,16 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 
 	if(isset($perms[$mod])){
 		foreach($perms[$mod] as $key => $value){
-			//-1 is all perms, so not a specific one
-
-			if($key=='-1')
+			if($key==PERM_ALL)
 				continue;
 
 			switch($value){
-				case '-1': //edit
-					$list[] = $key;
+				case PERM_EDIT:
+				case PERM_READ:
+	  		  $list[] = $key;
 					break;
-				case '0'://deny
+				case PERM_DENY:
 					unset($list[array_search($key, $list)]);
-					break;
-				case '1'://read
-					$list[] = $key;
 					break;
 				default:
 					break;
@@ -426,8 +426,78 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 		}
 	}
 
+  if (is_numeric($the_company)) {
+    $list[] = $the_company;
+  }
+
 	$list = array_unique($list);
 
-	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id.") ";
+	$sql = " ($mod_id_field in (".implode(",",$list).") ";
+  
+  if ($created_by_id_field != NULL) {
+    $sql .= " OR $created_by_id_field=".$AppUI->user_id;
+  }
+
+  $sql .= ") ";
+
+  return $sql;
+}
+
+function hditemReadable($item_company_id, $item_created_by) {
+  global $AppUI;
+
+  $canReadCompany = !getDenyRead("companies", $item_company_id);
+
+  if($canReadCompany || ($item_created_by == $AppUI->user_id)){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function hditemEditable($item_company_id, $item_created_by) {
+  global $HELPDESK_CONFIG, $AppUI;
+
+  if ($item_company_id == 0) {
+    if ($HELPDESK_CONFIG['no_company_editable']) {
+      $canEditCompany = 1;
+    } else {
+      $canEditCompany = 0;
+    }
+  } else {
+    $canEditCompany = !getDenyEdit("companies", $item_company_id);
+  }
+
+  if($canEditCompany || ($item_created_by == $AppUI->user_id)){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function hditemCreate() {
+  global $perms;
+
+  $create = FALSE;
+
+	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
+     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
+    $create = true;
+  } else if (is_array($perms['companies'])) {
+    foreach ($perms['companies'] as $perm) {
+      if ($perm == PERM_EDIT) {
+        $create = true;
+        break;
+      }
+    }
+  }
+
+  return $create;
+}
+
+function dump ($var) {
+  print "<pre>";
+  print_r($var);
+  print "</pre>";
 }
 ?>

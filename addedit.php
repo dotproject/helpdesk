@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.45 2004/05/17 16:58:12 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.46 2004/05/20 15:15:20 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -6,7 +6,8 @@ $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
-if (!$canReadModule) {
+
+if (!$canReadModule || !hditemCreate()) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -17,25 +18,16 @@ $sql = "SELECT *
 
 db_loadHash( $sql, $hditem );
 
-  // check permissions for this record
-  $canRead = 0;
-  $canEdit = 0;
+// check permissions for this record
+if ($item_id) {
+  $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
+} else {
+  $canEdit = 1;
+}
 
-  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
-  $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
-  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
-  	$canRead = 1;
-  }
-
-  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
-  $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
-  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
-  	$canEdit = 1;
-  }
-  
-  if(!$canEdit){
-	$AppUI->redirect( "m=public&a=access_denied" );
-  }
+if(!$canEdit){
+  $AppUI->redirect( "m=public&a=access_denied" );
+}
 
 if(!@$hditem["item_assigned_to"] && $HELPDESK_CONFIG['default_assigned_to_current_user']){
   @$hditem["item_assigned_to"] = $AppUI->user_id;
@@ -48,14 +40,18 @@ if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_com
 
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
         FROM users
-        ORDER BY user_first_name";
+        WHERE ". getPermsWhereClause("companies", "user_company", NULL, $HELPDESK_CONFIG['the_company'])
+     . "ORDER BY user_first_name";
 
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
 $sql = "SELECT project_id, project_name, company_name, company_id
         FROM projects
         LEFT JOIN companies ON company_id = projects.project_company
-        ORDER BY project_name";
+        WHERE "
+     . getPermsWhereClause("companies", "company_id", NULL)
+     . "ORDER BY project_name";
+
 $company_project_list = db_loadList( $sql );
 
 /* Build array of company/projects for output to javascript
@@ -67,9 +63,12 @@ foreach($company_project_list as $row){
   $reverse[$row['project_id']] = $row['company_id'];
 }
 
+
 $sql = "SELECT company_id, company_name
         FROM companies
-        ORDER BY company_name";
+        WHERE "
+     . getPermsWhereClause("companies", "company_id", NULL)
+     . "ORDER BY company_name";
 
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 

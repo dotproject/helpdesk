@@ -25,6 +25,16 @@ done
 - Default company to current user 
 */
 
+$sql = "SELECT company_id, company_name
+        FROM companies
+        ORDER BY company_name";
+
+$res = db_exec($sql);
+
+while ($row = db_fetch_assoc($res)) {
+  $companies[$row['company_id']] = $row['company_name'];
+}
+
 //All config options, their descriptions and their default values are defined here.  
 //Add new config options here.  type can be "checkbox", "text", or "select".  If it's "select"
 //then be sure to include a 'list' entry with the options.
@@ -32,33 +42,44 @@ done
 $config_options = array(
 	"hr1" => " <hr><b>".$AppUI->_('Item List Paging Options').'<b>',
 	"items_per_page" => array(
-		"description" => $AppUI->_('Number of items displayed per page on the list view.'),
+		"description" => $AppUI->_('Number of items displayed per page on the list view:'),
 		"value" => 30,
 		'type' => 'text'
 	),
 	"status_log_items_per_page" => array(
-		"description" => $AppUI->_('Number of status log items displayed per page in item view.'),
+		"description" => $AppUI->_('Number of status log items displayed per page in item view:'),
 		"value" => 15,
 		'type' => 'text'
 	),
 	"pages_per_side" => array(
-		"description" => $AppUI->_('Number of pages to display on each side of current page.'),
+		"description" => $AppUI->_('Number of pages to display on each side of current page:'),
 		"value" => 5,
 		'type' => 'text'
 	),
+	"the_company" => array(
+		"description" => $AppUI->_('The company which handles Help Desk items:'),
+		"value" => '',
+		'type' => 'select',
+    'list' => $companies
+	),
+	"no_company_editable" => array(
+		"description" => $AppUI->_('Items with no company should be editable by anyone:'),
+		"value" => '0',
+		'type' => 'checkbox',
+	),
 	"hr2" => " <hr><b>".$AppUI->_('New Item Default Selections').'<b>',
 	"default_assigned_to_current_user" => array(
-		"description" => $AppUI->_('Default "assigned to" field to be current user.'),
+		"description" => $AppUI->_('Default "assigned to" field to be current user'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"default_notify_by_email" => array(
-		"description" => $AppUI->_('Default the "notify by email" field to on.'),
+		"description" => $AppUI->_('Default the "notify by email" field to on'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"default_company_current_company" => array(
-		"description" => $AppUI->_('Default "company" field to be that of the current user.'),
+		"description" => $AppUI->_('Default "company" field to be that of the current user'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),

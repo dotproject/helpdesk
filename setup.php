@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.38 2004/05/18 15:25:11 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.39 2004/05/19 17:02:18 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -142,6 +142,7 @@ class CSetupHelpDesk {
 
 	  switch ($old_version) {
 	    case "0.1":
+        // Drop unused columns, add some new columns
         $bulk_sql[] = "
           ALTER TABLE `helpdesk_items`
           ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
@@ -158,11 +159,13 @@ class CSetupHelpDesk {
           DROP `item_assetno`
         ";
 
+        // Add help desk item id to task log table
         $bulk_sql[] = "
           ALTER TABLE `task_log`
           ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
         ";
 
+        // Add help desk item status log table
         $bulk_sql[] = "
           CREATE TABLE `helpdesk_item_status` (
             `status_id` INT NOT NULL AUTO_INCREMENT,
@@ -175,12 +178,14 @@ class CSetupHelpDesk {
           )
         ";
 
+        // Execute the above SQL
         foreach ($bulk_sql as $s) {
           db_exec($s);
           if (db_error())
             $success = 0;
         }
 
+        // Add audit trail to system values
         $sql = "SELECT syskey_id
                 FROM syskeys
                 WHERE syskey_name = 'HelpDeskList'";
@@ -190,6 +195,7 @@ class CSetupHelpDesk {
         $sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
         $sv->store();
 
+        // Update help desk status values
         $sql = "UPDATE sysvals
                 SET sysval_value='0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing'
                 WHERE sysval_title='HelpDeskStatus'
@@ -197,11 +203,13 @@ class CSetupHelpDesk {
 
         db_exec($sql);
 
-        $sql = "SELECT item_id,item_requestor_id,item_created
+        /* Get data for conversion update */
+        $sql = "SELECT item_id,item_requestor_id,item_created,item_project_id
                 FROM helpdesk_items";
 
         $items = db_loadList($sql);
 
+        /* Populate the status log table with the item's creation date */
         foreach ($items as $item) {
           $timestamp = date('Ymdhis', db_dateTime2unix($item['item_created']));
 
@@ -213,12 +221,37 @@ class CSetupHelpDesk {
           db_exec($sql);
         }
 
+        /* Figure out the company for each item based on project id or based
+           on requestor id */
+        foreach ($items as $item) {
+          if ($item['item_project_id']) {
+            $sql = "SELECT project_company
+                    FROM projects
+                    WHERE project_id='{$item['item_project_id']}'";
+
+            $company_id = db_loadResult($sql);
+          } else if ($item['item_requestor_id']) {
+            $sql = "SELECT user_company
+                    FROM users
+                    WHERE user_id='{$item['item_requestor_id']}'";
+
+            $company_id = db_loadResult($sql);
+          }
+
+          if ($company_id) {
+            $sql = "UPDATE helpdesk_items
+                    SET item_company_id='$company_id'
+                    WHERE item_id='{$item['item_id']}'";
+
+            db_exec($sql);
+          }
+        }
+
         break;
       default:
         $success = 0;
 	  }
 
-  
 		// NOTE: Need to return true, not null, if all is good
 		return $success;
 	}

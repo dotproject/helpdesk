@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.48 2004/05/20 17:49:47 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.49 2004/05/21 15:46:01 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -227,7 +227,9 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	//assigned to user list
 	$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
 		FROM users
+    WHERE ".getPermsWhereClause("companies", "user_company", NULL)."
 		ORDER BY user_first_name";
+
 	$assigned_to_list = db_loadHashList( $sql );
 	$selectors[] = "
 	    <td align=\"right\" nowrap>".$AppUI->_('Assigned To').":</td>
@@ -246,10 +248,12 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 		$tarr[] = "hi.item_requestor='$requestor'";
 	}
 	//requestor list
+
 	$sql = "SELECT distinct(item_requestor) as requestor, item_requestor
 		FROM helpdesk_items
 		WHERE ".getPermsWhereClause("companies", "item_company_id")."
 		ORDER BY item_requestor";
+
 	$requestor_list = db_loadHashList( $sql );
 	$selectors[] = "
 	    <td align=\"right\">".$AppUI->_('Requestor').":</td>
@@ -312,7 +316,8 @@ $rows = db_loadList( $sql );
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
-if ($canEdit) {
+
+if (hditemCreate()) {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
@@ -366,6 +371,8 @@ function changeList() {
 $s = '';
 
 foreach ($rows as $row) {
+  $canEdit = hditemEditable($row['item_company_id'], $row['item_created_by']);
+
   /* We need to check if the user who requested the item is still in the
      system. Just because we have a requestor id does not mean we'll be
      able to retrieve a full name */

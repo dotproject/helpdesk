@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.2 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.3 2004/05/19 17:23:18 agorski Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -50,11 +50,7 @@ $sql = "SELECT item_company_id,item_created_by
 
 db_loadHash( $sql, $hditem );
 
-//Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
-$canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
-if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
-  $canEdit = 1;
-}
+$canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
 
 foreach ($logs as $row) {
 	$task_log_date = intval( $row['task_log_date'] ) ? new CDate( $row['task_log_date'] ) : null;

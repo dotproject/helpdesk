@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.54 2004/05/20 17:01:02 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.55 2004/05/20 17:49:47 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -72,22 +72,9 @@ if (!db_loadHash( $sql, $hditem )) {
 
   $status_log = db_loadList($sql);
 
-  // check permissions for this record
-  $canRead = 0;
-  $canEdit = 0;
+  $canRead = hditemReadable($hditem['item_company_id'], $hditem['item_created_by']);
+  $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
 
-  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
-  $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
-  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
-  	$canRead = 1;
-  }
-
-  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
-  $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
-  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
-  	$canEdit = 1;
-  }
-  
   if(!$canRead && !$canEdit){
 	  $AppUI->redirect( "m=public&a=access_denied" );
   }
