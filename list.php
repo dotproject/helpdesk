@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.16 2004/01/23 16:31:57 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.17 2004/01/23 16:32:37 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -132,7 +132,7 @@ function changeList() {
 		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?php echo $AppUI->_('Priority');?></a>
 	</th>
 	<th nowrap="nowrap">
-		<?php echo $AppUI->_('Project');?>
+		<a href="?m=helpdesk&a=list&orderby=project_name" class="hdr"><?php echo $AppUI->_('Project');?></a>
 	</th>
 	<th>&nbsp;</th>
 </tr>
