@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.42 2004/05/06 14:16:55 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.43 2004/05/13 16:46:56 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -25,6 +25,15 @@ if (isset($_GET['orderdesc'])) {
 
 $orderdesc = $AppUI->getState('HelpDeskIdxOrderDesc') ? $AppUI->getState('HelpDeskIdxOrderDesc') : 0;
 
+if (isset($_GET['page'])) {
+  $AppUI->setState('HelpDeskListPage', $_GET['page']);
+} else {
+  // If page isn't mentioned, we need to reset
+  $AppUI->setState('HelpDeskListPage', 0);
+}
+
+$page = $AppUI->getState('HelpDeskListPage') ? $AppUI->getState('HelpDeskListPage') : 0;
+
 $tarr = array();
 $selectors = array();
 
@@ -41,7 +50,8 @@ if($HELPDESK_CONFIG['search_criteria_search']){
 	}
 	$selectors[] = "
 	    <td align=\"right\">".$AppUI->_('Search').":</td>
-	    <td nowrap=\"nowrap\"><input type=\"text\" name=\"search\" class=\"text\" value=\"".$search."\" size=\"12\"><input type=\"submit\" value=\"".$AppUI->_('Search')."\" class=\"button\" /></td>";
+	    <td nowrap=\"nowrap\"><input type=\"text\" name=\"search\" class=\"text\" value=\"$search\" size=\"12\">
+                            <input type=\"submit\" value=\"".$AppUI->_('Search')."\" class=\"button\" /></td>";
 
 }
 
@@ -278,8 +288,24 @@ if ($orderby == "project_name") {
 if ($orderdesc) {
   $sql .= " DESC";
 }
-//print "<pre>$sql</pre>";
+
+// Pagination
+$items_per_page = $HELPDESK_CONFIG['items_per_page'];
+
+// Figure out number of total results, but do not retrieve
+$total_results = db_num_rows(db_exec($sql));
+
+// Figure out the offset
+$offset = $page * $items_per_page;
+
+// Limit the results to enable pagination
+$sql .= " LIMIT $items_per_page
+          OFFSET $offset";
+
+
+// Get the actual, paginated results
 $rows = db_loadList( $sql );
+
 
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
@@ -401,10 +427,43 @@ foreach ($rows as $row) {
 }
 
 print "$s\n";
+
+// Pagination
+
+if ($total_results > $items_per_page) {
+  print "<tr><td colspan=\"8\" align=\"center\">";
+
+  if ($page > 0) {
+    print "<a href=\"?m=helpdesk&a=list&page="
+        . ($page - 1)
+        . "\">&larr; Previous</a>&nbsp;&nbsp;";
+  }
+
+  $pages = ceil($total_results / $items_per_page);
+
+  for ($i = 0; $i < $pages; $i++) {
+    if ($i == $page) {
+      print " <b>".($i + 1)."</b>";
+    } else {
+      print " <a href=\"?m=helpdesk&a=list&page=$i\">"
+          . ($i + 1)
+          . "</a>";
+    }
+  }
+
+  if ($page < ($pages - 1)) {
+    print "&nbsp;&nbsp;<a href=\"?m=helpdesk&a=list&page="
+        . ($page + 1)
+        . "\">Next &rarr;</a>";
+  }
+
+  print "</td></tr>";
+}
 ?>
 </table>
 
 <?php
+
 // Returns a header link used to sort results
 // TODO Probably need a better up/down arrow
 function sort_header($field, $name) {
