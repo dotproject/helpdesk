@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.4 2004/01/23 19:14:58 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.5 2004/01/23 19:35:46 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -119,7 +119,7 @@ function setRequestor( key, val ) {
 		<table cellspacing="0" cellpadding="2" border="0">
 	<?php if ($item_id) { ?>
 		<tr>
-			<td align="right" nowrap><?php echo $AppUI->_('Date Created');?>:</td>
+			<td align="right" nowrap><?php echo $AppUI->_('Date Opened');?>:</td>
 			<td width="100%"><strong><?php echo $tc;?></strong></td>
 		</tr>
 	<?php } ?>
