@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.21 2004/01/23 19:14:58 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.22 2004/01/23 22:00:04 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -8,7 +8,7 @@ if (isset( $_GET['orderby'] )) {
 $orderby = $AppUI->getState( 'HelpDeskIdxOrderBy' ) ? $AppUI->getState( 'HelpDeskIdxOrderBy' ) : 'item_id';
 
 // check for search text
-$search = dPgetParam( $_GET, 'search', '' );
+$search = dPgetParam( $_GET, 'Search', '' );
 
 // check for calltype filter
 if (isset( $_GET['item_calltype'] )) {
