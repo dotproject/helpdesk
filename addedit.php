@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.18 2004/04/20 17:52:18 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.19 2004/04/20 18:36:43 gatny Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -162,7 +162,7 @@ function updateStatus(obj){
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><!--&dagger; --><?=$AppUI->_('Requestor Phone');?>:</td>
+			<td align="right" nowrap>&dagger; <?=$AppUI->_('Requestor Phone');?>:</td>
 			<td valign="top"><input type="text" class="text" id="large"
                               name="item_requestor_phone"
                               value="<?=@$hditem["item_requestor_phone"]?>"
@@ -271,8 +271,9 @@ function updateStatus(obj){
   <br>
   <small>
     <font color="red">* Required field</font><br>
-    &dagger; If you select your name from the popup window, you do not need 
-    to enter an e-mail address.
+    &dagger; If you select your name from the popup window, your e-mail
+    address and phone number will be populated from your account details
+    (if available).
   </small>
   <br><br>
   </td>

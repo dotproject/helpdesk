@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.9 2004/04/20 17:35:34 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.10 2004/04/20 17:52:25 bloaterpaste Exp $ */
 /*
 dotProject Module
 
@@ -29,11 +29,10 @@ if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
 }
 
-# require_once( $AppUI->getSystemClass( 'syskeys' ) );
 require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
 
 /*
-// MODULE SETUP CLASS
+  MODULE SETUP CLASS
 	This class must contain the following methods:
 	install - creates the required db tables
 	remove - drop the appropriate db tables

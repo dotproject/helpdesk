@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.21 2004/04/19 21:06:46 gatny Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.22 2004/04/20 14:34:42 gatny Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -7,15 +7,18 @@ $item_id = dPgetParam( $_GET, 'item_id', 0 );
 $sql = "SELECT hi.*,
         CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
         CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
-        u1.user_email as user_email,
+        u1.user_email,
+        u1.user_phone,
         u2.user_email as assigned_email,
         p.project_id,
         p.project_name,
-        p.project_color_identifier
+        p.project_color_identifier,
+        c.company_name
         FROM helpdesk_items hi
         LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
+        LEFT OUTER JOIN companies c ON c.company_id = hi.item_company_id
         WHERE item_id = '$item_id'";
 
 if (!db_loadHash( $sql, $hditem )) {
@@ -36,6 +39,8 @@ if (!db_loadHash( $sql, $hditem )) {
 	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
 	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
+  $phone = $hditem["user_phone"] ? $hditem["user_phone"] : $hditem["item_requestor_phone"];
+
   $assigned_email = $hditem["assigned_email"];
 
 	$ts = db_dateTime2unix( @$hditem["item_created"] );
@@ -94,6 +99,11 @@ function delIt() {
 		</tr>
 
 		<tr>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor Phone')?>:</td>
+			<td class="hilite" width="100%"><?=$phone?></td>
+		</tr>
+
+		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Status')?>:</td>
 			<td class="hilite" width="100%"><?=$ist[$hditem["item_status"]]?></td>
 		</tr>
@@ -135,9 +145,15 @@ function delIt() {
 		</tr>
 
     <tr>
+      <td align="right" nowrap="nowrap"><?=$AppUI->_('Company')?>:</td>
+			<td class="hilite" width="100%"><?=$hditem["company_name"]?></td>
+    </tr>
+
+    <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
       <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
     </tr>
+
 		</table>
 
 	</td>
