@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.9 2004/05/06 17:35:17 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.10 2004/05/19 19:02:43 agorski Exp $*/
 
   /*
    * opened = 0
@@ -117,7 +117,11 @@ function vw_idx_handler ($type) {
       <td align="center" nowrap><?=$ist[@$row["item_status"]]?></td>
       <td align="center" nowrap><?=$ipr[@$row["item_priority"]]?></td>
       <td align="center" style="background-color: #<?=$row['project_color_identifier']?>;" nowrap>
-      <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>"><?=$row['project_name']?></a>
+      <?php if ($row['project_id']) { ?>
+        <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>"><?=$row['project_name']?></a>
+      <?php } else { ?>
+        -
+      <?php } ?>
       </td>
       <td nowrap="nowrap"><?php print ($tc ? $tc : '-'); ?></td>
     </tr>

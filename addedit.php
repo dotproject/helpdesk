@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.44 2004/05/17 13:48:21 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.45 2004/05/17 16:58:12 bloaterpaste Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -298,6 +298,17 @@ function selectList( listName, target ) {
     </tr>
 
     <tr>
+      <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+                          @$hditem["item_company_id"] )?></td>
+    </tr>
+
+    <tr>
+      <td align="right"><label for="p"><?=$AppUI->_('Project')?>:</label></td>
+      <td><select name="item_project_id" size="1" class="text" id="p"></select></td>
+    </tr>
+
+    <tr>
       <td align="right" nowrap><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
       <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
@@ -313,16 +324,6 @@ function selectList( listName, target ) {
         <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label></td>
     </tr>
 
-    <tr>
-      <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
-                          @$hditem["item_company_id"] )?></td>
-    </tr>
-
-    <tr>
-      <td align="right"><label for="p"><?=$AppUI->_('Project')?>:</label></td>
-      <td><select name="item_project_id" size="1" class="text" id="p"></select></td>
-    </tr>
 
     </table>
   </td>
