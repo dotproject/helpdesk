@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.39 2004/05/06 18:18:56 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.40 2004/05/06 18:40:36 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -163,7 +163,9 @@ function updateStatus(obj){
   var f = document.frmHelpDeskItem;
 
   if(obj.options[obj.selectedIndex].value>0){
-    f.item_status.selectedIndex=1;
+    if(f.item_status.selectedIndex==0){
+    	f.item_status.selectedIndex=1;
+    }
   }
 }
 
