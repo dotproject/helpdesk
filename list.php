@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.14 2004/01/23 16:30:07 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.15 2004/01/23 16:31:24 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -144,7 +144,7 @@ foreach ($rows as $row) {
 
 	$s .= $CR . '<form method="post">';
 	$s .= $CR . '<tr>';
-	$s .= $CR . '<td align="right">';
+	$s .= $CR . '<td align="right" nowrap>';
 	if ($email) {
 		$s .= $CR . '<a href="mailto:' . $email . '"><img src="images/obj/email.gif" width="16" height="16" border="0" alt="' . $email . '"></a>';
 	}
