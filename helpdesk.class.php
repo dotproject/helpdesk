@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.24 2004/04/27 15:31:27 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.25 2004/04/27 16:05:44 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -123,7 +123,9 @@ class CHelpDeskItem extends CDpObject {
     if (($msg = parent::store())) {
 	    return $msg;
     } else {
-	    $this->item_id = mysql_insert_id();
+	    if(!$this->item_id){  
+	    	$this->item_id = mysql_insert_id();
+	    }
 	    if ($this->item_notify) {
 	      $this->notify();
 	    }
