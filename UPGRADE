@@ -19,6 +19,8 @@ Added
    * Show the search option for Operation System.
 * User list now sorts by last name, like the contact list does.
 * Setting status to "Open" only if the current status is Unassigned on assigned user selection.
+* Added auto-linking of email addresses and http:// in that are contained within the summary field.
+* Added stripping of any html tags within the summary field.
 
 Fixes
 * Fixed a bug in the upgrade process that was causing it to fail.

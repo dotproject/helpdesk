@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.58 2004/05/25 17:02:06 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.60 2004/05/26 00:17:36 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -192,7 +192,7 @@ function toggle_comment(id){
 		<strong><?=$AppUI->_('Summary')?></strong>
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr>
-			<td class="hilite"><?=str_replace( chr(10), "<br />", $hditem["item_summary"])?>&nbsp;</td>
+			<td class="hilite"><?=str_replace( chr(10), "<br />", linkLinks($hditem["item_summary"]))?>&nbsp;</td>
 		</tr>
 		</table>
 

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.41 2004/05/26 00:04:29 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.42 2004/05/26 15:45:07 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -92,6 +92,8 @@ class CHelpDeskItem extends CDpObject {
 
     // Update the last modified time and user
     $this->item_modified = db_unix2dateTime( time() );
+    
+    $this->item_summary = stripHTML($this->item_summary);
 
     //if type indicates a contact or a user, then look up that phone and email for those entries
     switch ($this->item_requestor_type) {
@@ -522,4 +524,20 @@ function dump ($var) {
   print_r($var);
   print "</pre>";
 }
+
+function stripHTML($data){
+	$search_html= '/([<][^>]+[>])/';
+	$data = preg_replace($search_html,'',$data);
+	return $data;
+}
+
+function linkLinks($data){
+	$data = stripHTML($data);
+	$search_email = '/([\w-]+([.][\w_-]+){0,4}[@][\w_-]+([.][\w-]+){1,3})/';
+	$search_http = '/(http(s)?:\/\/[^\s]+)/i';
+	$data = preg_replace($search_email,"<a href=\"mailto:$1\">$1</a>",$data);
+	$data = preg_replace($search_http,"<a href=\"$1\" target=\"_blank\">$1</a>",$data);
+	return $data;
+}
+
 ?>
