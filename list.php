@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.46 2004/05/20 17:01:02 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.47 2004/05/20 17:26:30 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -438,7 +438,7 @@ if ($total_results > $items_per_page) {
     $start = $page - $pages_per_side;
   }
 
-  if ($page > ($pages - $pages_per_side)) {
+  if ($page >= ($pages - $pages_per_side)) {
     $end = ($pages - 1);
   } else {
     $end = $page + $pages_per_side;
@@ -468,10 +468,6 @@ if ($total_results > $items_per_page) {
         . "\">Next &rarr;</a>";
   }
 
-  /*
-  print "<br>$total_results ".(($total_results == 1) ? "item" : "items").", ";
-  print "$pages ".(($pages == 1) ? "page" : "pages"); 
-  */
   print "</td></tr>";
 }
 ?>
