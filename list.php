@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.11 2004/01/23 16:26:02 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.12 2004/01/23 16:28:25 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -162,7 +162,7 @@ foreach ($rows as $row) {
 	$s .= $CR . '<td align="center" nowrap>' . @$row["assigned_fullname"] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap>Foo</td>';
+	$s .= $CR . '<td align="center" nowrap>'.$row['project_name'].'</td>';
 	$s .= $CR . '<td align="center" nowrap><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
 	$s .= $CR . '</tr></form>';
 }
