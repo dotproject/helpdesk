@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.23 2004/05/27 13:41:03 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.24 2004/06/02 17:00:01 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -7,17 +7,17 @@ if (isset( $_GET['tab'] )) {
 $tab = $AppUI->getState( 'HelpDeskIdxTab' ) !== NULL ? $AppUI->getState( 'HelpDeskIdxTab' ) : 0;
 
 // Setup the title block
-$titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
+$titleBlock = new CTitleBlock( $AppUI->_('helpdeskHelpDesk'), 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
 if (hditemCreate()) {
   $titleBlock->addCell(
-    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<input type="submit" class="button" value="'.$AppUI->_('helpdeskNewItem').'" />', '',
     '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
   );
 }
 
-$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('Home') );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
+$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('helpdeskHome') );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('helpdeskList') );
 
 $titleBlock->show();
 
@@ -76,10 +76,10 @@ $numclosed = db_loadResult ($sql);
   <?php
   // Tabbed information boxes
   $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
-  $tabBox->add( 'vw_idx_stats', "Help Desk Items ($numtotal)" );
-  $tabBox->add( 'vw_idx_my', "My Open ($nummine)" );
-  $tabBox->add( 'vw_idx_new', "Opened Today ($numopened)" );
-  $tabBox->add( 'vw_idx_closed', "Closed Today ($numclosed)" );
+  $tabBox->add( 'vw_idx_stats', $AppUI->_('helpdeskHDItems')." ($numtotal)" );
+  $tabBox->add( 'vw_idx_my', $AppUI->_('helpdeskMyOpen')." ($nummine)" );
+  $tabBox->add( 'vw_idx_new', $AppUI->_('helpdeskOpenedToday')." ($numopened)" );
+  $tabBox->add( 'vw_idx_closed', $AppUI->_('helpdeskClosedToday')." ($numclosed)" );
   $tabBox->show();
   ?>
 	</td>

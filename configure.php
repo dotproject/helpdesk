@@ -39,122 +39,122 @@ $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 * This is used for grouping.
 */
 $config_options = array(
-	"heading1" => $AppUI->_('Paging Options'),
+	"heading1" => $AppUI->_('helpdeskPagingOptions'),
 	"items_per_page" => array(
-		"description" => $AppUI->_('Number of items displayed per page on the list view'),
+		"description" => $AppUI->_('helpdeskItemsPerPage'),
 		"value" => 30,
 		'type' => 'text'
 	),
 	"status_log_items_per_page" => array(
-		"description" => $AppUI->_('Number of status log items displayed per page in item view'),
+		"description" => $AppUI->_('helpdeskLogsPerPage'),
 		"value" => 15,
 		'type' => 'text'
 	),
 	"pages_per_side" => array(
-		"description" => $AppUI->_('Number of pages to display on each side of current page'),
+		"description" => $AppUI->_('helpdeskPagesPerSide'),
 		"value" => 5,
 		'type' => 'text'
 	),
-	"heading2" => $AppUI->_('Permission Options'),
+	"heading2" => $AppUI->_('helpdeskPermissionOptions'),
 	"the_company" => array(
-		"description" => $AppUI->_('The company which handles Help Desk items'),
+		"description" => $AppUI->_('helpdeskHDCompany'),
 		"value" => '',
 		'type' => 'select',
 		'list' => $companies
 	),
 	"no_company_editable" => array(
-		"description" => $AppUI->_('Items with no company should be editable by anyone'),
+		"description" => $AppUI->_('helpdeskItemNoCompany'),
 		"value" => '0',
 		'type' => 'radio',
-    'buttons' => array (1 => "Yes",
-                        0 => "No")
+    'buttons' => array (1 => $AppUI->_('Yes'),
+                        0 => $AppUI->_('No'))
 	),
 	'minimum_edit_level' => array(
-		'description' => $AppUI->_('Minimum user level to edit other users\' logs'),
+		'description' => $AppUI->_('helpdeskMinLevel'),
 		'value' => 0,
 		'type' => 'select',
 		'list' => @$user_types
 	),
-	"heading3" => $AppUI->_('New Item Default Selections'),
+	"heading3" => $AppUI->_('helpdeskDefaultSelections'),
 	"default_assigned_to_current_user" => array(
-		"description" => $AppUI->_('Default "assigned to" field to be current user'),
+		"description" => $AppUI->_('helpdeskDefCurUser'),
 		"value" => 1,
 		'type' => 'radio',
-    'buttons' => array (1 => "Yes",
-                       0 => "No")
+    'buttons' => array (1 => $AppUI->_('Yes'),
+                       0 => $AppUI->_('No'))
 	),
 	"default_notify_by_email" => array(
-		"description" => $AppUI->_('Default the "notify by email" field to on'),
+		"description" => $AppUI->_('helpdeskDefNotify'),
 		"value" => 1,
 		'type' => 'radio',
-    'buttons' => array (1 => "Yes",
-                       0 => "No")
+    'buttons' => array (1 => $AppUI->_('Yes'),
+                       0 => $AppUI->_('No'))
 	),
 	"default_company_current_company" => array(
-		"description" => $AppUI->_('Default "company" field to be that of the current user'),
+		"description" => $AppUI->_('helpdeskDefCompany'),
 		"value" => 1,
 		'type' => 'radio',
-    'buttons' => array (1 => "Yes",
-                       0 => "No")
+    'buttons' => array (1 => $AppUI->_('Yes'),
+                       0 => $AppUI->_('No'))
 	),
-	"heading4" => $AppUI->_('Search Fields for Item List'),
+	"heading4" => $AppUI->_('helpdeskSearchFields'),
 	"search_criteria_search" => array(
-		"description" => $AppUI->_('Title/Summary Search'),
+		"description" => $AppUI->_('helpdeskTitleSummary'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_call_type" => array(
-		"description" => $AppUI->_('Call Type'),
+		"description" => $AppUI->_('helpdeskCallType'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_company" => array(
-		"description" => $AppUI->_('Company'),
+		"description" => $AppUI->_('helpdeskCompany'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_status" => array(
-		"description" => $AppUI->_('Status'),
+		"description" => $AppUI->_('helpdeskStatus'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_call_source" => array(
-		"description" => $AppUI->_('Call Source'),
+		"description" => $AppUI->_('helpdeskCallSource'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_project" => array(
-		"description" => $AppUI->_('Project'),
+		"description" => $AppUI->_('helpdeskProject'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_assigned_to" => array(
-		"description" => $AppUI->_('Assigned To'),
+		"description" => $AppUI->_('helpdeskAssignedTo'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_priority" => array(
-		"description" => $AppUI->_('Priority'),
+		"description" => $AppUI->_('helpdeskPriority'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_application" => array(
-		"description" => $AppUI->_('Application'),
+		"description" => $AppUI->_('helpdeskApplication'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_requestor" => array(
-		"description" => $AppUI->_('Requestor'),
+		"description" => $AppUI->_('helpdeskRequestor'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_severity" => array(
-		"description" => $AppUI->_('Severity'),
+		"description" => $AppUI->_('helpdeskSeverity'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_os" => array(
-		"description" => $AppUI->_('Operation System'),
+		"description" => $AppUI->_('helpdeskOperatingSystem'),
 		"value" => 1,
 		'type' => 'checkbox'
 	)
@@ -166,12 +166,12 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 
 	if (is_writable($CONFIG_FILE)) {
 		if (!$handle = fopen($CONFIG_FILE, 'w')) {
-			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('cannot be opened.'), UI_MSG_ERROR );
+			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('helpdeskErrorOpen'), UI_MSG_ERROR );
 			exit;
 		}
 
 		if (fwrite($handle, "<?php //Do not edit this file by hand, it will be overwritting by the configuration utility. \n") === FALSE) {
-			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('cannot be written to.'), UI_MSG_ERROR );
+			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('helpdeskErrorWrite'), UI_MSG_ERROR );
 			exit;
 		} else {
 			foreach ($config_options as $key=>$value){
@@ -199,13 +199,13 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 			}
 
 			fwrite($handle, "?> \n");
-			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('has been successfully updated.'), UI_MSG_OK );
+			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('helpdeskUpdateSuccess'), UI_MSG_OK );
 			fclose($handle);
 		}
 	} else {
-		$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('is not writable.'), UI_MSG_ERROR );
+		$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('helpdeskErrorWritable'), UI_MSG_ERROR );
 	}
-} else if(dPgetParam( $_POST, "Cancel", '' )!=''){
+} else if(dPgetParam( $_POST, $AppUI->_('cancel'), '' )!=''){
 	$AppUI->redirect("m=system&a=viewmods");
 }
 
@@ -222,9 +222,9 @@ foreach ($config_options as $key=>$value){
 }
 
 // setup the title block
-$titleBlock = new CTitleBlock( 'Configure Help Desk Module', 'helpdesk.png', $m, "$m.$a" );
-$titleBlock->addCrumb( "?m=system", "system admin" );
-$titleBlock->addCrumb( "?m=system&a=viewmods", "modules list" );
+$titleBlock = new CTitleBlock( 'helpdeskConfigure', 'helpdesk.png', $m, "$m.$a" );
+$titleBlock->addCrumb( "?m=system", "System Admin" );
+$titleBlock->addCrumb( "?m=system&a=viewmods", "Modules" );
 $titleBlock->show();
 
 ?>
@@ -271,7 +271,8 @@ foreach ($config_options as $key=>$value){
 }
 ?>
 	<tr>
-		<td colspan="2" align="right"><input type="Submit" name="Cancel" value="<?=$AppUI->_('Back')?>"><input type="Submit" name="Save" value="<?=$AppUI->_('Save')?>"></td>
+		<td colspan="2" align="right"><input type="Submit" name="Cancel" value="<?=$AppUI->_('back')?>">
+                                  <input type="Submit" name="Save" value="<?=$AppUI->_('save')?>"></td>
 	</tr>
 </table>
 </form>

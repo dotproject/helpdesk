@@ -1,6 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.52 2004/05/28 13:17:39 agorski Exp $ */
-
-require_once( "./modules/helpdesk/config.php" );
+<?php /* HELPDESK $Id: addedit.php,v 1.53 2004/06/02 17:00:01 agorski Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -73,14 +71,14 @@ $sql = "SELECT company_id, company_name
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
 // Setup the title block
-$ttl = $item_id ? "Editing Item #$item_id" : "Adding New Item";
+$ttl = $item_id ? $AppUI->_('helpdeskEditingItem') . " #$item_id" : $AppUI->_('helpdeskAddingItem');
 
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
-$titleBlock->addCrumb( "?m=helpdesk", "Home" );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
+$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('helpdeskHome') );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('helpdeskList') );
 
 if ($item_id) {
-  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "View this item" );
+  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", $AppUI->_('helpdeskView') );
 }
 
 $titleBlock->show();
@@ -97,20 +95,20 @@ $tc = isset($tsc) ? date( "m/d/y g:i a", $tsc ) : null;
 <script language="javascript">
 function submitIt() {
   var f   = document.frmHelpDeskItem;
-  var msg = 'You must enter the following value(s):';
+  var msg = '<?=$AppUI->_('helpdeskSubmitError')?>:';
 
   if ( f.item_title.value.length < 1 ) {
-    msg += "\nTitle";
+    msg += "\n<?=$AppUI->_('helpdeskTitle')?>";
     f.item_title.focus();
   }
 
   if( f.item_requestor.value.length < 1 ) {
-    msg += "\nRequestor";
+    msg += "\n<?=$AppUI->_('helpdeskRequestor')?>";
     f.item_requestor.focus();
   }
 
   if( f.item_summary.value.length < 1 ) {
-    msg += "\nSummary";
+    msg += "\n<?=$AppUI->_('helpdeskSummary')?>";
     f.item_summary.focus();
   }
 
@@ -256,18 +254,18 @@ function selectList( listName, target ) {
     <table cellspacing="0" cellpadding="2" border="0">
     <?php if ($item_id) { ?>
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Date Created')?>:</td>
+      <td align="right" nowrap><?=$AppUI->_('helpdeskDateCreated')?>:</td>
       <td width="100%"><strong><?=$tc?></strong></td>
     </tr>
     <?php } ?>
     <tr>
-      <td align="right"><font color="red"><label for="it">* <?=$AppUI->_('Title')?>:</label></font></td>
+      <td align="right"><font color="red"><label for="it">* <?=$AppUI->_('helpdeskTitle')?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
                               value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><font color="red"><label for="ir">* <?=$AppUI->_('Requestor Name');?>:</label></font></td>
+      <td align="right" nowrap><font color="red"><label for="ir">* <?=$AppUI->_('helpdeskRequestor');?>:</label></font></td>
       <td valign="top" nowrap>
         <input type="text" class="text" id="ir" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
@@ -275,13 +273,13 @@ function selectList( listName, target ) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <input type="button" class="button" value="Users" onclick="popUserDialog();" />
-      <input type="button" class="button" value="Contacts" onclick="popContactDialog();" />
+      <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" />
+      <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" />
       </td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ire">&dagger; <?=$AppUI->_('Requestor E-mail');?>:</label></td>
+      <td align="right" nowrap><label for="ire">&dagger; <?=$AppUI->_('helpdeskRequestorEmail');?>:</label></td>
       <td valign="top"><input type="text" class="text" id="ire"
                               name="item_requestor_email"
                               value="<?=@$hditem["item_requestor_email"]?>"
@@ -289,7 +287,7 @@ function selectList( listName, target ) {
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="irp">&dagger; <?=$AppUI->_('Requestor Phone');?>:</label></td>
+      <td align="right" nowrap><label for="irp">&dagger; <?=$AppUI->_('helpdeskRequestorPhone');?>:</label></td>
       <td valign="top"><input type="text" class="text" id="irp"
                               name="item_requestor_phone"
                               value="<?=@$hditem["item_requestor_phone"]?>"
@@ -297,18 +295,18 @@ function selectList( listName, target ) {
     </tr>
 
     <tr>
-      <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
+      <td align="right"><label for="c"><?=$AppUI->_('helpdeskCompany')?>:</label></td>
       <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
                           @$hditem["item_company_id"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="p"><?=$AppUI->_('Project')?>:</label></td>
+      <td align="right"><label for="p"><?=$AppUI->_('helpdeskProject')?>:</label></td>
       <td><select name="item_project_id" size="1" class="text" id="p"></select></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
+      <td align="right" nowrap><label for="iat"><?=$AppUI->_('helpdeskAssignedTo')?>:</label></td>
       <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
         <input type="checkbox" name="item_notify" value="1" id="in"
@@ -320,7 +318,7 @@ function selectList( listName, target ) {
           }
         ?>
         />
-        <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label></td>
+        <label for="in"><?=$AppUI->_( 'helpdeskNotifyByEmail' );?></label></td>
     </tr>
 
 
@@ -329,52 +327,52 @@ function selectList( listName, target ) {
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
     <tr>
-      <td align="right" nowrap><label for="ict"><?=$AppUI->_('Call Type')?>:</label></td>
+      <td align="right" nowrap><label for="ict"><?=$AppUI->_('helpdeskCallType')?>:</label></td>
       <td><?=arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="ict"',
-                          @$hditem["item_calltype"] )?></td>
+                          @$hditem["item_calltype"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ics"><?=$AppUI->_('Call Source')?>:</label></td>
+      <td align="right" nowrap><label for="ics"><?=$AppUI->_('helpdeskCallSource')?>:</label></td>
       <td><?=arraySelect( $ics, 'item_source', 'size="1" class="text" id="ics"',
-                          @$hditem["item_source"] )?></td>
+                          @$hditem["item_source"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="ist"><?=$AppUI->_('Status')?>:</label></td>
+      <td align="right"><label for="ist"><?=$AppUI->_('helpdeskStatus')?>:</label></td>
       <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="ist"',
-                          @$hditem["item_status"] )?></td>
+                          @$hditem["item_status"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="ipr"><?=$AppUI->_('Priority')?>:</label></td>
+      <td align="right"><label for="ipr"><?=$AppUI->_('helpdeskPriority')?>:</label></td>
       <td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="ipr"',
-                          @$hditem["item_priority"] )?></td>
+                          @$hditem["item_priority"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="isv"><?=$AppUI->_('Severity')?>:</label></td>
+      <td align="right"><label for="isv"><?=$AppUI->_('helpdeskSeverity')?>:</label></td>
       <td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="isv"',
-                          @$hditem["item_severity"] )?></td>
+                          @$hditem["item_severity"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ios"><?=$AppUI->_('Operating System')?>:</label></td>
+      <td align="right" nowrap><label for="ios"><?=$AppUI->_('helpdeskOperatingSystem')?>:</label></td>
       <td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="ios"',
-                          @$hditem["item_os"] )?></td>
+                          @$hditem["item_os"], true )?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="iap"><?=$AppUI->_('Application')?>:</label></td>
+      <td align="right"><label for="iap"><?=$AppUI->_('helpdeskApplication')?>:</label></td>
       <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="iap"',
-                          @$hditem["item_application"] )?></td>
+                          @$hditem["item_application"], true )?></td>
     </tr>
     </table>
   </td>
 </tr>
 
 <tr>
-  <td align="left"><br><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
+  <td align="left"><br><font color="red"><label for="summary">* <?=$AppUI->_('helpdeskSummary')?>:</label></font></td>
   <td>&nbsp; </td>
 </tr>
 
@@ -389,18 +387,16 @@ function selectList( listName, target ) {
   <td colspan="2">
   <br>
   <small>
-    <font color="red">* Required field</font><br>
-    &dagger; If you select your name from the popup window, your e-mail
-    address and phone number will be populated from your account details
-    (if available).
+    <font color="red">* <?=$AppUI->_('helpdeskRequiredField')?></font><br>
+    &dagger; <?=$AppUI->_('helpdeskFieldMessage')?>
   </small>
   <br><br>
   </td>
 </tr>
 
 <tr>
-  <td><input type="button" value="<?=$AppUI->_('Back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
-  <td align="right"><input type="button" value="<?=$AppUI->_('Submit')?>" class="button" onClick="submitIt()" /></td>
+  <td><input type="button" value="<?=$AppUI->_('back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
+  <td align="right"><input type="button" value="<?=$AppUI->_('submit')?>" class="button" onClick="submitIt()" /></td>
 </tr>
 
 </form>

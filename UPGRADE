@@ -52,6 +52,7 @@ Added
   and have it pre-populate the phone and email fields.
 * Ability to log time to Task Logs for each item
 * Added toggle to show/hide summary message changes.
+* Much improved translation support
 
 Removed
 * Item status "Delete"

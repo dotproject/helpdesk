@@ -1,7 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.62 2004/06/02 17:33:07 bloaterpaste Exp $ */
-
-$HELPDESK_CONFIG = array();
-require_once( "./modules/helpdesk/config.php" );
+<?php /* HELPDESK $Id: list.php,v 1.63 2004/06/04 15:59:35 uid157919 Exp $ */
 
 $AppUI->savePlace();
 
@@ -69,12 +66,12 @@ if($HELPDESK_CONFIG['search_criteria_call_type']){
 	}
 
 	$selectors[] = "<td align=\"right\" nowrap><label for=\"call_type\">"
-               . $AppUI->_('Call Type')
+               . $AppUI->_('helpdeskCallType')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ict ),
                               'item_calltype',
 						                  'size="1" id="call_type" class="text" onchange="changeList()"',
-						                  $calltype )
+						                  $calltype, true )
                . "</td>";
 }
 
@@ -91,12 +88,12 @@ if($HELPDESK_CONFIG['search_criteria_status']){
 	}
 
 	$selectors[] = "<td align=\"right\"><label for=\"status\">"
-               . $AppUI->_('Status')
+               . $AppUI->_('helpdeskStatus')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ist ),
                               'item_status',
 						                  'size="1" id="status" class="text" onchange="changeList()"',
-						                  $status )
+						                  $status, true )
                . "</td>";
   }
 
@@ -113,12 +110,12 @@ if($HELPDESK_CONFIG['search_criteria_priority']){
 	}
 
 	$selectors[] = "<td align=\"right\"><label for=\"priority\">"
-               . $AppUI->_('Priority')
+               . $AppUI->_('helpdeskPriority')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ipr ),
                               'item_priority',
 							                'size="1" id="priority" class="text" onchange="changeList()"',
-							                $priority )
+							                $priority, true )
                . "</td>";
 }
 
@@ -135,12 +132,12 @@ if($HELPDESK_CONFIG['search_criteria_severity']){
 	}
 
 	$selectors[] = "<td align=\"right\"><label for=\"severity\">"
-               . $AppUI->_('Severity')
+               . $AppUI->_('helpdeskSeverity')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $isv ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $isv ),
                               'item_severity',
 						                  'size="1" id="severity" class="text" onchange="changeList()"',
-						                   $item_severity )
+						                   $item_severity, true )
                . "</td>";
 }
 
@@ -157,12 +154,12 @@ if($HELPDESK_CONFIG['search_criteria_call_source']){
 	}
 
 	$selectors[] = "<td align=\"right\" nowrap><label for=\"call_source\">"
-               . $AppUI->_('Call Source')
+               . $AppUI->_('helpdeskCallSource')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $ics ), 
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ics ), 
                               'item_source',
 						                  'size="1" id="call_source" class="text" onchange="changeList()"',
-						                  $item_source )
+						                  $item_source, true )
                . "</td>";
 }
 
@@ -179,12 +176,12 @@ if($HELPDESK_CONFIG['search_criteria_os']){
 	}
 
 	$selectors[] = "<td align=\"right\"><label for=\"os\">"
-               . $AppUI->_('OS')
+               . $AppUI->_('helpdeskOS')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $ios ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ios ),
                               'item_os',
 						                  'size="1" id="os" class="text" onchange="changeList()"',
-						                  $item_os )
+						                  $item_os, true )
                . "</td>";
 }
 
@@ -201,12 +198,12 @@ if($HELPDESK_CONFIG['search_criteria_application']){
 	}
 
 	$selectors[] = "<td align=\"right\"><label for=\"application\">"
-               . $AppUI->_('Application')
+               . $AppUI->_('helpdeskApplication')
                . "</label>:</td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $iap ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $iap ),
                               'item_application',
 						                  'size="1" id="application" class="text" onchange="changeList()"',
-						                  $item_application )
+						                  $item_application, true )
                . "</td>";
 }
 
@@ -230,9 +227,9 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 	$company_list = db_loadHashList( $sql );
 
 	$selectors[] = "<td align=\"right\"><label for=\"company\">"
-               . $AppUI->_('Company')
+               . $AppUI->_('helpdeskCompany')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $company_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $company_list ),
                               'company',
 							                'size="1" id="company" class="text" onchange="changeList()"',
 							                $company )
@@ -259,9 +256,9 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	$project_list = db_loadHashList( $sql );
 
 	$selectors[] = "<td align=\"right\"><label for=\"project\">"
-               . $AppUI->_('Project')
+               . $AppUI->_('helpdeskProject')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $project_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $project_list ),
                               'project',
 							                'size="1" id="project" class="text" onchange="changeList()"',
 							                $project )
@@ -288,9 +285,9 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	$assigned_to_list = db_loadHashList( $sql );
 
 	$selectors[] = "<td align=\"right\" nowrap><label for=\"assigned_to\">"
-               . $AppUI->_('Assigned To')
+               . $AppUI->_('helpdeskAssignedTo')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $assigned_to_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $assigned_to_list ),
                               'assigned_to',
 						                  'size="1" id="assigned_to" class="text" onchange="changeList()"',
 						                  $assigned_to )
@@ -317,9 +314,9 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 	$requestor_list = db_loadHashList( $sql );
 
 	$selectors[] = "<td align=\"right\"><label for=\"requestor\">"
-               . $AppUI->_('Requestor')
+               . $AppUI->_('helpdeskRequestor')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All' ), $requestor_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $requestor_list ),
                               'requestor',
 						                  'size="1" id="requestor" class="text" onchange="changeList()"',
 						                  $requestor )
@@ -375,11 +372,11 @@ $sql .= " LIMIT $offset,$items_per_page";
 $rows = db_loadList( $sql );
 
 // Setup the title block
-$titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
+$titleBlock = new CTitleBlock( $AppUI->_('helpdeskHelpDesk'), 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
 if (hditemCreate()) {
   $titleBlock->addCell(
-    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<input type="submit" class="button" value="'.$AppUI->_('helpdeskNewItem').'" />', '',
     '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
   );
 }
@@ -418,14 +415,14 @@ function changeList() {
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
 	<td align="right" nowrap>&nbsp;</td>
-	<th nowrap="nowrap"><?=sort_header("item_id", $AppUI->_('Number'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_created", $AppUI->_('Opened On'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_requestor", $AppUI->_('Requestor'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_title", $AppUI->_('Title'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_status", $AppUI->_('Status'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_priority", $AppUI->_('Priority'))?></th>
-	<th nowrap="nowrap"><?=sort_header("project_name", $AppUI->_('Project'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_id", $AppUI->_('helpdeskNumber'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_created", $AppUI->_('helpdeskOpenedOn'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_requestor", $AppUI->_('helpdeskRequestor'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_title", $AppUI->_('helpdeskTitle'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('helpdeskAssignedTo'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_status", $AppUI->_('helpdeskStatus'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_priority", $AppUI->_('helpdeskPriority'))?></th>
+	<th nowrap="nowrap"><?=sort_header("project_name", $AppUI->_('helpdeskProject'))?></th>
 </tr>
 <?php
 $s = '';
@@ -489,8 +486,8 @@ foreach ($rows as $row) {
 		$s .= $CR . $row['assigned_fullname'];
 	}
 	$s .= $CR . "</td>";
-	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ist[@$row["item_status"]]) . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ipr[@$row["item_priority"]]) . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'
 		    . $row['project_color_identifier']
@@ -527,11 +524,15 @@ if ($total_results > $items_per_page) {
   $link = "?m=helpdesk&a=list&page=";
 
   if ($page > 0) {
-    print "<a href=\"{$link}0\">&larr; First</a>&nbsp;&nbsp;";
+    print "<a href=\"{$link}0\">&larr; "
+        . $AppUI->_('helpdeskFirst')
+        . "</a>&nbsp;&nbsp;";
 
     print "<a href=\"$link"
         . ($page - 1)
-        . "\">&larr; Prev</a>&nbsp;&nbsp;";
+        . "\">&larr; "
+        . $AppUI->_('helpdeskPrevious') 
+        . "</a>&nbsp;&nbsp;";
   }
 
   for ($i = $start; $i <= $end; $i++) {
@@ -547,9 +548,13 @@ if ($total_results > $items_per_page) {
   if ($page < $pages) {
     print "&nbsp;&nbsp;<a href=\"$link"
         . ($page + 1)
-        . "\">Next &rarr;</a>";
+        . "\">"
+        . $AppUI->_('helpdeskNext')
+        . "&rarr;</a>";
 
-    print "&nbsp;&nbsp;<a href=\"$link$pages\">Last &rarr;</a>";
+    print "&nbsp;&nbsp;<a href=\"$link$pages\">"
+        . $AppUI->_('helpdeskLast') 
+        . " &rarr;</a>";
   }
 
   print "</td></tr>";
@@ -558,13 +563,15 @@ if ($total_results > $items_per_page) {
 </table>
 <?php
   print "<center><small>$total_results "
-      . (($total_results == 1) ? "item" : "items")
-      . " found";
+      . (($total_results == 1) ? $AppUI->_('helpdeskItem') : $AppUI->_('helpdeskItems'))
+      . " "
+      . $AppUI->_('helpdeskFound');
       
   if ($pages > 0) {
     print ", "
         . ($pages + 1)
-        . " pages";
+        . " "
+        . $AppUI->_('helpdeskPages');
   }
       
   print "</small></center>";

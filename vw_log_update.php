@@ -1,7 +1,5 @@
-<?php /* $Id: vw_log_update.php,v 1.6 2004/05/26 23:28:38 bloaterpaste Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.7 2004/05/27 08:46:37 grahamjb Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
-
-require_once( "./modules/helpdesk/config.php" );
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
@@ -65,8 +63,8 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	      clockID  = 0;
 	   }
 	
-       // One minute has passed
-       total_minutes = total_minutes+1;
+     // One minute has passed
+     total_minutes = total_minutes+1;
 	   
 	   document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" <?php echo $AppUI->_('minutes elapsed'); ?> )";
 
@@ -80,7 +78,8 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	function timerStart() {
 		if(!timerID){ // this means that it needs to be started
 			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop');?>";
-            UpdateTimer();
+      total_minutes = Math.round(document.editFrm.task_log_hours.value*60) - 1;
+      UpdateTimer();
 		} else { // timer must be stoped
 			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start');?>";
 			document.getElementById("timerStatus").innerHTML = "";
@@ -131,7 +130,7 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	</td>
 </tr>
 <tr>
-      <td><?=$AppUI->_('Status')?>:<br><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"] )?></td>
+      <td><?=$AppUI->_('Status')?>:<br><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"], true )?></td>
 	<td rowspan="3">
 	<?php echo $AppUI->_('Description');?>:<br>
 		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description;?></textarea>

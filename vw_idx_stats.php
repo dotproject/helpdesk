@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.8 2004/05/25 22:15:34 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.9 2004/05/27 13:41:03 agorski Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();
@@ -17,11 +17,13 @@ foreach ($ict as $k => $v) {
 ?>
 <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
 <tr>
-	<th colspan="2"><?=$AppUI->_('Type')?></th>
+	<th colspan="2"><?=$AppUI->_('helpdeskType')?></th>
 <?php
 	$s = '';
 	foreach ($ist as $k => $v) {
-		$s .= "<th width=\"20%\"><a href=\"?m=helpdesk&a=list&item_status=$k\" class=\"hdr\">$v</a></th>";
+		$s .= "<th width=\"20%\"><a href=\"?m=helpdesk&a=list&item_status=$k\" class=\"hdr\">"
+        . $AppUI->_($v)
+        . "</a></th>";
 	}
 	echo $s;
 
@@ -29,9 +31,11 @@ foreach ($ict as $k => $v) {
 	foreach ($ict as $kct => $vct) {
 		$s .= '<tr>';
 		$s .= '<td width="15">'
-        . dPshowImage (dPfindImage( 'ct'.$kct.'.png', $m ), 15, 17, $ict[$kct])
+        . dPshowImage (dPfindImage( 'ct'.$kct.'.png', $m ), 15, 17, $vct)
         . '</td>';
-		$s .= "<td nowrap><a href=\"?m=helpdesk&a=list&item_calltype=$kct\">$vct</a></td>";
+		$s .= "<td nowrap><a href=\"?m=helpdesk&a=list&item_calltype=$kct\">"
+        . $AppUI->_($vct)
+        . "</a></td>";
 
 		foreach ($ist as $kst => $vst) {
 			$s .= "<td align=\"center\"><a href=\"?m=helpdesk&a=list&item_calltype={$kct}&item_status=$kst\">"
