@@ -1,4 +1,4 @@
-$Id: README,v 1.4 2004/05/18 22:33:05 bloaterpaste Exp $
+$Id: README,v 1.5 2004/05/25 18:45:57 agorski Exp $
 
 ABOUT
 
@@ -10,39 +10,36 @@ PERMISSIONS
     The Help Desk uses built in dotProject permissions to its best abilities. The
     permission system is layed out as follows.
 
-    1. Permissions to the Help Desk module overwrite company permissions. For
-    instance, if a user has read-write access to a company but has read only
-    access to Help Desk, overall read only access will result. A user must have
-    read-write permissions to Help Desk in order to be able to create and edit
-    items.
+    Let our example user be Joe
+
+    1. Joe will always have permission to edit his own Help Desk items, as long
+    as he has at least read-only permissions to the Help Desk.
+
+    2. Permissions to the Help Desk module overwrite company permissions. For
+    instance, if Joe has read-write access to a company but has read only
+    access to Help Desk, overall read only access will result. This means that
+    Joe cannot create any new items and cannot edit any items which are not his
+    own.
 
     2. Company permissions are used to determine access to Help Desk items. If
-    a user has read only permissions for company X, the user will be able to
-    only read items associated with company X. If the user has read-write
-    access to company X, the user will be able to create items for company X,
-    but not for any other company. Having read only permission to a company
-    will not allow the user to create items for that company.  The user must
-    have read-write permissions to at least one company in order to be able to
-    create Help Desk items.
+    Joe has read only permissions for company X and no other, he will be able
+    to read items associated with company X, but that's all. If Joe has
+    read-write access to company X, he will be able to create items for company
+    X.  Having read only permission to a company will not allow Joe to create
+    items for that company.  Joe must have read-write permissions to at least
+    one company in order to be able to create new Help Desk items.
 
-    3. If a user has created an item for company X, but later his read-write
-    permissions for company X have been removed, the user will still be able to
-    edit that item. If the user's Help Desk read-write permissions have been
-    also removed, the user will no longer be able to edit any items.  These
-    individual permissions are in place for all items a user has created.
+    3. On the configuration screen, there are two options of note. The first
+    option has to do with the company which handles Help Desk items. If Joe has
+    read-write access to company X, he will be able to assign items to users
+    from company X. If a company is assigned in the configuration screen
+    option, users from that company will be also visible in that list. This is
+    done so that Joe can assign items to people from the company that hosts the
+    Help Desk. The "requestor" list is limited to people from company X only.
 
-    4. On the configuration screen, there are two options of note. The first
-    option has to do with the company which handles Help Desk items.If a user
-    has read-write access to company X, the user will be able to assign items
-    to users from company X. The user will also be able to select from a list
-    of users in company X for the "requestor" of an item. If a company is
-    assigned in the configuration screen, users from that company will be added
-    to those two lists. This is done so that users can assign items to people
-    from the company that hosts the Help Desk. This is useful if Help Desk
-    staff don't have time to go through and assign items to themselves.
-    
     The second option has to do with items which have no company assigned. By
-    default, those items are not readable by random users.
+    default, those items are not editable by anyone except the item creator. If
+    the items should be editable by anyone, turn the option on.
 
 MAINTAINERS
  
