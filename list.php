@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.18 2004/01/23 16:33:44 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.19 2004/01/23 16:35:19 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -22,23 +22,32 @@ if (isset( $_GET['item_status'] )) {
 }
 $status = $AppUI->getState( 'HelpDeskStatus' ) !== null ? $AppUI->getState( 'HelpDeskStatus' ) : -1;
 
-// check for status filter
+// check for priority filter
 if (isset( $_GET['item_priority'] )) {
 	$AppUI->setState( 'HelpDeskPriority', $_GET['item_priority'] );
 }
 $priority = $AppUI->getState( 'HelpDeskPriority' ) !== null ? $AppUI->getState( 'HelpDeskPriority' ) : -1;
 
 $tarr = array();
+
 if ($search) {
 	$tarr[] = "(hi.item_title LIKE '%$search%' OR hi.item_summary LIKE '%$search%')";
 }
+
 if ($calltype >= 0) {
 	$tarr[] = "hi.item_calltype=$calltype";
 }
+
 if ($status >= 0) {
 	$tarr[] = "hi.item_status=$status";
 }
+
+if ($priority >= 0) {
+	$tarr[] = "hi.item_priority=$priority";
+}
+
 $where = '';
+
 if (count( $tarr )) {
 	$where = 'WHERE ' . implode( ' AND ', $tarr );
 }
