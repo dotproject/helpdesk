@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.21 2004/04/26 21:09:51 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.22 2004/04/26 23:42:17 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -176,82 +176,113 @@ class CHelpDeskItem extends CDpObject {
 		$hditem->load( dPgetParam( $_POST, "item_id") );
 		foreach($field_event_map as $key => $value){
 			if(!eval("return \$hditem->$value == \$this->$value;")){
+				$old_name = $new_name = "";
 				switch($value){
 					// Create the comments here
 					case 'item_assigned_to':
 						$sql = "
 							SELECT 
-								concat(u1.user_first_name,' ',u1.user_last_name) as old_user_name, 
-								concat(u2.user_first_name,' ',u2.user_last_name) as new_user_name 
+								user_id, concat(user_first_name,' ',user_last_name) as user_name
 							FROM 
-								users as u1
-								JOIN users as u2
+								users
 							WHERE 
-								u1.user_id ={$hditem->$value} AND
-								u2.user_id ={$this->$value}
+								user_id in (".
+								($hditem->$value?$hditem->$value:"").
+								($this->$value&&$hditem->$value?", ":"").
+								($this->$value?$this->$value:"").
+								")
 						";
-						db_loadHash( $sql, $ids );
-						$this->log_status($key, "changed from \"".$ids['old_user_name']."\" to \"".$ids['new_user_name']."\"");
+
+						$ids = db_loadList($sql);
+						foreach ($ids as $row){
+							if($row["user_id"]==$this->$value){
+								$new_name = $row["user_name"];
+							} else if($row["user_id"]==$hditem->$value){
+								$old_name = $row["user_name"];
+							}
+						}
 						break;
 					case 'item_company_id':
 						$sql = "
 							SELECT 
-								c1.company_name as old_company_name, 
-								c2.company_name as new_company_name 
+								company_id, company_name
 							FROM 
-								companies as c1
-								JOIN companies as c2
+								companies
 							WHERE 
-								c1.company_id ={$hditem->$value} AND
-								c2.company_id ={$this->$value}
+								company_id in (".
+								($hditem->$value?$hditem->$value:"").
+								($this->$value&&$hditem->$value?", ":"").
+								($this->$value?$this->$value:"").
+								")
 						";
 
-						db_loadHash( $sql, $ids );
-						$this->log_status($key, "changed from \"".$ids['old_company_name']."\" to \"".$ids['new_company_name']."\"");
+						$ids = db_loadList($sql);
+						foreach ($ids as $row){
+							if($row["company_id"]==$this->$value){
+								$new_name = $row["company_name"];
+							} else if($row["company_id"]==$hditem->$value){
+								$old_name = $row["company_name"];
+							}
+						}
 						break;
 					case 'item_project_id':
 						$sql = "
 							SELECT 
-								p1.project_name as old_project_name, 
-								p2.project_name as new_project_name 
+								project_id, project_name
 							FROM 
-								projects as p1
-								JOIN projects as p2
+								projects
 							WHERE 
-								p1.project_id ={$hditem->$value} AND
-								p2.project_id ={$this->$value}
+								project_id in (".
+								($hditem->$value?$hditem->$value:"").
+								($this->$value&&$hditem->$value?", ":"").
+								($this->$value?$this->$value:"").
+								")
 						";
-//$AppUI->setMsg($sql);
 
-						db_loadHash( $sql, $ids );
-						$this->log_status($key, "changed from \"".$ids['old_project_name']."\" to \"".$ids['new_project_name']."\"");
+						$ids = db_loadList($sql);
+						foreach ($ids as $row){
+							if($row["project_id"]==$this->$value){
+								$new_name = $row["project_name"];
+							} else if($row["project_id"]==$hditem->$value){
+								$old_name = $row["project_name"];
+							}
+						}
 						break;
 					case 'item_calltype':
-						$this->log_status($key, "changed from \"".$ict[$hditem->$value]."\" to \"".$ict[$this->$value]."\"");
+						$old_name = $ict[$hditem->$value];
+						$new_name = $ict[$this->$value];
 						break;
 					case 'item_source':
-						$this->log_status($key, "changed from \"".$ics[$hditem->$value]."\" to \"".$ics[$this->$value]."\"");
+						$old_name = $ics[$hditem->$value];
+						$new_name = $ics[$this->$value];
 						break;
 					case 'item_status':
-						$this->log_status($key, "changed from \"".$ist[$hditem->$value]."\" to \"".$ist[$this->$value]."\"");
+						$old_name = $ist[$hditem->$value];
+						$new_name = $ist[$this->$value];
 						break;
 					case 'item_priority':
-						$this->log_status($key, "changed from \"".$ipr[$hditem->$value]."\" to \"".$ipr[$this->$value]."\"");
+						$old_name = $ipr[$hditem->$value];
+						$new_name = $ipr[$this->$value];
 						break;
 					case 'item_severity':
-						$this->log_status($key, "changed from \"".$isv[$hditem->$value]."\" to \"".$isv[$this->$value]."\"");
+						$old_name = $isv[$hditem->$value];
+						$new_name = $isv[$this->$value];
 						break;
 					case 'item_os':
-						$this->log_status($key, "changed from \"".$ios[$hditem->$value]."\" to \"".$ios[$this->$value]."\"");
+						$old_name = $ios[$hditem->$value];
+						$new_name = $ios[$this->$value];
 						break;
 					case 'item_application':
-						$this->log_status($key, "changed from \"".$iap[$hditem->$value]."\" to \"".$iap[$this->$value]."\"");
+						$old_name = $iap[$hditem->$value];
+						$new_name = $iap[$this->$value];
 						break;
 					default:
-	//					$this->log_status($key);
-						$this->log_status($key, "changed from \"{$hditem->$value}\" to \"{$this->$value}\"");
+						$old_name = $hditem->$value;
+						$new_name = $this->$value;
 					break;
+
 				}
+				$this->log_status($key, "changed from \"".$old_name."\" to \"".$new_name."\"");
 			}
 		}
 	}
