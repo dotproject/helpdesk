@@ -13,31 +13,22 @@ $CONFIG_FILE = "./modules/helpdesk/config.php";
 
 $AppUI->savePlace();
 
-/*
-pending
--HTMLArea, on/off
--available search criteria on the list screen
 
-done
--default assigned to to current user
-- Notify by email
-- Default company to current user 
-*/
-
+// Get a list of companies
 $sql = "SELECT company_id, company_name
         FROM companies
         ORDER BY company_name";
 
 $res = db_exec($sql);
 
-// First start with "No Company"
+// Add "No Company"
 $companies['-1'] = '';
 
 while ($row = db_fetch_assoc($res)) {
   $companies[$row['company_id']] = $row['company_name'];
 }
 
-//define user type list
+// Define user type list
 $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 
 //All config options, their descriptions and their default values are defined here.  
@@ -71,7 +62,9 @@ $config_options = array(
 	"no_company_editable" => array(
 		"description" => $AppUI->_('Items with no company should be editable by anyone'),
 		"value" => '0',
-		'type' => 'checkbox',
+		'type' => 'radio',
+    'buttons' => array (1 => "Yes",
+                        0 => "No")
 	),
 	'minimum_edit_level' => array(
 		'description' => $AppUI->_('Minimum user level to edit other users\' logs'),
@@ -83,17 +76,23 @@ $config_options = array(
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Default "assigned to" field to be current user'),
 		"value" => 1,
-		'type' => 'checkbox'
+		'type' => 'radio',
+    'buttons' => array (1 => "Yes",
+                       0 => "No")
 	),
 	"default_notify_by_email" => array(
 		"description" => $AppUI->_('Default the "notify by email" field to on'),
 		"value" => 1,
-		'type' => 'checkbox'
+		'type' => 'radio',
+    'buttons' => array (1 => "Yes",
+                       0 => "No")
 	),
 	"default_company_current_company" => array(
 		"description" => $AppUI->_('Default "company" field to be that of the current user'),
 		"value" => 1,
-		'type' => 'checkbox'
+		'type' => 'radio',
+    'buttons' => array (1 => "Yes",
+                       0 => "No")
 	),
 	"hr4" => '<br><b>'.$AppUI->_('Search Fields for Item List').'<b><hr>',
 	"search_criteria_search" => array(
@@ -186,6 +185,9 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 					case 'select': 
 						$val = isset($_POST[$key])?$_POST[$key]:"0";
 						break;
+          case 'radio':
+            $val = $_POST[$key];
+            break;
 					default:
 						break;
 				}
@@ -231,29 +233,32 @@ foreach ($config_options as $key=>$value){
 ?>
 	<tr>
 		<?php
-// the key starts with hr, then just display the value
-			if(substr($key,0,2)=='hr'){ ?>
-		<td colspan="2" align="center"><?=$value?></td>
-		<?php
-			} else {
-		?>
+    // the key starts with hr, then just display the value
+	  if(substr($key,0,2)=='hr'){ ?>
+		  <td colspan="2" align="center"><?=$value?></td>
+		<?php } else { ?>
 		<td align="right"><?=$value['description']?></td>
 		<td><?php
-				switch($value['type']){
-					case 'checkbox': ?>
-						<input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked=\"checked\"":""?>>
-						<?php
-						break;
-					case 'text': ?>
-						<input type="text" name="<?=$key?>" value="<?=$value['value']?>">
-						<?php
-						break;
-					case 'select': 
-						print arraySelect( $value["list"], $key, 'class=text size=1', $value["value"] );
-						break;
-					default:
-						break;
-				}
+      switch($value['type']){
+        case 'checkbox': ?>
+          <input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked=\"checked\"":""?>>
+          <?php
+          break;
+        case 'text': ?>
+          <input type="text" name="<?=$key?>" value="<?=$value['value']?>">
+          <?php
+          break;
+        case 'select': 
+          print arraySelect( $value["list"], $key, 'class=text size=1', $value["value"] );
+          break;
+        case 'radio':
+          foreach ($value['buttons'] as $v => $n) {?>
+            <input type="radio" name="<?=$key?>" value=<?=$v?> <?=(($value['value'] == $v)?"checked":"")?>> <?=$n?>
+          <?php }
+          break;
+        default:
+          break;
+      }
 		?></td>
 		<?php
 			}
