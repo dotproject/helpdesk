@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.41 2004/04/26 23:42:17 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.42 2004/04/27 15:31:27 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -59,7 +59,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 
 	if ($canEdit) {
-    $titleBlock->addCrumbDelete("Delete this item", 1);
+    		$titleBlock->addCrumbDelete("Delete this item", 1);
 		$titleBlock->addCell(
 			'<input type="submit" class="button" value="'.$AppUI->_('New Item').'">', '',
 			'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
@@ -77,6 +77,8 @@ function delIt() {
 }
 </script>
 
+<table border="0" cellpadding="4" cellspacing="0" width="100%">
+<tr><td width="60%" valign="top">
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
 <form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">
   <input type="hidden" name="dosql" value="do_item_aed">
@@ -174,7 +176,16 @@ function delIt() {
 		</table>
 
 	</td>
-	<td width="50%" valign="top">
+</tr>
+<tr>
+	<td valign="top" colspan="2">
+	</td>
+</tr>
+</table>
+</td>
+<td width="40%" rowspan="2" valign="top">
+<table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
+<tr><td>
 		<strong><?=$AppUI->_('Status Log')?></strong>
 		<table cellspacing="1" cellpadding="2" border="0" width="100%" bgcolor="black">
     <?php
@@ -208,13 +219,9 @@ function delIt() {
     }
     ?>
 		</table>
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
-	</td>
-</tr>
-</table>
+</td></tr></table>
+</td></tr>
+<tr><td valign="top">
 <?php 
 
 $tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
@@ -231,3 +238,4 @@ $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New L
 $tabBox->show();
 } 
 ?>
+</td></tr></table>
