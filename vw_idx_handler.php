@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.13 2004/05/25 18:45:57 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.14 2004/05/25 22:15:34 bloaterpaste Exp $*/
 
   /*
    * opened = 0
@@ -62,15 +62,15 @@ function vw_idx_handler ($type) {
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
           WHERE $where";
 
-$permarr = array();
-//pull in permitted companies
-$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", NULL, PERM_READ);
-//it's assigned to the current user
-$permarr[] = "item_assigned_to=".$AppUI->user_id;
-//it's requested by a user and that user is you
-$permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' )' ;
+  $permarr = array();
+  //pull in permitted companies
+  $permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
+  //it's assigned to the current user
+  $permarr[] = "item_assigned_to=".$AppUI->user_id;
+  //it's requested by a user and that user is you
+  $permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' )' ;
 
-$sql .= ' AND ('.implode("\n OR ", $permarr).')';
+  $sql .= ' AND ('.implode("\n OR ", $permarr).')';
 
   $sql .= " GROUP BY item_id
             ORDER BY item_id";
