@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.31 2004/04/29 23:11:30 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.32 2004/05/05 16:11:51 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -81,7 +81,7 @@ class CHelpDeskItem extends CDpObject {
     return NULL;
   }
 
-  function store() {
+  function store($status_log_id) {
     global $AppUI;
 
     // Update the last modified time and user
@@ -127,7 +127,7 @@ class CHelpDeskItem extends CDpObject {
 	    	$this->item_id = mysql_insert_id();
 	    }
 	    if ($this->item_notify) {
-	      $this->notify();
+	      $this->notify($status_log_id);
 	    }
 	    return $msg;
     }
@@ -138,28 +138,42 @@ class CHelpDeskItem extends CDpObject {
     return parent::delete();
   }
   
-  function notify() {
-    global $AppUI, $ist, $ict;
+  function notify($status_log_id) {
+    global $AppUI, $ist, $ict, $isa;
 
-    // TODO Not localized
-
+    // Pull up the user's e-mail
     $sql = "SELECT user_email
             FROM users
             WHERE user_id='{$this->item_assigned_to}'";
 
     $assigned_to_email = db_loadResult($sql);
 
+    // Pull up the last status log entry
+    $sql = "SELECT status_code, status_comment
+            FROM helpdesk_item_status
+            WHERE status_id=$status_log_id";
+
+    db_loadHash($sql, $log);
+
     $mail = new Mail;
 
     if ($mail->ValidEmail($assigned_to_email)) {
       $body = "Title: {$this->item_title}\n"
             . "Call Type: {$ict[$this->item_calltype]}\n"
-            . "Status: {$ist[$this->item_status]}\n"
-            . "Link: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
-            . "\nSummary:\n\n"
-            . $this->item_summary
-            . "\n\n-- \n"
-            . "Sincerely,\nThe dotProject Help Desk module";
+            . "Status: {$ist[$this->item_status]}\n";
+            
+      if($log['status_code']==0 || $log['status_code']==17){
+        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} {$isa[$log['status_code']]}");
+      } else {
+        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} Updated");
+        $body .= "Update: {$isa[$log['status_code']]} {$log['status_comment']}\n";
+      }
+
+      $body .= "Link: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+             . "\nSummary:\n\n"
+             . $this->item_summary
+             . "\n\n-- \n"
+             . "Sincerely,\nThe dotProject Help Desk module";
 
       if ($mail->ValidEmail($this->item_requestor_email)) {
         $email = $this->item_requestor_email;
@@ -169,7 +183,6 @@ class CHelpDeskItem extends CDpObject {
 
       $mail->From("\"".$this->item_requestor."\" <{$email}>");
       $mail->To($assigned_to_email);
-      $mail->Subject($AppUI->cfg['page_title']." Help Desk item #".$this->item_id);
       $mail->Body($body);
       $mail->Send();
     }
@@ -182,6 +195,7 @@ class CHelpDeskItem extends CDpObject {
 	  if(dPgetParam( $_POST, "item_id")){
       $hditem = new CHelpDeskItem();
       $hditem->load( dPgetParam( $_POST, "item_id") );
+
       foreach($field_event_map as $key => $value){
         if(!eval("return \$hditem->$value == \$this->$value;")){
           $old = $new = "";
@@ -296,11 +310,11 @@ class CHelpDeskItem extends CDpObject {
               break;
 				  }
 
-				  $this->log_status($key, "changed from \""
-                                  .addslashes($old)
-                                  ."\" to \""
-                                  .addslashes($new)
-                                  ."\"");
+				  return $this->log_status($key, "changed from \""
+                                         .addslashes($old)
+                                         ."\" to \""
+                                         .addslashes($new)
+                                         ."\"");
 			  }
 		  }
 	  }
@@ -321,7 +335,7 @@ class CHelpDeskItem extends CDpObject {
       return false;
     }
     
-    return true;
+    return mysql_insert_id();
   }
 }
 

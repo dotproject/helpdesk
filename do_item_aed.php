@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.15 2004/04/26 21:25:41 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.16 2004/04/27 16:05:44 bloaterpaste Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -12,10 +12,10 @@ if($do_task_log=="1"){
 	$hditem->load( $item_id );
 	$new_status = dPgetParam( $_POST, 'item_status', 0 );
 	if($new_status!=$hditem->item_status){
-		$hditem->log_status(11, "changed from \"".$ist[$hditem->item_status]."\" to \"".$ist[$new_status]."\"");
+		$status_log_id = $hditem->log_status(11, "changed from \"{$ist[$hditem->item_status]}\" to \"{$ist[$new_status]}\"");
 		$hditem->item_status = $new_status;
 
-		if (($msg = $hditem->store())) {
+		if (($msg = $hditem->store($status_log_id))) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 			$AppUI->redirect();
 		}
@@ -47,7 +47,7 @@ if($do_task_log=="1"){
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 			$AppUI->redirect();
 		} else {
-			$AppUI->setMsg( @$_POST['task_log_id'] ? 'updated' : 'inserted', UI_MSG_OK, true );
+			$AppUI->setMsg( @$_POST['task_log_id'] ? 'updated' : 'added', UI_MSG_OK, true );
 		}
 	}
 
@@ -73,16 +73,16 @@ if($do_task_log=="1"){
 			$AppUI->redirect('', -1);
 		}
 	} else {
-		$hditem->log_status_changes();
+    if($new_item){
+      $status_log_id = $hditem->log_status(0,"Created");
+    } else {
+      $status_log_id = $hditem->log_status_changes();
+    }
 
-		if (($msg = $hditem->store())) {
+		if (($msg = $hditem->store($status_log_id))) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
-			if($new_item){
-				$hditem->log_status(0,"Created");
-			}
-
-			$AppUI->setMsg( $new_item ? 'inserted' : 'updated' , UI_MSG_OK, true );
+			$AppUI->setMsg( $new_item ? 'added' : 'updated' , UI_MSG_OK, true );
 			$AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
 		}
 	}
