@@ -1,4 +1,4 @@
-<?php /* TASKS $Id: vw_log_update.php,v 1.1 2004/04/22 17:37:56 bloaterpaste Exp $ */
+<?php /* TASKS $Id: vw_log_update.php,v 1.2 2004/04/26 20:18:07 bloaterpaste Exp $ */
 GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
@@ -103,10 +103,8 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id;?>" />
 	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name;?>" />
 <tr>
-	<td align="right">
-		<?php echo $AppUI->_('Date');?>
-	</td>
 	<td nowrap="nowrap">
+		<?php echo $AppUI->_('Date');?><br>
 	<!-- patch by rowan  bug #890841 against v1.0.2-1   email: bitter at sourceforge dot net -->
 		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL );?>">
 	<!-- end patch #890841 -->
@@ -115,24 +113,20 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
-	<td align="right"><?php echo $AppUI->_('Summary');?>:</td>
-	<td>
+	<td><?php echo $AppUI->_('Summary');?>:<br>
 		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name;?>" maxlength="255" size="30" />
 	</td>
 </tr>
 <tr>
-      <td align="right"><?=$AppUI->_('Status')?>:</td>
-      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"] )?></td>
-	<td rowspan="3" align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
+      <td><?=$AppUI->_('Status')?>:<br><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"] )?></td>
 	<td rowspan="3">
-		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description;?></textarea>
+	<?php echo $AppUI->_('Description');?>:<br>
+		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description;?></textarea>
 	</td>
 </tr>
 <tr>
-	<td align="right">
-		<?php echo $AppUI->_('Hours Worked');?>
-	</td>
 	<td>
+		<?php echo $AppUI->_('Hours Worked');?><br>
 		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
 		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
@@ -140,10 +134,8 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	</td>
 </tr>
 <tr>
-	<td align="right">
-		<?php echo $AppUI->_('Cost Code');?>
-	</td>
 	<td>
+		<?php echo $AppUI->_('Cost Code');?>:<br>
 <?php
 		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].text;"', '' );
 ?>
@@ -151,7 +143,7 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	</td>
 </tr>
 <tr>
-	<td colspan="4" valign="bottom" align="right">
+	<td colspan="2" valign="bottom" align="right">
 		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log');?>" onclick="" />
 	</td>
 </tr>
