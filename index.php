@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.21 2004/05/25 18:45:57 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.22 2004/05/25 22:15:32 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -21,19 +21,11 @@ $titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
 
 $titleBlock->show();
 
-$permarr = array();
-//pull in permitted companies
-$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
-//it's assigned to the current user
-$permarr[] = "item_assigned_to=".$AppUI->user_id;
-//it's requested by a user and that user is you
-$permarr[] = "item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' ' ;
-
-$company_perm_sql = ' ('.implode("\n OR ", $permarr).') ';
+$item_perms = getItemPerms();
 
 $sql = "SELECT COUNT(item_id)
-        FROM helpdesk_items";
-$sql .= " WHERE ".$company_perm_sql;
+        FROM helpdesk_items
+        WHERE $item_perms";
 
 $numtotal = db_loadResult ($sql);
 
@@ -62,7 +54,7 @@ $sql = "SELECT COUNT(DISTINCT(item_id))
         WHERE 
         	status_code = 0
         	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        	AND $company_perm_sql";
+        	AND $item_perms";
 
 $numopened = db_loadResult ($sql);
 
@@ -74,7 +66,7 @@ $sql = "SELECT COUNT(DISTINCT(item_id))
         	item_status=2
         	AND status_code=11
         	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-          AND $company_perm_sql";
+          AND $item_perms";
 $numclosed = db_loadResult ($sql);
 
 ?>

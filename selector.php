@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.6 2004/05/25 18:45:57 agorski Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.7 2004/05/26 15:45:07 agorski Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -94,7 +94,7 @@ case 'users':
 	$title = 'User';
 	$select = "user_id,CONCAT_WS(' ',user_first_name,user_last_name)";
 	$order = 'user_last_name, user_first_name';
-  $where = getPermsWhereClause("user_company", NULL, PERM_EDIT);
+  $where = getCompanyPerms("user_company", NULL, PERM_EDIT);
 	break;
 case 'contacts':
 	$title = 'Contacts';

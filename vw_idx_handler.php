@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.14 2004/05/25 22:15:34 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.15 2004/05/26 19:15:28 agorski Exp $*/
 
   /*
    * opened = 0
@@ -48,6 +48,8 @@ function vw_idx_handler ($type) {
    * Delete = 4
    * Testing = 5
    */
+   
+  $item_perms = getItemPerms();
 
   $sql = "SELECT hi.*,
           CONCAT(u.user_first_name,' ',u.user_last_name) assigned_fullname,
@@ -60,20 +62,10 @@ function vw_idx_handler ($type) {
           LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
           LEFT JOIN users u ON u.user_id = hi.item_assigned_to
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
-          WHERE $where";
-
-  $permarr = array();
-  //pull in permitted companies
-  $permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
-  //it's assigned to the current user
-  $permarr[] = "item_assigned_to=".$AppUI->user_id;
-  //it's requested by a user and that user is you
-  $permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' )' ;
-
-  $sql .= ' AND ('.implode("\n OR ", $permarr).')';
-
-  $sql .= " GROUP BY item_id
-            ORDER BY item_id";
+          WHERE $where
+          AND $item_perms
+          GROUP BY item_id
+          ORDER BY item_id";
 
   $items = db_loadList( $sql );
   ?>

@@ -1,10 +1,9 @@
 <?php
+/* This file will write a php config file to be included during execution of
+ * all helpdesk files which require the configuration options. */
 
-//This file will write a php config file to be included during execution of all helpdesk  file for configuration.
-
-// deny all but system admins
-$canEdit = !getDenyEdit( 'system' );
-if (!$canEdit) {
+// Deny all but system admins
+if (getDenyEdit('system')) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -31,6 +30,9 @@ $sql = "SELECT company_id, company_name
 
 $res = db_exec($sql);
 
+// First start with "No Company"
+$companies['-1'] = '';
+
 while ($row = db_fetch_assoc($res)) {
   $companies[$row['company_id']] = $row['company_name'];
 }
@@ -45,33 +47,33 @@ $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 $config_options = array(
 	"hr1" => " <hr><b>".$AppUI->_('Item List Paging Options').'<b>',
 	"items_per_page" => array(
-		"description" => $AppUI->_('Number of items displayed per page on the list view:'),
+		"description" => $AppUI->_('Number of items displayed per page on the list view'),
 		"value" => 30,
 		'type' => 'text'
 	),
 	"status_log_items_per_page" => array(
-		"description" => $AppUI->_('Number of status log items displayed per page in item view:'),
+		"description" => $AppUI->_('Number of status log items displayed per page in item view'),
 		"value" => 15,
 		'type' => 'text'
 	),
 	"pages_per_side" => array(
-		"description" => $AppUI->_('Number of pages to display on each side of current page:'),
+		"description" => $AppUI->_('Number of pages to display on each side of current page'),
 		"value" => 5,
 		'type' => 'text'
 	),
 	"the_company" => array(
-		"description" => $AppUI->_('The company which handles Help Desk items:'),
+		"description" => $AppUI->_('The company which handles Help Desk items'),
 		"value" => '',
 		'type' => 'select',
 		'list' => $companies
 	),
 	"no_company_editable" => array(
-		"description" => $AppUI->_('Items with no company should be editable by anyone:'),
+		"description" => $AppUI->_('Items with no company should be editable by anyone'),
 		"value" => '0',
 		'type' => 'checkbox',
 	),
 	'minimum_edit_level' => array(
-		'description' => $AppUI->_('Minimum user level to edit others logs.'),
+		'description' => $AppUI->_('Minimum user level to edit other users\' logs'),
 		'value' => 0,
 		'type' => 'select',
 		'list' => @$user_types
@@ -170,6 +172,8 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 			exit;
 		} else {
 			foreach ($config_options as $key=>$value){
+			  if(substr($key,0,2)=='hr') continue;
+
 				$val="";
 				switch($value['type']){
 					case 'checkbox': 

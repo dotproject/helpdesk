@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.42 2004/05/26 15:45:07 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.43 2004/05/26 18:22:54 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -377,11 +377,32 @@ class CTaskLog extends CDpObject {
 
 }
 
-// Function to build a where clause to be appended to any sql that will narrow
-// down the returned data to only permitted entities
-// item_created_by
+/* Function to build a where clasuse that will restrict the list of Help Desk
+ * items to only those viewable by a user. The viewable items include
+ * 1. Items the user created
+ * 2. Items that are assigned to the user
+ * 3. Items where the user is the requestor
+ * 4. Items of a company you have permissions for
+ */
+function getItemPerms() {
+  global $AppUI;
 
-function getPermsWhereClause($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
+  $permarr = array();
+  //pull in permitted companies
+  $permarr[] = getCompanyPerms("item_company_id", "item_created_by", PERM_READ);
+  //it's assigned to the current user
+  $permarr[] = "item_assigned_to=".$AppUI->user_id;
+  //it's requested by a user and that user is you
+  $permarr[] = " (item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.') ' ;
+
+  $sql = '('.implode("\n OR ", $permarr).')';
+
+  return $sql;
+}
+
+// Function to build a where clause to be appended to any sql that will narrow
+// down the returned data to only permitted company data
+function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
 	GLOBAL $AppUI, $perms;
 
   // Check for the system wide "all" permission

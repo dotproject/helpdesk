@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.49 2004/05/25 18:45:57 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.50 2004/05/26 15:45:07 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -40,7 +40,7 @@ if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_com
 
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
         FROM users
-        WHERE ". getPermsWhereClause("user_company", NULL, PERM_EDIT, $HELPDESK_CONFIG['the_company'])
+        WHERE ". getCompanyPerms("user_company", NULL, PERM_EDIT, $HELPDESK_CONFIG['the_company'])
      . "ORDER BY user_first_name";
 
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
@@ -49,7 +49,7 @@ $sql = "SELECT project_id, project_name, company_name, company_id
         FROM projects
         LEFT JOIN companies ON company_id = projects.project_company
         WHERE "
-     . getPermsWhereClause("company_id", NULL, PERM_EDIT)
+     . getCompanyPerms("company_id", NULL, PERM_EDIT)
      . "ORDER BY project_name";
 
 $company_project_list = db_loadList( $sql );
@@ -67,7 +67,7 @@ foreach($company_project_list as $row){
 $sql = "SELECT company_id, company_name
         FROM companies
         WHERE "
-     . getPermsWhereClause("company_id", NULL, PERM_EDIT)
+     . getCompanyPerms("company_id", NULL, PERM_EDIT)
      . "ORDER BY company_name";
 
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );

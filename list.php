@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.56 2004/05/26 15:45:07 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.57 2004/05/26 19:19:18 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -175,7 +175,7 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 	//company list
 	$sql = "SELECT company_id, company_name
 		FROM companies
-    WHERE ".getPermsWhereClause("company_id", NULL, PERM_READ)."
+    WHERE ".getCompanyPerms("company_id", NULL, PERM_READ)."
 		ORDER BY company_name";
 	$company_list = db_loadHashList( $sql );
 	$selectors[] = "
@@ -197,7 +197,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	//project list
 	$sql = "SELECT project_id, project_name
 		      FROM projects
-          WHERE ".getPermsWhereClause("project_company", NULL, PERM_READ)
+          WHERE ".getCompanyPerms("project_company", NULL, PERM_READ)
 		   . "ORDER BY project_name";
 	$project_list = db_loadHashList( $sql );
 	$selectors[] = "
@@ -219,7 +219,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	//assigned to user list
 	$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
 		FROM users
-    WHERE ".getPermsWhereClause("user_company", NULL, PERM_READ, $HELPDESK_CONFIG['the_company'])."
+    WHERE ".getCompanyPerms("user_company", NULL, PERM_READ, $HELPDESK_CONFIG['the_company'])."
 		ORDER BY user_first_name";
 
 	$assigned_to_list = db_loadHashList( $sql );
@@ -243,7 +243,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 
 	$sql = "SELECT distinct(item_requestor) as requestor, item_requestor
 		FROM helpdesk_items
-		WHERE ".getPermsWhereClause("item_company_id", NULL, PERM_READ)."
+		WHERE ".getCompanyPerms("item_company_id", NULL, PERM_READ)."
 		ORDER BY item_requestor";
 
 	$requestor_list = db_loadHashList( $sql );
@@ -254,16 +254,8 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 						   $requestor )."</td>";
 }
 
-$permarr = array();
-//pull in permitted companies
-$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
-//it's assigned to the current user
-$permarr[] = "item_assigned_to=".$AppUI->user_id;
-//it's requested by a user and that user is you
-$permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' ) ' ;
 
-
-$where = 'WHERE ('.implode("\n OR ", $permarr).')';
+$where = getItemPerms();
 
 if (count( $tarr )) {
 	$where .=  'AND ('.implode("\n AND ", $tarr).') ';
@@ -278,7 +270,7 @@ $sql = "SELECT hi.*,
         FROM helpdesk_items hi
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT JOIN projects p ON p.project_id = hi.item_project_id
-        $where
+        WHERE $where
         ORDER BY ";
 
 // Do custom order by if needed, default at the end
@@ -459,7 +451,7 @@ if ($total_results > $items_per_page) {
     $end = $page + $pages_per_side;
   }
 
-  print "<tr><td colspan=\"8\" align=\"center\">";
+  print "<tr><td colspan=\"9\" align=\"center\">";
 
   $link = "?m=helpdesk&a=list&page=";
 
