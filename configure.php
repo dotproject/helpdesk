@@ -27,16 +27,65 @@ done
 $config_options = array(
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Defaults that "assigned to" field to be that of the current user.'),
-		"value" => 0
+		"value" => 1
 	),
 	"default_notify_by_email" => array(
 		"description" => $AppUI->_('Defaults the "notify by email" field to on.'),
-		"value" => 0
+		"value" => 1
 	),
 	"default_company_current_company" => array(
 		"description" => $AppUI->_('Defaults the "company" field to be that of the current user.'),
-		"value" => 0
+		"value" => 1
+	),
+	"search_criteria_search" => array(
+		"description" => $AppUI->_('Show the search option for Title Search.'),
+		"value" => 1
+	),
+	"search_criteria_call_type" => array(
+		"description" => $AppUI->_('Show the search option for Call Type.'),
+		"value" => 1
+	),
+	"search_criteria_company" => array(
+		"description" => $AppUI->_('Show the search option for Company.'),
+		"value" => 1
+	),
+	"search_criteria_status" => array(
+		"description" => $AppUI->_('Show the search option for Status.'),
+		"value" => 1
+	),
+	"se,arch_criteria_call_source" => array(
+		"description" => $AppUI->_('Show the search option for Call Source.'),
+		"value" => 1
+	),
+	"search_criteria_project" => array(
+		"description" => $AppUI->_('Show the search option for Project.'),
+		"value" => 1
+	),
+	"search_criteria_assigned_to" => array(
+		"description" => $AppUI->_('Show the search option for Assigned To.'),
+		"value" => 1
+	),
+	"search_criteria_priority" => array(
+		"description" => $AppUI->_('Show the search option for Priority.'),
+		"value" => 1
+	),
+	"search_criteria_application" => array(
+		"description" => $AppUI->_('Show the search option for Application.'),
+		"value" => 1
+	),
+	"search_criteria_requestor" => array(
+		"description" => $AppUI->_('Show the search option for Requestor.'),
+		"value" => 1
+	),
+	"search_criteria_severity" => array(
+		"description" => $AppUI->_('Show the search option for Severity.'),
+		"value" => 1
+	),
+	"search_criteria_os" => array(
+		"description" => $AppUI->_('Show the search option for Operation System.'),
+		"value" => 1
 	)
+
 );
 
 //if this is a submitted page, overwrite the config file.
