@@ -1,0 +1,11 @@
+===== Version 0.1 to 0.2 =====
+
+Added
+* Requestor phone number, requestor type (user or contact), item company
+* Optional item assignee notification by e-mail
+* Status log of item activity, based on the new item audit trail options
+
+Removed
+* Item status "Delete"
+* Item asset number
+

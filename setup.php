@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.26 2004/04/26 16:41:23 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.27 2004/04/26 17:18:22 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -39,11 +39,8 @@ class CSetupHelpDesk {
 			  `item_requestor_email` varchar(128) NOT NULL default '',
 			  `item_requestor_phone` varchar(30) NOT NULL default '',
 			  `item_requestor_type` tinyint NOT NULL default '0',
-			  `item_assetno` varchar(24) NOT NULL default '',
 			  `item_created` datetime default NULL,
-			  `item_created_by` int(11) NOT NULL default '0',
 			  `item_modified` datetime default NULL,
-			  `item_modified_by` int(11) NOT NULL default '0' ,
 			  `item_parent` int(10) unsigned NOT NULL default '0',
 			  `item_project_id` int(11) NOT NULL default '0',
 			  `item_company_id` int(11) NOT NULL default '0',
@@ -148,15 +145,14 @@ class CSetupHelpDesk {
           ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
           ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
           ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
-			    ADD `item_created_by` int(11) NOT NULL default '0' AFTER `item_created`,
-			    ADD `item_modified_by` int(11) NOT NULL default '0' AFTER `item_modified`,
           ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
           DROP `item_receipt_target`,
           DROP `item_receipt_custom`,
           DROP `item_receipted`,
           DROP `item_resolve_target`,
           DROP `item_resolve_custom`,
-          DROP `item_resolved`
+          DROP `item_resolved`,
+			    DROP `item_assetno`
         ";
 
         $bulk_sql[] = "
