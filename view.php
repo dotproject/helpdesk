@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.47 2004/05/05 18:30:25 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.48 2004/05/06 14:16:55 agorski Exp $ */
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -103,6 +103,11 @@ function delIt() {
   if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {
     document.frmDelete.submit();
   }
+}
+
+function toggle_comment(id){
+   var element = document.getElementById(id)
+   element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none"
 }
 </script>
 
@@ -256,6 +261,21 @@ $tabBox->show();
         	if($log['status_code']==0 || $log['status_code']==17){
             // Created or Deleted
         		print $isa[$log['status_code']];
+          } else if ($log['status_code'] == 16) {
+            // Comment
+            print "<a href=\"javascript:void(0);\"
+                      onClick=\"toggle_comment('{$log['status_id']}_short');
+                                toggle_comment('{$log['status_id']}_long');\">"
+                . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
+                . "</a>";
+
+            print "<span style='display: inline' id='{$log['status_id']}_short'> "
+                . "{$isa[$log['status_code']]} "
+                . htmlspecialchars(substr($log['status_comment'],0,8))
+                . "</span><span style='display: none' id='{$log['status_id']}_long'> "
+                . "{$isa[$log['status_code']]} "
+                . htmlspecialchars($log['status_comment'])
+                . "</span>";
         	} else {
             // Everything else
         		print $isa[$log['status_code']]." ".$log['status_comment'];
