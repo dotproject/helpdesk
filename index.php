@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.16 2004/05/06 18:40:36 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.17 2004/05/13 00:16:37 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -7,9 +7,6 @@ if (!$canReadModule) {
 }
 
 $AppUI->savePlace();
-
-$HELPDESK_CONFIG = array();
-require_once( "./modules/helpdesk/config.php" );
 
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'HelpDeskIdxTab', $_GET['tab'] );

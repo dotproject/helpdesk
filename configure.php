@@ -53,7 +53,7 @@ $config_options = array(
 		"description" => $AppUI->_('Show the search option for Status.'),
 		"value" => 1
 	),
-	"se,arch_criteria_call_source" => array(
+	"search_criteria_call_source" => array(
 		"description" => $AppUI->_('Show the search option for Call Source.'),
 		"value" => 1
 	),
