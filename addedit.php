@@ -1,6 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.17 2004/04/20 16:59:51 bloaterpaste Exp $ */
-$AppUI->savePlace();
-
+<?php /* HELPDESK $Id: addedit.php,v 1.18 2004/04/20 17:52:18 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
