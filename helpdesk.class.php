@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.47 2004/05/28 13:17:39 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.48 2004/05/28 15:51:29 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -23,25 +23,25 @@ $ist = dPgetSysVal( 'HelpDeskStatus' );
 $isa = dPgetSysVal( 'HelpDeskAuditTrail' );
 
 $field_event_map = array(
-      //0=>Created
-        1=>"item_title",            //Title
-        2=>"item_requestor",        //Requestor Name
-        3=>"item_requestor_email",  //Requestor E-mail
-        4=>"item_requestor_phone",  //Requestor Phone
-        5=>"item_assigned_to",      //Assigned To
-        6=>"item_notify",           //Notify by e-mail
-        7=>"item_company_id",       //Company
-        8=>"item_project_id",       //Project
-        9=>"item_calltype",         //Call Type
-        10=>"item_source",          //Call Source
-        11=>"item_status",          //Status
-        12=>"item_priority",        //Priority
-        13=>"item_severity",        //Severity
-        14=>"item_os",              //Operating System
-        15=>"item_application",     //Application
-        16=>"item_summary",         //Summary
-      //17=>Deleted
-  );
+//0=>Created
+  1=>"item_title",            //Title
+  2=>"item_requestor",        //Requestor Name
+  3=>"item_requestor_email",  //Requestor E-mail
+  4=>"item_requestor_phone",  //Requestor Phone
+  5=>"item_assigned_to",      //Assigned To
+  6=>"item_notify",           //Notify by e-mail
+  7=>"item_company_id",       //Company
+  8=>"item_project_id",       //Project
+  9=>"item_calltype",         //Call Type
+  10=>"item_source",          //Call Source
+  11=>"item_status",          //Status
+  12=>"item_priority",        //Priority
+  13=>"item_severity",        //Severity
+  14=>"item_os",              //Operating System
+  15=>"item_application",     //Application
+  16=>"item_summary",         //Summary
+//17=>Deleted
+);
   
 // Help Desk class
 class CHelpDeskItem extends CDpObject {
@@ -100,22 +100,23 @@ class CHelpDeskItem extends CDpObject {
     
     $this->item_summary = strip_tags($this->item_summary);
 
-    //if type indicates a contact or a user, then look up that phone and email for those entries
+    //if type indicates a contact or a user, then look up that phone and email
+    //for those entries
     switch ($this->item_requestor_type) {
       case '0'://it's not a user or a contact
         break;
       case '1'://it's a system user
         $sql = "SELECT user_id as id,
-                user_email as email,
-                user_phone as phone,
+                       user_email as email,
+                       user_phone as phone,
                 CONCAT(user_first_name,' ', user_last_name) as name
                 FROM users
                 WHERE user_id='{$this->item_requestor_id}'";
         break;
       case '2':
         $sql = "SELECT contact_id as id,
-                contact_email as email,
-                contact_phone as phone,
+                       contact_email as email,
+                       contact_phone as phone,
                 CONCAT(contact_first_name,' ', contact_last_name) as name
                 FROM contacts
                 WHERE contact_id='{$this->item_requestor_id}'";
@@ -131,7 +132,6 @@ class CHelpDeskItem extends CDpObject {
       $this->item_requestor = $result['name'];
     }
       
-
     /* if the store is successful, pull the new id value and insert it into the 
        object. */
     if (($msg = parent::store())) {
@@ -142,7 +142,6 @@ class CHelpDeskItem extends CDpObject {
 	    }
 	    return $msg;
     }
-    
   }
 
   function delete() {

@@ -32,14 +32,14 @@ while ($row = db_fetch_assoc($res)) {
 $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 
 /* All config options, their descriptions and their default values are defined
- * here. Add new config options here. Type can be "checkbox", "text", "radio" 
- * or "select". If the type is "radio," it must include a set of buttons. If 
- * it's "select" then be sure to include a 'list' entry with the options.  if 
- * the key starts with hrXXX then it will just display the contents on the
- * value. This is used for grouping.
- */
+* here. Add new config options here. Type can be "checkbox", "text", "radio" or
+* "select". If the type is "radio," it must include a set of buttons. If it's
+* "select" then be sure to include a 'list' entry with the options.  if the key
+* starts with headingXXX then it will just display the contents on the value.
+* This is used for grouping.
+*/
 $config_options = array(
-	"hr1" => '<b>'.$AppUI->_('Paging Options').'<b><hr>',
+	"heading1" => $AppUI->_('Paging Options'),
 	"items_per_page" => array(
 		"description" => $AppUI->_('Number of items displayed per page on the list view'),
 		"value" => 30,
@@ -55,7 +55,7 @@ $config_options = array(
 		"value" => 5,
 		'type' => 'text'
 	),
-	"hr2" => '<br><b>'.$AppUI->_('Permission Options').'<b><hr>',
+	"heading2" => $AppUI->_('Permission Options'),
 	"the_company" => array(
 		"description" => $AppUI->_('The company which handles Help Desk items'),
 		"value" => '',
@@ -75,7 +75,7 @@ $config_options = array(
 		'type' => 'select',
 		'list' => @$user_types
 	),
-	"hr3" => "<br><b>".$AppUI->_('New Item Default Selections').'<b><hr>',
+	"heading3" => $AppUI->_('New Item Default Selections'),
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Default "assigned to" field to be current user'),
 		"value" => 1,
@@ -97,7 +97,7 @@ $config_options = array(
     'buttons' => array (1 => "Yes",
                        0 => "No")
 	),
-	"hr4" => '<br><b>'.$AppUI->_('Search Fields for Item List').'<b><hr>',
+	"heading4" => $AppUI->_('Search Fields for Item List'),
 	"search_criteria_search" => array(
 		"description" => $AppUI->_('Title/Summary Search'),
 		"value" => 1,
@@ -175,7 +175,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 			exit;
 		} else {
 			foreach ($config_options as $key=>$value){
-			  if(substr($key,0,2)=='hr') continue;
+			  if(substr($key,0,7)=='heading') continue;
 
 				$val="";
 				switch($value['type']){
@@ -237,8 +237,8 @@ foreach ($config_options as $key=>$value){
 	<tr>
 		<?php
     // the key starts with hr, then just display the value
-	  if(substr($key,0,2)=='hr'){ ?>
-		  <td colspan="2" align="center"><?=$value?></td>
+	  if(substr($key,0,7)=='heading'){ ?>
+		  <th align="center" colspan="2"><?=$value?></th>
 		<?php } else { ?>
 		<td align="right"><?=$value['description']?></td>
 		<td><?php
