@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.43 2004/06/02 17:00:01 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.44 2004/06/04 12:55:19 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -21,7 +21,7 @@ if (@$a == 'setup') {
 	print dPshowModuleConfig( $config );
 }
 
-require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
+require_once( $dPconfig['root_dir'].'/modules/system/syskeys/syskeys.class.php');
 
 class CSetupHelpDesk {
 	function install() {
