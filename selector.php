@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.1 2004/04/21 17:41:40 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.2 2004/04/29 14:12:07 agorski Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -123,6 +123,10 @@ if (!$ok) {
 ?>
 <script language="javascript">
 	function setClose(key, val){
+		window.opener.<?php echo $callback;?>(key,val);
+		window.close();
+	}
+	function setHeight(){
 		window.opener.<?php echo $callback;?>(key,val);
 		window.close();
 	}

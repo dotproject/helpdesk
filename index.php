@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.10 2004/04/28 20:33:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.11 2004/04/29 00:17:47 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -48,7 +48,7 @@ $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
         	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (status_code = 0 OR status_code = 1)";
+        AND (item_status = 0 OR item_status = 1)";
 $sql .= " AND ".$company_perm_sql;
 
 $numopened = db_loadResult ($sql);
@@ -57,10 +57,17 @@ $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
         	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (status_code = 2)";
+        AND (item_status = 2)";
 $sql .= " AND ".$company_perm_sql;
 
 $numclosed = db_loadResult ($sql);
+
+$sql = "SELECT COUNT(item_status)
+        FROM helpdesk_items
+        WHERE item_assigned_to=".$AppUI->user_id."
+        AND (item_status != 2)";
+
+$nummine = db_loadResult ($sql);
 
 ?>
 <table cellspacing="0" cellpadding="2" border="0" width="100%">
@@ -70,6 +77,7 @@ $numclosed = db_loadResult ($sql);
   // Tabbed information boxes
   $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
   $tabBox->add( 'vw_idx_stats', "Help Desk Items ($numtotal)" );
+  $tabBox->add( 'vw_idx_my', "My Open ($nummine)" );
   $tabBox->add( 'vw_idx_new', "Opened Today ($numopened)" );
   $tabBox->add( 'vw_idx_closed', "Closed Today ($numclosed)" );
   $tabBox->show();

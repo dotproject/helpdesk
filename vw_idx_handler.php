@@ -1,6 +1,39 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.5 2004/04/23 17:17:43 agorski Exp $*/
-function vw_idx_handler ($opened) {
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.6 2004/04/29 00:17:47 bloaterpaste Exp $*/
+
+  /*
+   * opened = 0
+   * closed = 1
+   * mine = 2
+   */
+function vw_idx_handler ($type) {
   global $m, $ipr, $ist, $AppUI;
+
+  $where=$date_field_name=$date_field_title="";
+  switch($type){
+  	case 0://mine
+  		$opened = 1;
+  		$date_field_title = $AppUI->_('Opened On');
+  		$date_field_name = "item_created";
+		$where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
+		$where .= "AND his.status_code = 0";
+  		break;
+  	case 1://closed
+  		$closed = 1;
+  		$date_field_title = $AppUI->_('Closed On');
+  		$date_field_name = "status_date";
+		$where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
+		$where .= "AND his.status_code = 2";
+  		break;
+  	case 2: //mine
+  	default:
+  		$mine = 1;
+  		$date_field_title = $AppUI->_('Opened On');
+  		$date_field_name = "item_created";
+		$where .= "item_assigned_to=".$AppUI->user_id;
+		$where .= " AND item_status !=2";
+		$where .= " AND his.status_code = 0";
+  		break;
+  }
 
   $df = $AppUI->getPref( 'SHDATEFORMAT' );
   $tf = $AppUI->getPref( 'TIMEFORMAT' );
@@ -26,16 +59,8 @@ function vw_idx_handler ($opened) {
           LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
           LEFT JOIN users u ON u.user_id = hi.item_assigned_to
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
-          WHERE ";
+          WHERE $where";
 
-  if ($opened) {
-    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
-    $sql .= "AND (his.status_code = 0 OR his.status_code = 1)";
-  } else {
-    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
-    $sql .= "AND his.status_code = 2";
-  }
-  
 //pull in permitted companies
   $sql .= " AND ".getPermsWhereClause("companies", "item_company_id");
 
@@ -53,14 +78,7 @@ function vw_idx_handler ($opened) {
     <th><?=$AppUI->_('Status')?></th>
     <th><?=$AppUI->_('Priority')?></th>
     <th><?=$AppUI->_('Project')?></th>
-    <th nowrap="nowrap">
-    <?php
-      if ($opened) {
-        print $AppUI->_('Opened On');
-      } else {
-        print $AppUI->_('Closed On');
-      }
-    ?></th>
+    <th nowrap="nowrap"><?=$date_field_title?></th>
   </tr>
   <?php
   foreach ($items as $row) {
@@ -68,17 +86,10 @@ function vw_idx_handler ($opened) {
        system. Just because we have a requestor id does not mean we'll be
        able to retrieve a full name */
 
-    if ($opened) {
-      if ($row["item_created"]) {
-        $created = new CDate( $row["item_created"] );
-        $tc = $created->format( $format );
-      }
-    } else {
-      if($row["status_date"]){
-        $resolved = new CDate( $row["status_date"] );
-        $tc = $resolved->format( $format );
-      }
-    }
+	if ($row[$date_field_name]) {
+		$date = new CDate( $row[$date_field_name] );
+		$tc = $date->format( $format );
+	}
     ?>
     <tr>
       <td><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>
