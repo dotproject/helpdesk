@@ -1,4 +1,4 @@
-$Id: README,v 1.2 2004/05/06 20:07:06 agorski Exp $
+$Id: README,v 1.3 2004/05/13 21:25:23 bloaterpaste Exp $
 
 ABOUT
 
@@ -42,3 +42,11 @@ LICENSE
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 See UPGRADE for version changes and information
+
+NOTES
+
+The HelpDesk module has company level permissions wrapped around it.  
+So, if your friend is in company X and the ticket is assigned to company 
+X, and you do not have perms to view info for company X you will not see 
+that ticket.  You will need to have company X perms granted to you via
+the User Admin module.
