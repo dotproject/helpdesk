@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.17 2004/05/06 16:11:12 agorski Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.18 2004/05/06 18:09:39 agorski Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -35,21 +35,14 @@ if($do_task_log=="1"){
 	}
 
 	$AppUI->setMsg( 'Task Log' );
-	if ($del) {
-		if (($msg = $obj->delete())) {
-			$AppUI->setMsg( $msg, UI_MSG_ERROR );
-		} else {
-			$AppUI->setMsg( "deleted", UI_MSG_ALERT );
-		}
-	} else {
-		$obj->task_log_costcode = $obj->task_log_costcode;
-		if (($msg = $obj->store())) {
-			$AppUI->setMsg( $msg, UI_MSG_ERROR );
-			$AppUI->redirect();
-		} else {
-			$AppUI->setMsg( @$_POST['task_log_id'] ? 'updated' : 'added', UI_MSG_OK, true );
-		}
-	}
+
+  $obj->task_log_costcode = $obj->task_log_costcode;
+  if (($msg = $obj->store())) {
+    $AppUI->setMsg( $msg, UI_MSG_ERROR );
+    $AppUI->redirect();
+  } else {
+    $AppUI->setMsg( @$_POST['task_log_id'] ? 'updated' : 'added', UI_MSG_OK, true );
+  }
 
 	$AppUI->redirect("m=helpdesk&a=view&item_id=$item_id&tab=0");
 
@@ -70,7 +63,7 @@ if($do_task_log=="1"){
 		} else {
 			$AppUI->setMsg( "Help Desk item deleted", UI_MSG_OK );
 			$hditem->log_status(17);
-			$AppUI->redirect('', -1);
+			$AppUI->redirect('m=helpdesk&a=list');
 		}
 	} else {
     $status_log_id = $hditem->log_status_changes();

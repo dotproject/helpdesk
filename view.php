@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.51 2004/05/19 17:02:18 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.52 2004/05/19 17:23:17 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -12,7 +12,7 @@ if (!$canReadModule) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
-$AppUI->savePlace();
+//$AppUI->savePlace();
 
 // Get pagination page
 if (isset($_GET['page'])) {
@@ -261,49 +261,51 @@ $tabBox->show();
     <?php
     $last_date = "";
 
-    foreach ($status_log as $log) {
-		  $log_date = new CDate($log['status_date']);
-		  $date = $log_date->format( $df );
-		  if($date!=$last_date){
-		  	$last_date = $date;
-		  ?>
-      <tr>
-        <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
-      </tr>
-		  <?php
-		  }
-		
-		  $time = $log_date->format( $tf );
-      ?>
-      <tr>
-        <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
-        <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
-        <td class="hilite" width="98%"><?php
-        	if($log['status_code']==0 || $log['status_code']==17){
-            // Created or Deleted
-        		print $isa[$log['status_code']];
-          } else if ($log['status_code'] == 16) {
-            // Comment
-            print "<a href=\"javascript:void(0);\"
-                      onClick=\"toggle_comment('{$log['status_id']}_short');
-                                toggle_comment('{$log['status_id']}_long');\">"
-                . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
-                . "</a>";
+    if (is_array($status_log)) {
+      foreach ($status_log as $log) {
+        $log_date = new CDate($log['status_date']);
+        $date = $log_date->format( $df );
+        if($date!=$last_date){
+          $last_date = $date;
+        ?>
+        <tr>
+          <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
+        </tr>
+        <?php
+        }
+      
+        $time = $log_date->format( $tf );
+        ?>
+        <tr>
+          <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
+          <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+          <td class="hilite" width="98%"><?php
+            if($log['status_code']==0 || $log['status_code']==17){
+              // Created or Deleted
+              print $isa[$log['status_code']];
+            } else if ($log['status_code'] == 16) {
+              // Comment
+              print "<a href=\"javascript:void(0);\"
+                        onClick=\"toggle_comment('{$log['status_id']}_short');
+                                  toggle_comment('{$log['status_id']}_long');\">"
+                  . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
+                  . "</a>";
 
-            print "<span style='display: inline' id='{$log['status_id']}_short'> "
-                . "{$isa[$log['status_code']]} "
-                . htmlspecialchars(substr($log['status_comment'],0,8))
-                . "</span><span style='display: none' id='{$log['status_id']}_long'> "
-                . "{$isa[$log['status_code']]} "
-                . htmlspecialchars($log['status_comment'])
-                . "</span>";
-        	} else {
-            // Everything else
-        		print $isa[$log['status_code']]." ".$log['status_comment'];
-        	}
-        ?></td>
-      </tr>
-      <?php
+              print "<span style='display: inline' id='{$log['status_id']}_short'> "
+                  . "{$isa[$log['status_code']]} "
+                  . htmlspecialchars(substr($log['status_comment'],0,8))
+                  . "</span><span style='display: none' id='{$log['status_id']}_long'> "
+                  . "{$isa[$log['status_code']]} "
+                  . htmlspecialchars($log['status_comment'])
+                  . "</span>";
+            } else {
+              // Everything else
+              print $isa[$log['status_code']]." ".$log['status_comment'];
+            }
+          ?></td>
+        </tr>
+        <?php
+      }
     }
     ?>
 		</table>
