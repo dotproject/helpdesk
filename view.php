@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.32 2004/04/22 18:12:15 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.33 2004/04/22 18:30:33 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -89,7 +89,7 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Item Number')?>:</td>
-			<td class="hilite" width="100%"><i><?=$hditem["item_id"]?></i></td>
+			<td class="hilite" width="100%"><?=$hditem["item_id"]?></td>
 		</tr>
 
 		<tr>
@@ -173,16 +173,16 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Opened')?>:</td>
-			<td class="hilite" width="100%"><i><?=$tc?></i></td>
+			<td class="hilite" width="100%"><?=$tc?></td>
 		</tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
-      <td class="hilite" width="100%"><i><?=$tm?></i></td>
+      <td class="hilite" width="100%"><?=$tm?></td>
     </tr>
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
-      <td class="hilite" width="100%"><i><?=$tr?></i></td>
+      <td class="hilite" width="100%"><?=$tr?></td>
     </tr>
 		</table>
 	</td>
