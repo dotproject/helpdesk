@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.67 2004/06/22 12:14:41 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.68 2004/07/12 17:34:43 agorski Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -50,17 +50,6 @@ if (!db_loadHash( $sql, $hditem )) {
   $name = $hditem['item_requestor'];
   $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
   $assigned_email = $hditem["assigned_email"];
-
-	// User's specified format for date and time
-	$df = $AppUI->getPref('SHDATEFORMAT');
-	$tf = $AppUI->getPref('TIMEFORMAT');
-	$format = "$df $tf";
-  $tc = $tm = $tr = "";
-
-	if(@$hditem["item_created"]){
-		$created = new CDate( @$hditem["item_created"] );
-		$tc = $created->format( $format );
-	}
 
 	$titleBlock = new CTitleBlock( 'Viewing Help Desk Item', 'helpdesk.png',
                                  $m, 'ID_HELP_HELPDESK_IDX' );

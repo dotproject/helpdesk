@@ -1,5 +1,10 @@
 <?php
-  Global $HELPDESK_CONFIG, $hditem, $df, $tf, $isa, $m, $item_id;
+global $HELPDESK_CONFIG, $hditem, $isa, $m, $item_id;
+
+// User's specified format for date and time
+$df = $AppUI->getPref('SHDATEFORMAT');
+$tf = $AppUI->getPref('TIMEFORMAT');
+
 $isa = dPgetSysVal( 'HelpDeskAuditTrail' );
 
 // Get pagination page

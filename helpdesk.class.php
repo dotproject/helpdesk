@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.51 2004/06/22 12:14:40 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.52 2004/07/12 17:34:43 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -326,8 +326,8 @@ class CHelpDeskItem extends CDpObject {
               $new = $AppUI->_($ict[$this->$value]);
               break;
             case 'item_source':
-              $old = $ics[$hditem->$value];
-              $new = $ics[$this->$value];
+              $old = $AppUI->_($ics[$hditem->$value]);
+              $new = $AppUI->_($ics[$this->$value]);
               break;
             case 'item_status':
               $old = $AppUI->_($ist[$hditem->$value]);
@@ -342,12 +342,12 @@ class CHelpDeskItem extends CDpObject {
               $new = $AppUI->_($isv[$this->$value]);
               break;
             case 'item_os':
-              $old = $ios[$hditem->$value];
-              $new = $ios[$this->$value];
+              $old = $AppUI->_($ios[$hditem->$value]);
+              $new = $AppUI->_($ios[$this->$value]);
               break;
             case 'item_application':
-              $old = $iap[$hditem->$value];
-              $new = $iap[$this->$value];
+              $old = $AppUI->_($iap[$hditem->$value]);
+              $new = $AppUI->_($iap[$this->$value]);
               break;
             case 'item_notify':
               $old = $hditem->$value ? $AppUI->_('On') : $AppUI->_('Off');
@@ -361,11 +361,11 @@ class CHelpDeskItem extends CDpObject {
 
 				  $last_status_log_id = $this->log_status($key, $AppUI->_('changed from')
                                                       . " \""
-                                                      . addslashes($AppUI->_($old))
+                                                      . addslashes($old)
                                                       . "\" "
                                                       . $AppUI->_('to')
                                                       . " \""
-                                                      . addslashes($AppUI->_($new))
+                                                      . addslashes($new)
                                                       . "\"");
 			  }
 		  }

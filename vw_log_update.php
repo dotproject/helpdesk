@@ -1,4 +1,4 @@
-<?php /* $Id: vw_log_update.php,v 1.7 2004/05/27 08:46:37 grahamjb Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.8 2004/06/14 20:58:11 agorski Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -91,15 +91,27 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	   if(timerID) {
 	      clearTimeout(timerID);
 	      timerID  = 0;
-          total_minutes = total_minutes-1;
+        total_minutes = total_minutes-1;
 	   }
 	}
 	
 	function timerReset() {
 		document.editFrm.task_log_hours.value = "0.00";
-        total_minutes = -1;
+    total_minutes = -1;
 	}
 	
+  function popCalendar( field ){
+    calendarField = field;
+    idate = eval( 'document.editFrm.task_' + field + '.value' );
+    window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=251, height=220, scollbars=false' );
+  }
+
+  function setCalendar( idate, fdate ) {
+    fld_date = eval( 'document.editFrm.task_' + calendarField );
+    fld_fdate = eval( 'document.editFrm.' + calendarField );
+    fld_date.value = idate; 
+    fld_fdate.value = fdate;
+  }
 </script>
 <!-- END OF TIMER RELATED SCRIPTS -->
 

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.55 2004/06/22 12:14:38 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.56 2004/07/12 17:34:43 agorski Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -84,12 +84,13 @@ if ($item_id) {
 $titleBlock->show();
 
 if ($item_id) { 
-  $tsc = db_dateTime2unix( $hditem["item_created"] );
+  $df = $AppUI->getPref('SHDATEFORMAT');
+  $tf = $AppUI->getPref('TIMEFORMAT');
+  $item_date = new CDate( $hditem["item_created"] );
+  $tc = $item_date->format( "$df $tf" );
 } else {
   $hditem["item_created"] = db_unix2dateTime(time());
 }
-
-$tc = isset($tsc) ? date( "m/d/y g:i a", $tsc ) : null;
 
 ?>
 <script language="javascript">

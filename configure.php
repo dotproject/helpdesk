@@ -63,7 +63,7 @@ $config_options = array(
 		'list' => $companies
 	),
 	"no_company_editable" => array(
-		"description" => $AppUI->_('helpdeskItemNoCompany'),
+		"description" => $AppUI->_('helpdeskItemsNoCompany'),
 		"value" => '0',
 		'type' => 'radio',
     'buttons' => array (1 => $AppUI->_('Yes'),
