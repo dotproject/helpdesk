@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.16 2004/04/23 14:25:01 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.17 2004/04/23 17:17:43 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -20,6 +20,17 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 
 class CSetupHelpDesk {
 	function install() {
+		$sql[] = "
+		  CREATE TABLE `helpdesk_item_status` (
+		    `status_id` INT NOT NULL AUTO_INCREMENT,
+		    `status_item_id` INT NOT NULL,
+		    `status_code` INT(3) NOT NULL,
+		    `status_date` TIMESTAMP NOT NULL,
+		    `status_modified_by` INT NOT NULL,
+		    `status_comment` VARCHAR(64) DEFAULT '',
+		    PRIMARY KEY (`status_id`)
+		  )";
+
 		$sql[] = "
 			CREATE TABLE helpdesk_items (
 			  `item_id` int(11) unsigned NOT NULL auto_increment,
@@ -50,9 +61,9 @@ class CSetupHelpDesk {
 			) TYPE=MyISAM";
 
 		$sql[] = "
-      ALTER TABLE `task_log`
-      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
-    ";
+		      ALTER TABLE `task_log`
+		      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+		    ";
 
     foreach ($sql as $s) {
       db_exec($s);
