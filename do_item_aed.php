@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.6 2004/04/19 18:24:12 adam Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.7 2004/04/20 15:43:46 gatny Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -33,7 +33,7 @@ if ($del) {
     if ($item_id) {
       $AppUI->redirect();
     } else {
-      $AppUI->redirect('?m=helpdesk&a=view&item_id='.$hditem->item_id);
+      $AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
     }
 	}
 }
