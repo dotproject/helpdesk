@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.64 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.65 2004/06/22 12:14:40 agorski Exp $ */
 
 $AppUI->savePlace();
 
@@ -159,7 +159,7 @@ if($HELPDESK_CONFIG['search_criteria_call_source']){
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ics ), 
                               'item_source',
 						                  'size="1" id="call_source" class="text" onchange="changeList()"',
-						                  $item_source)
+						                  $item_source, true)
                . "</td>";
 }
 
@@ -181,7 +181,7 @@ if($HELPDESK_CONFIG['search_criteria_os']){
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ios ),
                               'item_os',
 						                  'size="1" id="os" class="text" onchange="changeList()"',
-						                  $item_os )
+						                  $item_os, true )
                . "</td>";
 }
 
@@ -203,7 +203,7 @@ if($HELPDESK_CONFIG['search_criteria_application']){
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $iap ),
                               'item_application',
 						                  'size="1" id="application" class="text" onchange="changeList()"',
-						                  $item_application)
+						                  $item_application, true)
                . "</td>";
 }
 

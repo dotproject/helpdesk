@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.22 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.23 2004/06/22 12:14:40 agorski Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -13,10 +13,10 @@ if($do_task_log=="1"){
 	$new_status = dPgetParam( $_POST, 'item_status', 0 );
 
 	if($new_status!=$hditem->item_status){
-		$status_log_id = $hditem->log_status(11, $AppUI->_('helpdeskChangedFrom')
-                                           . " \"{$ist[$hditem->item_status]}\" "
-                                           . $AppUI->_('helpdeskChangeTo')
-                                           . "\"{$ist[$new_status]}\"");
+		$status_log_id = $hditem->log_status(11, $AppUI->_('changed from')
+                                           . " \"".$AppUI->_($ist[$hditem->item_status])."\" "
+                                           . $AppUI->_('to')
+                                           . " \"".$AppUI->_($ist[$new_status])."\"");
 		$hditem->item_status = $new_status;
 
 		if (($msg = $hditem->store())) {

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.66 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.67 2004/06/22 12:14:41 agorski Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -157,7 +157,7 @@ if (!db_loadHash( $sql, $hditem )) {
 
       <tr>
         <td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
-        <td class="hilite" width="100%"><?=@$ics[$hditem["item_source"]]?></td>
+        <td class="hilite" width="100%"><?=$AppUI->_(@$ics[$hditem["item_source"]])?></td>
       </tr>
 
       <tr>
@@ -177,12 +177,12 @@ if (!db_loadHash( $sql, $hditem )) {
 
       <tr>
         <td align="right" nowrap="nowrap"><?=$AppUI->_('Operating System')?>:</td>
-        <td class="hilite" width="100%"><?=@$ios[$hditem["item_os"]]?></td>
+        <td class="hilite" width="100%"><?=$AppUI->_(@$ios[$hditem["item_os"]])?></td>
       </tr>
 
       <tr>
         <td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
-        <td class="hilite" width="100%"><?=@$iap[$hditem["item_application"]]?></td>
+        <td class="hilite" width="100%"><?=$AppUI->_(@$iap[$hditem["item_application"]])?></td>
       </tr>
       </table>
     </td>

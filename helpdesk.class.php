@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.50 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.51 2004/06/22 12:14:40 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -361,11 +361,11 @@ class CHelpDeskItem extends CDpObject {
 
 				  $last_status_log_id = $this->log_status($key, $AppUI->_('changed from')
                                                       . " \""
-                                                      . addslashes($old)
+                                                      . addslashes($AppUI->_($old))
                                                       . "\" "
                                                       . $AppUI->_('to')
                                                       . " \""
-                                                      . addslashes($new)
+                                                      . addslashes($AppUI->_($new))
                                                       . "\"");
 			  }
 		  }

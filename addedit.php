@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.54 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.55 2004/06/22 12:14:38 agorski Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -333,7 +333,7 @@ function selectList( listName, target ) {
     <tr>
       <td align="right" nowrap><label for="ics"><?=$AppUI->_('Call Source')?>:</label></td>
       <td><?=arraySelect( $ics, 'item_source', 'size="1" class="text" id="ics"',
-                          @$hditem["item_source"])?></td>
+                          @$hditem["item_source"], true)?></td>
     </tr>
 
     <tr>
@@ -357,13 +357,13 @@ function selectList( listName, target ) {
     <tr>
       <td align="right" nowrap><label for="ios"><?=$AppUI->_('Operating System')?>:</label></td>
       <td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="ios"',
-                          @$hditem["item_os"])?></td>
+                          @$hditem["item_os"], true)?></td>
     </tr>
 
     <tr>
       <td align="right"><label for="iap"><?=$AppUI->_('Application')?>:</label></td>
       <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="iap"',
-                          @$hditem["item_application"])?></td>
+                          @$hditem["item_application"], true)?></td>
     </tr>
     </table>
   </td>

@@ -113,10 +113,10 @@ if (is_array($status_log)) {
               . "</a>";
 
           print "<span style='display: inline' id='{$log['status_id']}_short'> "
-              . $AppUI->_($isa[$log['status_code']])
+              . $AppUI->_($isa[$log['status_code']]) . " "
               . htmlspecialchars(substr($log['status_comment'],0,8))
               . "</span><span style='display: none' id='{$log['status_id']}_long'> "
-              . $AppUI->_($isa[$log['status_code']])
+              . $AppUI->_($isa[$log['status_code']]) . " "
               . htmlspecialchars($log['status_comment'])
               . "</span>";
         } else {

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.10 2004/06/14 20:58:11 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.11 2004/06/22 12:14:47 agorski Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();
@@ -21,7 +21,7 @@ foreach ($ict as $k => $v) {
 <?php
 	$s = '';
 	foreach ($ist as $k => $v) {
-		$s .= "<th width=\"20%\"><a href=\"?m=helpdesk&a=list&item_status=$k\" class=\"hdr\">"
+		$s .= "<th width=\"20%\"><a href=\"?m=helpdesk&a=list&item_calltype=-1&item_status=$k\" class=\"hdr\">"
         . $AppUI->_($v)
         . "</a></th>";
 	}
@@ -33,7 +33,7 @@ foreach ($ict as $k => $v) {
 		$s .= '<td width="15">'
         . dPshowImage (dPfindImage( 'ct'.$kct.'.png', $m ), 15, 17, $vct)
         . '</td>';
-		$s .= "<td nowrap><a href=\"?m=helpdesk&a=list&item_calltype=$kct\">"
+		$s .= "<td nowrap><a href=\"?m=helpdesk&a=list&item_calltype=$kct&item_status=-1\">"
         . $AppUI->_($vct)
         . "</a></td>";
 
