@@ -1,7 +1,16 @@
-<?php /* COMPANIES $Id: view.php,v 1.43 2004/04/27 16:26:15 bloaterpaste Exp $ */
-$AppUI->savePlace();
+<?php /* COMPANIES $Id: view.php,v 1.44 2004/04/27 17:06:17 bloaterpaste Exp $ */
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
+
+// check permissions for this record
+$canReadModule = !getDenyRead( $m );
+
+if (!$canRead) {
+	$AppUI->redirect( "m=public&a=access_denied" );
+}
+
+$AppUI->savePlace();
+
 // retrieve any state parameters
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'HelpLogVwTab', $_GET['tab'] );
@@ -37,6 +46,27 @@ if (!db_loadHash( $sql, $hditem )) {
           ORDER BY h.status_date";
 
   $status_log = db_loadList($sql);
+  
+  // check permissions for this record
+  $canRead = 0;
+  $canEdit = 0;
+
+  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
+  $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
+  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
+  	$canRead = 1;
+  }
+
+  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
+  $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
+  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
+  	$canEdit = 1;
+  }
+  
+  if(!$canRead && !$canEdit){
+	$AppUI->redirect( "m=public&a=access_denied" );
+  }
+  
 
   $name = $hditem['item_requestor'];
   $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";

@@ -1,4 +1,11 @@
-<?php /* HELPDESK $Id: list.php,v 1.34 2004/04/23 14:25:01 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.35 2004/04/23 17:17:43 agorski Exp $ */
+
+// check permissions for this module
+$canReadModule = !getDenyRead( $m );
+if (!$canReadModule) {
+	$AppUI->redirect( "m=public&a=access_denied" );
+}
+
 $AppUI->savePlace();
 
 // check sort order
@@ -59,6 +66,7 @@ if ($priority >= 0) {
 }
 
 $where = '';
+$join = winnow( 'projects', 'project_id', $where );
 
 if (count( $tarr )) {
 	$where = 'WHERE ' . implode(' AND ', $tarr);

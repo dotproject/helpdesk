@@ -1,13 +1,38 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.34 2004/04/26 23:42:17 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.35 2004/04/27 00:24:57 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
-// Pull data
+// check permissions for this module
+$canReadModule = !getDenyRead( $m );
+if (!$canReadModule) {
+	$AppUI->redirect( "m=public&a=access_denied" );
+}
 
+// Pull data
 $sql = "SELECT *
         FROM helpdesk_items
         WHERE item_id = '$item_id'";
 
 db_loadHash( $sql, $hditem );
+
+  // check permissions for this record
+  $canRead = 0;
+  $canEdit = 0;
+
+  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
+  $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
+  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
+  	$canRead = 1;
+  }
+
+  //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
+  $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
+  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
+  	$canEdit = 1;
+  }
+  
+  if(!$canEdit){
+	$AppUI->redirect( "m=public&a=access_denied" );
+  }
 
 if(!@$hditem["item_assigned_to"]){
   @$hditem["item_assigned_to"] = $AppUI->user_id;
@@ -210,8 +235,10 @@ function selectList( listName, target ) {
   <input name="del" type="hidden" value="0" />
   <input type="hidden" name="item_id" value="<?=$item_id?>" />
   <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
-  <input type="hidden" name="item_requestor_type" value="<?=$item_requestor_type?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
+  <?php if(!$item_id){ ?>
+  <input type="hidden" name="item_created_by" value="<?=$AppUI->user_id?>" />
+  <?php } ?>
 
   <tr>
   <td valign="top" width="50%">
