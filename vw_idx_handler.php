@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.18 2004/06/14 20:58:11 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.19 2004/06/22 12:14:47 agorski Exp $*/
 
   /*
    * opened = 0
@@ -52,8 +52,8 @@ function vw_idx_handler ($type) {
   $item_perms = getItemPerms();
 
   $sql = "SELECT hi.*,
-          CONCAT(u.user_first_name,' ',u.user_last_name) assigned_fullname,
-          u.user_email as assigned_email,
+          CONCAT(co.contact_first_name,' ',co.contact_last_name) assigned_fullname,
+          co.contact_email as assigned_email,
           p.project_id,
           p.project_name,
           p.project_color_identifier,
@@ -61,6 +61,7 @@ function vw_idx_handler ($type) {
           FROM helpdesk_items hi
           LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
           LEFT JOIN users u ON u.user_id = hi.item_assigned_to
+          LEFT JOIN contacts co ON co.contact_id = u.user_contact
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
           WHERE $where
           AND $item_perms

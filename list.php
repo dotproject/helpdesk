@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.65 2004/06/22 12:14:40 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.66 2004/07/12 17:34:43 agorski Exp $ */
 
 $AppUI->savePlace();
 
@@ -278,11 +278,12 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	}
 
 	// retrieve assigned to user list
-	$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
-		      FROM users
-          WHERE ".getCompanyPerms("user_company", NULL, PERM_READ, $HELPDESK_CONFIG['the_company'])."
-		      ORDER BY user_first_name";
-	$assigned_to_list = db_loadHashList( $sql );
+        $sql = "SELECT user_id, CONCAT(contact_first_name, ' ', contact_last_name)
+                FROM users
+                LEFT JOIN contacts ON user_contact = contact_id
+                WHERE ".getCompanyPerms("user_company", NULL, PERM_READ, $HELPDESK_CONFIG['the_company'])."
+                ORDER BY contact_first_name";
+        $assigned_to_list = db_loadHashList( $sql );
 
 	$selectors[] = "<td align=\"right\" nowrap><label for=\"assigned_to\">"
                . $AppUI->_('Assigned To')
@@ -331,13 +332,14 @@ if (count( $tarr )) {
 }
 
 $sql = "SELECT hi.*,
-        CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
-        u2.user_email as assigned_email,
+        CONCAT(co.contact_first_name,' ',co.contact_last_name) assigned_fullname,
+        co.contact_email as assigned_email,
         p.project_id,
         p.project_name,
         p.project_color_identifier
         FROM helpdesk_items hi
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+        LEFT JOIN contacts co ON u2.user_contact = co.contact_id
         LEFT JOIN projects p ON p.project_id = hi.item_project_id
         WHERE $where
         ORDER BY ";

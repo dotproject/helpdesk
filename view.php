@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.69 2004/07/14 16:36:41 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.70 2004/12/06 07:59:30 cyberhorse Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -20,14 +20,15 @@ $tab = $AppUI->getState( 'HelpLogVwTab' ) !== NULL ? $AppUI->getState( 'HelpLogV
 
 // Pull data
 $sql = "SELECT hi.*,
-        CONCAT(u.user_first_name,' ',u.user_last_name) assigned_to_fullname,
-        u.user_email as assigned_email,
+        CONCAT(co.contact_first_name,' ',co.contact_last_name) assigned_to_fullname,
+        co.contact_email as assigned_email,
         p.project_id,
         p.project_name,
         p.project_color_identifier,
         c.company_name
         FROM helpdesk_items hi
         LEFT JOIN users u ON u.user_id = hi.item_assigned_to
+        LEFT JOIN contacts co ON co.contact_id = u.user_contact
         LEFT JOIN projects p ON p.project_id = hi.item_project_id
         LEFT JOIN companies c ON c.company_id = hi.item_company_id
         WHERE item_id = '$item_id'";

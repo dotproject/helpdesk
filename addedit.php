@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.56 2004/07/12 17:34:43 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.57 2004/07/14 16:36:41 agorski Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -36,10 +36,11 @@ if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_com
   @$hditem["item_company_id"] = $AppUI->user_company;
 }
 
-$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
+$sql = "SELECT user_id, CONCAT(contact_first_name, ' ', contact_last_name)
         FROM users
+       LEFT JOIN contacts ON user_contact = contact_id
         WHERE ". getCompanyPerms("user_company", NULL, PERM_EDIT, $HELPDESK_CONFIG['the_company'])
-     . "ORDER BY user_first_name";
+     . "ORDER BY contact_first_name";
 
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
@@ -272,7 +273,7 @@ function selectList( listName, target ) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" />
+      <!-- <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" /> -->
       <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" />
       </td>
     </tr>

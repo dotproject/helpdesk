@@ -18,10 +18,11 @@ $page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage'
 
 // Load status log
 $sql = "SELECT *,
-        TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by,
-        u.user_email as email
+        TRIM(CONCAT(co.contact_first_name,' ',co.contact_last_name)) modified_by,
+        co.contact_email as email
         FROM helpdesk_item_status h
         LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
+        LEFT OUTER JOIN contacts co  ON u.user_contact = co.contact_id
         WHERE h.status_item_id='{$hditem['item_id']}'
         ORDER BY h.status_date";
 
