@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.3 2004/04/15 17:32:01 adam Exp $*/
+<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.4 2004/04/19 17:55:36 adam Exp $*/
 global $m, $ipr;
 
 /*  select items created today with 'closed' status
@@ -64,7 +64,10 @@ $newitems = db_loadList( $sql );
 	}
 
   if( $s == '' ) {
-    $s = "<tr><td colspan=7><p><font color=red><i>No items were closed today</i></font><p></td></tr>\n";
+    // FIXME When implemented, update the thing below.
+
+    $s = "<tr><td colspan=7><p><font color=red>This feature is not yet implemented</font><p></td></tr>\n";
+    //$s = "<tr><td colspan=7><p><font color=red><i>No items were closed today</i></font><p></td></tr>\n";
   }
 
 	echo $s;

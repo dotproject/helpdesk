@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_new.php,v 1.4 2004/04/15 17:32:01 adam Exp $*/
+<?php /* HELPDESK $Id: vw_idx_new.php,v 1.5 2004/04/19 17:55:36 adam Exp $*/
 global $m, $ipr;
 
 /*  select items created today with 'unassigned' or 'open' status
@@ -72,7 +72,7 @@ $newitems = db_loadList( $sql );
 	}
 
   if( $s == '' ) {
-    $s = "<tr><td colspan=7><p><font color=red><i>No items were opened today</i></font><p></td></tr>\n";
+    $s = "<tr><td colspan=7><p><font color=red>No items were opened today</font><p></td></tr>\n";
   }
 
 	echo $s;
