@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.14 2004/05/06 17:28:12 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.15 2004/05/06 18:09:39 agorski Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -44,7 +44,7 @@ $numtotal = db_loadResult ($sql);
  * Testing = 5
  */
 
-$sql = "SELECT COUNT(DISTINCT(item_status))
+$sql = "SELECT COUNT(DISTINCT(item_id))
         FROM 
         	helpdesk_items
         WHERE 

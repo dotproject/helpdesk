@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.38 2004/04/29 15:55:42 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.39 2004/05/06 18:18:56 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -249,46 +249,46 @@ function selectList( listName, target ) {
     </tr>
     <?php } ?>
     <tr>
-      <td align="right"><font color="red"><?=$AppUI->_('* Title')?>:</font></td>
-      <td valign="top"><input type="text" class="text" id="large" name="item_title"
+      <td align="right"><font color="red"><label for="it"><?=$AppUI->_('* Title')?>:</label></font></td>
+      <td valign="top"><input type="text" class="text" id="it" name="item_title"
                               value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><font color="red">* <?=$AppUI->_('Requestor Name');?>:</font></td>
+      <td align="right" nowrap><font color="red"><label for="ir">* <?=$AppUI->_('Requestor Name');?>:</label></font></td>
       <td valign="top" nowrap>
-        <input type="text" class="text" id="large" name="item_requestor"
+        <input type="text" class="text" id="ir" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
         onChange="if (this.value!=oldRequestor) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <input type="button" class="button" value="Users..." onclick="popUserDialog();" />
-      <input type="button" class="button" value="Contacts..." onclick="popContactDialog();" />
+      <input type="button" class="button" value="Users" onclick="popUserDialog();" />
+      <input type="button" class="button" value="Contacts" onclick="popContactDialog();" />
       </td>
     </tr>
 
     <tr>
-      <td align="right" nowrap>&dagger; <?=$AppUI->_('Requestor E-mail');?>:</td>
-      <td valign="top"><input type="text" class="text" id="large"
+      <td align="right" nowrap><label for="ire">&dagger; <?=$AppUI->_('Requestor E-mail');?>:</label></td>
+      <td valign="top"><input type="text" class="text" id="ire"
                               name="item_requestor_email"
                               value="<?=@$hditem["item_requestor_email"]?>"
                               maxlength="64" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap>&dagger; <?=$AppUI->_('Requestor Phone');?>:</td>
-      <td valign="top"><input type="text" class="text" id="large"
+      <td align="right" nowrap><label for="irp">&dagger; <?=$AppUI->_('Requestor Phone');?>:</label></td>
+      <td valign="top"><input type="text" class="text" id="irp"
                               name="item_requestor_phone"
                               value="<?=@$hditem["item_requestor_phone"]?>"
                               maxlength="30" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
-      <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium" onchange="updateStatus(this)"',
+      <td align="right" nowrap><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
+      <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
-        <input type="checkbox" name="item_notify" value="1"
+        <input type="checkbox" name="item_notify" value="1" id="in"
         <?php 
           if (!$item_id) {
             print "checked";
@@ -297,18 +297,18 @@ function selectList( listName, target ) {
           }
         ?>
         />
-        <?=$AppUI->_( 'Notify by e-mail' );?></td>
+        <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Company')?>:</td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+      <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
                           @$hditem["item_company_id"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Project')?>:</td>
-      <td><select name="item_project_id" size="1" class="text" id="large"></select></td>
+      <td align="right"><label for="p"><?=$AppUI->_('Project')?>:</label></td>
+      <td><select name="item_project_id" size="1" class="text" id="p"></select></td>
     </tr>
 
     </table>
@@ -316,44 +316,44 @@ function selectList( listName, target ) {
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
-      <td><?=arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="medium"',
+      <td align="right" nowrap><label for="ict"><?=$AppUI->_('Call Type')?>:</label></td>
+      <td><?=arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="ict"',
                           @$hditem["item_calltype"] )?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Call Source')?>:</td>
-      <td><?=arraySelect( $ics, 'item_source', 'size="1" class="text" id="medium"',
+      <td align="right" nowrap><label for="ics"><?=$AppUI->_('Call Source')?>:</label></td>
+      <td><?=arraySelect( $ics, 'item_source', 'size="1" class="text" id="ics"',
                           @$hditem["item_source"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Status')?>:</td>
-      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',
+      <td align="right"><label for="ist"><?=$AppUI->_('Status')?>:</label></td>
+      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="ist"',
                           @$hditem["item_status"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Priority')?>:</td>
-      <td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="medium"',
+      <td align="right"><label for="ipr"><?=$AppUI->_('Priority')?>:</label></td>
+      <td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="ipr"',
                           @$hditem["item_priority"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Severity')?>:</td>
-      <td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"',
+      <td align="right"><label for="isv"><?=$AppUI->_('Severity')?>:</label></td>
+      <td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="isv"',
                           @$hditem["item_severity"] )?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Operating System')?>:</td>
-      <td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="medium"',
+      <td align="right" nowrap><label for="ios"><?=$AppUI->_('Operating System')?>:</label></td>
+      <td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="ios"',
                           @$hditem["item_os"] )?></td>
     </tr>
 
     <tr>
-      <td align="right"><?=$AppUI->_('Application')?>:</td>
-      <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="medium"',
+      <td align="right"><label for="iap"><?=$AppUI->_('Application')?>:</label></td>
+      <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="iap"',
                           @$hditem["item_application"] )?></td>
     </tr>
     </table>
@@ -361,7 +361,7 @@ function selectList( listName, target ) {
 </tr>
 
 <tr>
-  <td align="left"><br><font color="red">* <?=$AppUI->_('Summary')?>:</font></td>
+  <td align="left"><br><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
   <td>&nbsp; </td>
 </tr>
 
