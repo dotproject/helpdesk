@@ -1,6 +1,6 @@
-<?php /* HELPDESK $Id: vw_idx_new.php,v 1.7 2004/04/21 15:09:03 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_my.php,v 1.1 2004/05/05 16:12:47 bloaterpaste Exp $*/
 require_once("vw_idx_handler.php");
 
 // Show my items
-vw_idx_handler(3);
+vw_idx_handler(2);
 ?>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.6 2004/04/29 00:17:47 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.7 2004/05/05 16:11:51 bloaterpaste Exp $*/
 
   /*
    * opened = 0
@@ -8,31 +8,31 @@
 function vw_idx_handler ($type) {
   global $m, $ipr, $ist, $AppUI;
 
-  $where=$date_field_name=$date_field_title="";
+  $where = $date_field_name = $date_field_title = "";
+
   switch($type){
-  	case 0://mine
-  		$opened = 1;
+  	case 0:// Opened
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-		$where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
-		$where .= "AND his.status_code = 0";
+		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0)
+		             AND his.status_code = 0";
   		break;
-  	case 1://closed
-  		$closed = 1;
+  	case 1:// Closed
   		$date_field_title = $AppUI->_('Closed On');
   		$date_field_name = "status_date";
-		$where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
-		$where .= "AND his.status_code = 2";
+		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0)
+		             AND his.status_code = 2";
   		break;
-  	case 2: //mine
-  	default:
-  		$mine = 1;
+  	case 2: // Mine
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-		$where .= "item_assigned_to=".$AppUI->user_id;
-		$where .= " AND item_status !=2";
-		$where .= " AND his.status_code = 0";
+      $where .= "item_assigned_to={$AppUI->user_id}
+                 AND item_status !=2
+                 AND his.status_code = 0";
   		break;
+  	default:
+      print "Shouldn't be here (for now)";
+      exit(1);
   }
 
   $df = $AppUI->getPref( 'SHDATEFORMAT' );
@@ -61,9 +61,8 @@ function vw_idx_handler ($type) {
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
           WHERE $where";
 
-//pull in permitted companies
+  //pull in permitted companies
   $sql .= " AND ".getPermsWhereClause("companies", "item_company_id");
-
 
   $sql .= " ORDER BY item_id";
 

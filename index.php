@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.11 2004/04/29 00:17:47 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.12 2004/05/05 16:11:51 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -48,8 +48,8 @@ $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
         	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (item_status = 0 OR item_status = 1)";
-$sql .= " AND ".$company_perm_sql;
+        AND (item_status = 0 OR item_status = 1)
+        AND $company_perm_sql";
 
 $numopened = db_loadResult ($sql);
 
@@ -57,14 +57,14 @@ $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
         	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (item_status = 2)";
-$sql .= " AND ".$company_perm_sql;
+        AND (item_status = 2)
+        AND $company_perm_sql";
 
 $numclosed = db_loadResult ($sql);
 
 $sql = "SELECT COUNT(item_status)
         FROM helpdesk_items
-        WHERE item_assigned_to=".$AppUI->user_id."
+        WHERE item_assigned_to={$AppUI->user_id}
         AND (item_status != 2)";
 
 $nummine = db_loadResult ($sql);
