@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.6 2004/04/19 18:24:12 adam Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.6 2004/04/19 21:06:46 gatny Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -19,6 +19,25 @@ if ($canEdit) {
 
 $titleBlock->show();
 
+$sql = "SELECT COUNT(item_id)
+        FROM helpdesk_items";
+
+$numtotal = db_loadResult ($sql);
+
+$sql = "SELECT COUNT(item_id)
+        FROM helpdesk_items
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
+        AND (item_status = 2)";
+
+$numclosed = db_loadResult ($sql);
+
+$sql = "SELECT COUNT(item_id)
+        FROM helpdesk_items
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
+        AND (item_status = 0 OR item_status = 1)";
+
+$numopened = db_loadResult ($sql);
+
 ?>
 <table cellspacing="0" cellpadding="2" border="0" width="100%">
 <tr>
@@ -26,9 +45,9 @@ $titleBlock->show();
   <?php
   // Tabbed information boxes
   $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
-  $tabBox->add( 'vw_idx_stats', 'Help Desk Items' );
-  $tabBox->add( 'vw_idx_new', 'Opened Today' );
-  $tabBox->add( 'vw_idx_closed', 'Closed Today' );
+  $tabBox->add( 'vw_idx_stats', "Help Desk Items ($numtotal)" );
+  $tabBox->add( 'vw_idx_new', "Opened Today ($numopened)" );
+  $tabBox->add( 'vw_idx_closed', "Closed Today ($numclosed)" );
   $tabBox->show();
   ?>
 	</td>
