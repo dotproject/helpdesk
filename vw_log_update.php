@@ -1,5 +1,5 @@
-<?php /* TASKS $Id: vw_log_update.php,v 1.12 2004/04/19 02:03:35 ajdonnison Exp $ */
-GLOBAL $AppUI, $hditem;
+<?php /* TASKS $Id: vw_log_update.php,v 1.1 2004/04/22 17:37:56 bloaterpaste Exp $ */
+GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
 //$canEdit = !getDenyEdit( 'tasks', $item_id );
@@ -95,8 +95,9 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
 <form name="editFrm" action="?m=helpdesk&a=view&item_id=<?php echo $item_id;?>" method="post">
 	<input type="hidden" name="uniqueid" value="<?php echo uniqid("");?>" />
-	<input type="hidden" name="dosql" value="do_updatetask" />
+	<input type="hidden" name="dosql" value="do_item_aed" />
 	<input type="hidden" name="item_id" value="<?php echo $item_id;?>" />
+	<input type="hidden" name="task_log" value="1" />
 	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id;?>" />
 	<input type="hidden" name="task_log_help_desk_id" value="<?php echo $item_id;?>" />
 	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id;?>" />
@@ -120,6 +121,14 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	</td>
 </tr>
 <tr>
+      <td align="right"><?=$AppUI->_('Status')?>:</td>
+      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"] )?></td>
+	<td rowspan="3" align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
+	<td rowspan="3">
+		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description;?></textarea>
+	</td>
+</tr>
+<tr>
 	<td align="right">
 		<?php echo $AppUI->_('Hours Worked');?>
 	</td>
@@ -128,10 +137,6 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
 		<span id='timerStatus'></span>
-	</td>
-	<td rowspan="3" align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
-	<td rowspan="3">
-		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description;?></textarea>
 	</td>
 </tr>
 <tr>
