@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.17 2004/04/15 18:50:16 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.18 2004/04/15 19:15:53 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -106,6 +106,10 @@ if (!db_loadHash( $sql, $hditem )) {
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_application"]]?></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
+			<td class="hilite" width="100%"><?=$ics[$hditem["item_severity"]]?></td>
 		</tr>
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
