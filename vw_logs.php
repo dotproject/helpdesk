@@ -1,11 +1,11 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.4 2004/05/24 19:07:22 agorski Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.5 2004/05/28 13:17:39 agorski Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
 ?>
 <script language="JavaScript">
 function delIt2(id) {
-	if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Task Log').'?';?>" )) {
+	if (confirm( "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Task Log', UI_OUTPUT_JS).'?';?>" )) {
 		document.frmDelete2.task_log_id.value = id;
 		document.frmDelete2.submit();
 	}
