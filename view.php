@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.8 2004/01/23 19:14:58 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.9 2004/01/23 19:35:46 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -67,28 +67,28 @@ if (!db_loadHash( $sql, $hditem )) {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Item Number');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $hditem["item_id"];?></strong></td>
+			<td class="hilite" width="100%"><?php echo $hditem["item_id"];?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Title');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $hditem["item_title"];?></strong></td>
+			<td class="hilite" width="100%"><?php echo $hditem["item_title"];?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Requestor');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $name;?></strong></td>
+			<td class="hilite" width="100%"><?php echo $name;?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Status');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $ist[$hditem["item_status"]];?></strong></td>
+			<td class="hilite" width="100%"><?php echo $ist[$hditem["item_status"]];?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Priority');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $ipr[$hditem["item_priority"]];?></strong></td>
+			<td class="hilite" width="100%"><?php echo $ipr[$hditem["item_priority"]];?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Assigned To');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $assigned_to_name;?></strong></td>
+			<td class="hilite" width="100%"><?php echo $assigned_to_name;?></td>
 		</tr>
 
 		<tr>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.5 2004/01/23 19:35:46 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.6 2004/01/23 19:38:45 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -32,7 +32,7 @@ else {
 $tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
 $tm = $tsm < 0 ? null : date( "m/d/y g:i a", $tsm );
 
-$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name) FROM users";
+$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name) FROM users ORDER BY user_first_name";
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
 $sql = "
