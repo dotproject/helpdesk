@@ -1,13 +1,11 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.46 2004/05/20 15:15:20 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.47 2004/05/24 19:07:22 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
-// check permissions for this module
-$canReadModule = !getDenyRead( $m );
-
-if (!$canReadModule || !hditemCreate()) {
+// Make sure we can create items
+if (!hditemCreate()) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -18,10 +16,12 @@ $sql = "SELECT *
 
 db_loadHash( $sql, $hditem );
 
-// check permissions for this record
+// Check permissions for this record
 if ($item_id) {
+  // Already existing item
   $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
 } else {
+  // New record
   $canEdit = 1;
 }
 

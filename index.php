@@ -1,11 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.18 2004/05/13 16:46:56 bloaterpaste Exp $ */
-
-// check permissions for this module
-$canReadModule = !getDenyRead( $m );
-if (!$canReadModule) {
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
-
+<?php /* HELPDESK $Id: index.php,v 1.19 2004/05/20 17:13:49 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {

@@ -1,18 +1,9 @@
-<?php /* HELPDESK $Id: view.php,v 1.55 2004/05/20 17:49:47 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.56 2004/05/24 19:07:22 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
-
-// check permissions for this record
-$canReadModule = !getDenyRead( $m );
-
-if (!$canReadModule) {
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
-
-//$AppUI->savePlace();
 
 // Get pagination page
 if (isset($_GET['page'])) {
@@ -72,6 +63,7 @@ if (!db_loadHash( $sql, $hditem )) {
 
   $status_log = db_loadList($sql);
 
+  // Check permissions on this record
   $canRead = hditemReadable($hditem['item_company_id'], $hditem['item_created_by']);
   $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
 

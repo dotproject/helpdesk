@@ -1,6 +1,11 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.37 2004/05/19 17:02:18 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.38 2004/05/24 19:07:22 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
+
+// Make sure we can read the module
+if (getDenyRead($m)) {
+	$AppUI->redirect( "m=public&a=access_denied" );
+}
 
 // Pull in some standard arrays
 $ict = dPgetSysVal( 'HelpDeskCallType' );
@@ -11,6 +16,7 @@ $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $isv = dPgetSysVal( 'HelpDeskSeverity' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
 $isa = dPgetSysVal( 'HelpDeskAuditTrail' );
+
 $field_event_map = array(
       //0=>Created
         1=>"item_title",            //Title
@@ -405,8 +411,6 @@ function getPermsWhereClause($mod,
 		$list = array();
 	}
 
-	$list[] = "''";
-
 	if(isset($perms[$mod])){
 		foreach($perms[$mod] as $key => $value){
 			if($key==PERM_ALL)
@@ -432,7 +436,13 @@ function getPermsWhereClause($mod,
 
 	$list = array_unique($list);
 
-	$sql = " ($mod_id_field in (".implode(",",$list).") ";
+  /* If we are denied access, we will try to match company id of -1, which
+     in all theory should never be a valid id */
+  if (!count($list)) {
+    $list[] = "-1";
+  }
+
+  $sql = " ($mod_id_field in (".implode(",",$list).") ";
   
   if ($created_by_id_field != NULL) {
     $sql .= " OR $created_by_id_field=".$AppUI->user_id;
@@ -458,6 +468,10 @@ function hditemReadable($item_company_id, $item_created_by) {
 function hditemEditable($item_company_id, $item_created_by) {
   global $HELPDESK_CONFIG, $AppUI;
 
+  if (!hditemCreate()) {
+    return false;
+  }
+
   if ($item_company_id == 0) {
     if ($HELPDESK_CONFIG['no_company_editable']) {
       $canEditCompany = 1;
@@ -476,9 +490,15 @@ function hditemEditable($item_company_id, $item_created_by) {
 }
 
 function hditemCreate() {
-  global $perms;
+  global $perms, $m;
 
   $create = FALSE;
+
+  $canEditModule = !getDenyEdit( $m );
+
+  if (!$canEditModule) {
+    return $create;
+  }
 
 	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
      (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {

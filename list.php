@@ -1,14 +1,7 @@
-<?php /* HELPDESK $Id: list.php,v 1.49 2004/05/21 15:46:01 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.50 2004/05/24 19:07:22 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
-
-// check permissions for this module
-$canReadModule = !getDenyRead( $m );
-
-if (!$canReadModule) {
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
 
 $AppUI->savePlace();
 
