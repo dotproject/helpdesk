@@ -1,4 +1,6 @@
-<?php /* HELPDESK $Id: list.php,v 1.66 2004/07/12 17:34:43 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.67 2004/12/10 17:14:51 cyberhorse Exp $ */
+$allowedCompanies = getAllowedCompanies();
+$allowedProjects = getAllowedProjects();
 
 $AppUI->savePlace();
 
@@ -219,17 +221,10 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 		$tarr[] = "hi.item_company_id=$company";
 	}
 
-	// retrieve company list
-	$sql = "SELECT company_id, company_name
-		FROM companies
-    WHERE ".getCompanyPerms("company_id", NULL, PERM_READ)."
-		ORDER BY company_name";
-	$company_list = db_loadHashList( $sql );
-
 	$selectors[] = "<td align=\"right\"><label for=\"company\">"
                . $AppUI->_('Company')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $company_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $allowedCompanies ),
                               'company',
 							                'size="1" id="company" class="text" onchange="changeList()"',
 							                $company )
@@ -258,7 +253,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	$selectors[] = "<td align=\"right\"><label for=\"project\">"
                . $AppUI->_('Project')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $project_list ),
+               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $allowedProjects ),
                               'project',
 							                'size="1" id="project" class="text" onchange="changeList()"',
 							                $project )

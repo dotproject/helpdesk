@@ -1,4 +1,4 @@
-<?php /* $Id: vw_log_update.php,v 1.8 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.9 2004/07/14 16:36:41 agorski Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -9,7 +9,7 @@ $item_id = dPgetParam( $_GET, 'item_id', 0 );
 //}
 
 $task_log_id = intval( dPgetParam( $_GET, 'task_log_id', 0 ) );
-$log = new CTaskLog();
+$log = new CHDTaskLog();
 if ($task_log_id) {
 	$log->load( $task_log_id );
 

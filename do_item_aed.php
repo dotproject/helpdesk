@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.23 2004/06/22 12:14:40 agorski Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.24 2004/07/12 17:34:43 agorski Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -28,7 +28,7 @@ if($do_task_log=="1"){
 	}
 
 	//then create/update the task log
-	$obj = new CTaskLog();
+	$obj = new CHDTaskLog();
 
 	if (!$obj->bind( $_POST )) {
 		$AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );

@@ -1,4 +1,49 @@
 <?php
+function getAllowedCompanies(){
+  global $AppUI;
+  require_once( $AppUI->getModuleClass ('companies' ) );
+  $row = new CCompany();
+  $allowedCompanies = $row->getAllowedRecords( $AppUI->user_id, 'company_id,company_name', 'company_name' );
+  //$allowedCompanies = arrayMerge( array( '0'=>'' ), $allowedCompanies );
+  return $allowedCompanies;
+}
+
+function getAllowedProjects(){
+  global $AppUI;
+  require_once( $AppUI->getModuleClass('projects'));
+  $project =& new CProject;
+  $allowedProjects = $project->getAllowedRecords($AppUI->user_id, 'project_id, project_name');
+  return $allowedProjects;
+}
+
+function getAllowedProjectsForJavascript(){
+  global $AppUI;
+  $allowedProjects = getAllowedProjects();
+  foreach($allowedProjects as $k=>$v){
+    $whereclause[] = " project_id = $k ";
+  }
+  $whereclause = implode(" || ", $whereclause);
+
+  $sql = "SELECT project_id, project_name, company_name, company_id
+          FROM projects
+          LEFT JOIN companies ON company_id = projects.project_company
+          WHERE (". $whereclause
+       . ") ORDER BY project_name";
+
+  $allowedCompanyProjectList = db_loadList( $sql );
+
+
+  /* Build array of company/projects for output to javascript
+     Adding slashes in case special characters exist */
+  foreach($allowedCompanyProjectList as $row){
+    $projects[] = "[{$row['company_id']},{$row['project_id']},'"
+                . addslashes($row['project_name'])
+                . "']";
+    $reverse[$row['project_id']] = $row['company_id'];
+  }
+  return $projects;
+}
+
 /* Function to build a where clasuse that will restrict the list of Help Desk
  * items to only those viewable by a user. The viewable items include
  * 1. Items the user created
@@ -11,7 +56,16 @@ function getItemPerms() {
 
   $permarr = array();
   //pull in permitted companies
-  $permarr[] = getCompanyPerms("item_company_id", "item_created_by", PERM_READ);
+  $allowedCompanies = getAllowedCompanies();
+  foreach($allowedCompanies as $k=>$v){
+    $companyIds[] = $k;
+  }
+  $companyIds = implode(",", $companyIds);
+  $permarr[] = "(item_company_id in ("
+               .$companyIds
+               .")  OR item_created_by="
+               .$AppUI->user_id
+               .") ";
   //it's assigned to the current user
   $permarr[] = "item_assigned_to=".$AppUI->user_id;
   //it's requested by a user and that user is you
@@ -120,7 +174,7 @@ function hditemPerm($hditem, $perm_type) {
 
   switch($perm_type) {
     case PERM_READ:
-      $company_perm = $perms->checkModuleItem($m, 'view', $company_id);
+      $company_perm = $perms->checkModuleItem('companies', 'view', $company_id);
       break;
     case PERM_EDIT:
       // If the item is not assigned to a company, figure out if we can edit it
@@ -131,7 +185,7 @@ function hditemPerm($hditem, $perm_type) {
           $company_perm = 0;
         }
       } else {
-      $company_perm = $perms->checkModuleItem($m, 'edit', $company_id);
+      $company_perm = $perms->checkModuleItem('companies', 'view', $company_id);
       }
       break;
     default:
@@ -144,6 +198,8 @@ function hditemPerm($hditem, $perm_type) {
     3. He is the assignee
     4. He is the requestor
   */
+
+  
   if($company_perm ||
      ($created_by == $AppUI->user_id) ||
      ($assigned_to == $AppUI->user_id) ||

@@ -1,6 +1,9 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.59 2004/12/10 17:48:55 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.60 2005/02/14 05:26:13 cyberhorse Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
+
+$allowedCompanies = getAllowedCompanies();
+$projects = getAllowedProjectsForJavascript();
 
 // Pull data
 $sql = "SELECT *
@@ -37,24 +40,6 @@ $sql = "SELECT user_id, CONCAT(contact_first_name, ' ', contact_last_name)
      . "ORDER BY contact_first_name";
 
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
-
-$sql = "SELECT project_id, project_name, company_name, company_id
-        FROM projects
-        LEFT JOIN companies ON company_id = projects.project_company
-        WHERE "
-     . getCompanyPerms("company_id", NULL, PERM_EDIT)
-     . "ORDER BY project_name";
-
-$company_project_list = db_loadList( $sql );
-
-/* Build array of company/projects for output to javascript
-   Adding slashes in case special characters exist */
-foreach($company_project_list as $row){
-  $projects[] = "[{$row['company_id']},{$row['project_id']},'"
-              . addslashes($row['project_name'])
-              . "']";
-  $reverse[$row['project_id']] = $row['company_id'];
-}
 
 
 $sql = "SELECT company_id, company_name
@@ -290,7 +275,7 @@ function selectList( listName, target ) {
 
     <tr>
       <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+      <td><?=arraySelect( $allowedCompanies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
                           @$hditem["item_company_id"] )?></td>
     </tr>
 
