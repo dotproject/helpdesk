@@ -1,18 +1,18 @@
-<?php /* COMPANIES $Id: view.php,v 1.25 2004/04/21 17:45:27 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.26 2004/04/21 19:21:25 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
 // Pull data
 $sql = "SELECT hi.*,
-        CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
-        u2.user_email as assigned_email,
+        CONCAT(u.user_first_name,' ',u.user_last_name) assigned_to_fullname,
+        u.user_email as assigned_email,
         p.project_id,
         p.project_name,
         p.project_color_identifier,
         c.company_name
         FROM helpdesk_items hi
-        LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+        LEFT JOIN users u ON u.user_id = hi.item_assigned_to
         LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
         LEFT OUTER JOIN companies c ON c.company_id = hi.item_company_id
         WHERE item_id = '$item_id'";
@@ -23,20 +23,14 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 	$titleBlock->show();
 } else {
-  /* We need to check if the user who requested the item is still in the
-     system. Just because we have a requestor id does not mean we'll be
-     able to retrieve a full name */
-$name = $hditem['item_requestor'];
-
-$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
-
-  
+  $name = $hditem['item_requestor'];
+  $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
   $assigned_email = $hditem["assigned_email"];
 
-	// format date and time
+	// User's specified format for date and time
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
-	$format = $df." ".$tf;
+	$format = "$df $tf";
 
 	if(@$hditem["item_created"]){
 		$created = new CDate( @$hditem["item_created"] );
@@ -71,7 +65,7 @@ $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"
 
 <script language="JavaScript">
 function delIt() {
-  if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {
+  if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {
     document.frmDelete.submit();
   }
 }
@@ -99,7 +93,10 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor')?>:</td>
-			<td class="hilite" width="100%"><?php print $hditem["item_requestor_email"] ? "<a href=\"mailto:".$hditem["item_requestor_email"]."\">".$hditem['item_requestor']."</a>" : $hditem['item_requestor'];?></td>
+			<td class="hilite" width="100%"><?php
+        print $hditem["item_requestor_email"] ? 
+          "<a href=\"mailto:".$hditem["item_requestor_email"]."\">".$hditem['item_requestor']."</a>" :
+          $hditem['item_requestor'];?></td>
 		</tr>
 
 		<tr>
@@ -119,13 +116,17 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Assigned To')?>:</td>
-			<td class="hilite" width="100%"><?php print $assigned_email ? "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" : $assigned_to_name;?></td>
+			<td class="hilite" width="100%"><?php
+        print $assigned_email ?
+          "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
+          $assigned_to_name;?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Type')?>:</td>
-			<td class="hilite" width="100%"><?php echo dPshowImage (dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ), 15, 17, 'align=center');
-                                            echo " ".$ict[$hditem["item_calltype"]];?></td>
+			<td class="hilite" width="100%"><?php
+        print dPshowImage (dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ), 15, 17, 'align=center');
+        print " ".$ict[$hditem["item_calltype"]];?></td>
 		</tr>
 
 		<tr>
@@ -176,38 +177,6 @@ function delIt() {
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
       <td class="hilite" width="100%"><?=$tr?></td>
     </tr>
-
-		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>
-
-    <?php /* Commented out until implemented 
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Receipt Target')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_receipt_target"]?></td>
-		</tr>
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Receipt Negotiated')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_receipt_custom"]?></td>
-		</tr>
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Receipt Actual')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_receipted"]?></td>
-		</tr>
-
-		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>
-
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Resolved Target')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_resolve_target"]?></td>
-		</tr>
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Resolved Negotiated')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_resolve_custom"]?></td>
-		</tr>
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Resolved Actual')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_resolved"]?></td>
-		</tr>
-    */ ?>
 		</table>
 	</td>
 </tr>
@@ -219,16 +188,6 @@ function delIt() {
 			<td class="hilite"><?=str_replace( chr(10), "<br />", $hditem["item_summary"])?>&nbsp;</td>
 		</tr>
 		</table>
-	</td>
-	<td valign="top"> &nbsp;
-<?php
-/* This is interesting, but I'm not sure where it was going...
-<strong><?=$AppUI->_('Action Log')?></strong>
-<br>
-//$log = array( 'this is', 'the history', 'log', 'TODO' );
-//echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
-*/
-?>
 	</td>
 </tr>
 </table>

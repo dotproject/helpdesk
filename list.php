@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.30 2004/04/19 21:06:46 gatny Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.31 2004/04/21 17:57:37 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -157,12 +157,6 @@ foreach ($rows as $row) {
 	$s .= $CR . '<tr>';
 	$s .= $CR . '<td align="right" nowrap>';
 
-	if ($row["item_requestor_email"]) {
-		$s .= $CR . "<a href=\"mailto:".$row["item_requestor_email"]."\">"
-              . dPshowImage("images/obj/email.gif", 16, 16, $row["item_requestor_email"])
-              . "</a>";
-	}
-
 	if ($canEdit) {
 		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='
               . $row["item_id"]
@@ -187,7 +181,7 @@ foreach ($rows as $row) {
               . $row['item_requestor']
               . "</a>";
 	} else {
-		$s .= $CR . "<td nowrap>".$row['item_requestor']."</td>";
+		$s .= $CR . $row['item_requestor'];
 	}
 	$s .= $CR . "</td>";
 
@@ -202,7 +196,7 @@ foreach ($rows as $row) {
               . $row['assigned_fullname']
               . "</a>";
 	} else {
-		$s .= $CR . "<td nowrap>".$row['assigned_fullname']."</td>";
+		$s .= $CR . $row['assigned_fullname'];
 	}
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
