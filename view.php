@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.62 2004/05/28 13:17:39 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.63 2004/06/02 17:00:01 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -66,17 +66,21 @@ if (!db_loadHash( $sql, $hditem )) {
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
                                  $m, 'ID_HELP_HELPDESK_IDX' );
+  if (hditemCreate()) {
+    $titleBlock->addCell(
+      '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+      '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
+    );
+  }
+
 	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 
 	if ($canEdit) {
-    		$titleBlock->addCrumbDelete("Delete this item", 1);
-		$titleBlock->addCell(
-			'<input type="submit" class="button" value="'.$AppUI->_('New Item').'">', '',
-			'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
-		);
+    $titleBlock->addCrumbDelete("Delete this item", 1);
 		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", "Edit this item" );
 	}
+
 	$titleBlock->show();
 ?>
 <script language="JavaScript">
