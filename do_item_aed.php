@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.2 2003/04/12 00:16:54 eddieajau Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
   #include( "../../misc/debug.php" );
 
 #foreach( $_POST as $key => $value ) {
@@ -15,14 +15,16 @@ if ( !$hditem->bind( $_POST )) {
 	$AppUI->redirect();
 }
 
-writeDebug( $hditem->item_created, "hditem->item_created", __FILE__, __LINE__);
-
 // convert dates to SQL format first
-$hditem->item_created = db_unix2DateTime( $hditem->item_created );
-
-writeDebug( $hditem->item_created, "hditem->item_created", __FILE__, __LINE__ );
-
-//echo '<pre>';print_r($hditem);echo "</pre>";die;
+/*
+$hditem->item_modified = db_unix2DateTime( $hditem->item_modified );
+if( $item_id == 0 ) {
+  $hditem->item_created  = db_unix2DateTime( $hditem->item_created );
+} else {
+  unset( $hditem->item_created );
+}
+*/
+//print "<pre><font color=red>"; print_r( $hditem ); print "</font></pre>\n";
 
 $AppUI->setMsg( "HelpDesk item", UI_MSG_OK );
 if ($del) {
@@ -38,5 +40,6 @@ if ($del) {
 		$AppUI->setMsg( $item_id ? 'updated' : 'inserted', UI_MSG_OK, true );
 	}
 }
+
 $AppUI->redirect();
 ?>

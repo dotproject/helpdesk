@@ -11,8 +11,10 @@ LIMIT 10
 */
 
 
-/*  select items created today with 'unassigned' or 'open' status
- *
+
+
+/*  select items created today with 'closed' status
+ *  
  *  unassigned = 0, open = 1, closed = 2, on hold = 3
  */
 $sql = "
@@ -20,7 +22,7 @@ SELECT item_id, item_title, item_created, user_username
 FROM helpdesk_items
 LEFT JOIN users ON user_id = item_assigned_to
 WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
-AND (item_status = 0 OR item_status = 1)
+AND (item_status = 2)
 ORDER BY item_id DESC
 ";
 
@@ -52,7 +54,7 @@ $newitems = db_loadList( $sql );
 	}
 
   if( $s == '' ) {
-    $s = "<tr><td colspan=4><p><font color=red><i>No items were opened today</i></font><p></td></tr>\n";
+    $s = "<tr><td colspan=4><p><font color=red><i>No items were closed today</i></font><p></td></tr>\n";
   }
 
 	echo $s;

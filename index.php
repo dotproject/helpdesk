@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.2 2003/04/12 00:16:54 eddieajau Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
 
 // enable debug output
 #include( "../../misc/debug.php" );
@@ -59,8 +59,8 @@ $titleBlock->show();
 // tabbed information boxes
 $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
 $tabBox->add( 'vw_idx_stats', 'Call Type Statistics' );
-$tabBox->add( 'vw_idx_new', 'New Items' );
-$tabBox->add( 'vw_idx_new', 'Recently Closed Items' );
+$tabBox->add( 'vw_idx_new', 'Opened Today' );
+$tabBox->add( 'vw_idx_closed', 'Closed Today' );
 $tabBox->show();
 ?>
 	</td>

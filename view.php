@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.3 2003/04/12 00:16:54 eddieajau Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -33,23 +33,11 @@ if (!db_loadHash( $sql, $hditem )) {
 	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
 	$name = $hditem["item_requestor_id"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
 
-	$df = $AppUI->getPref( 'SHDATEFORMAT' );
-	$tf = $AppUI->getPref( 'TIMEFORMAT' );
-
-	writeDebug( "$ts", "ts", __FILE__, __LINE__ );
-	writeDebug( $hditem["item_created"], "hditem[item_created]", __FILE__, __LINE__ );
-
 	$ts = db_dateTime2unix( @$hditem["item_created"] );
-	#$tc = $ts < 0 ? null : new CDate( $ts, "$df $tf" );
-	$tc = $ts < 0 ? null : date( "m.d.y g:i a", $ts );
+	$tc = $ts < 0 ? null : date( "m/d/y g:i a", $ts );
 
-	writeDebug( "$tc", "tc", __FILE__, __LINE__ );
-	writeDebug( $hditem["item_modified"], "hditem[item_modified]", __FILE__, __LINE__ );
-	
-	#$tm = CDate::fromDateTime( $hditem["item_modified"] );
 	$ts = db_dateTime2unix( $hditem["item_modified"] );
-	#$t->setFormat( "$df $tf" );
-	$tm = $ts < 0 ? null : date( "m.d.y g:i a", $ts );
+	$tm = $ts < 0 ? null : date( "m/d/y g:i a", $ts );
 
 	writeDebug( "$tm", "tm", __FILE__, __LINE__ );
 

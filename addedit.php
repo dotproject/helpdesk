@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.3 2003/04/12 00:16:53 eddieajau Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -11,15 +11,29 @@ WHERE item_id = '$item_id'
 ";
 db_loadHash( $sql, $hditem );
 
-$df = $AppUI->getPref( 'SHDATEFORMAT' );
-$tf = $AppUI->getPref( 'TIMEFORMAT' );
+print "<pre><font color=blue>"; print_r( $_GET ); print "</font></pre>\n";
+print "<pre><font color=green>"; print_r( $hditem ); print "</font></pre>\n";
 
-$ts = db_dateTime2unix( $hditem["item_created"] );
-writeDebug( "$ts", "ts", __FILE__, __LINE__ );
-#$tc = $ts < 0 ? null : new CDate( $ts, "$df $tf" );
-$tc = $ts < 0 ? null : date( "m.d.y g:i a", $ts );
-writeDebug( "$tc", "tc", __FILE__, __LINE__ );
+//$df = $AppUI->getPref( 'SHDATEFORMAT' );
+//$tf = $AppUI->getPref( 'TIMEFORMAT' );
 
+$tsm = $rightNow = time();
+$hditem["item_modified"] = db_unix2dateTime( $rightNow );
+
+if( $item_id == 0 ) { 
+  $tsc = $rightNow;
+  $hditem["item_created"] = db_unix2dateTime( $rightNow );
+}
+else {
+  $tsc = db_dateTime2unix( $hditem["item_created"] );
+}
+
+#print "<pre><font color=red>"; print_r( $hditem ); print "</font></pre>\n";
+#echo "<pre>{$hditem["item_created"]}\n{$hditem["item_modified"]}\n</pre>";
+#echo "<pre>$tsc\n$tsm\n</pre>";
+
+$tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
+$tm = $tsm < 0 ? null : date( "m/d/y g:i a", $tsm );
 
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name) FROM users";
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
@@ -70,8 +84,8 @@ function setRequestor( key, val ) {
 	<input name="del" type="hidden" value="0" />
 	<input type="hidden" name="item_id" value="<?php echo $item_id;?>" />
 	<input type="hidden" name="item_requestor_id" value="<?php echo @$hditem["item_requestor_id"];?>" />
-	<input type="hidden" name="item_created" value="<?php echo @$hditem["item_created"];?>" />
-
+  <input type="hidden" name="item_created" value="<?php echo @$hditem["item_created"]; ?>" />
+  <input type="hidden" name="item_modified" value="<?php echo @$hditem["item_modified"]; ?>" />
 <tr>
 	<td valign="top" width="50%">
 		<table cellspacing="0" cellpadding="2" border="0">
@@ -202,7 +216,7 @@ function setRequestor( key, val ) {
 </tr>
 <tr>
 	<td colspan="2" align="left">
-		<textarea cols="80" rows="15" class="textarea" name="item_summary"><?php echo @$hditem["item_summary"];?></textarea>
+		<textarea cols="60" rows="10" class="textarea" name="item_summary"><?php echo @$hditem["item_summary"];?></textarea>
 	</td>
 </tr>
 <tr>
