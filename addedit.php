@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.30 2004/04/23 18:11:49 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.31 2004/04/23 20:04:34 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -227,7 +227,7 @@ function selectList( listName, target ) {
     <table cellspacing="0" cellpadding="2" border="0">
     <?php if ($item_id) { ?>
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Date Opened')?>:</td>
+      <td align="right" nowrap><?=$AppUI->_('Date Created')?>:</td>
       <td width="100%"><strong><?=$tc?></strong></td>
     </tr>
     <?php } ?>

@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.34 2004/04/23 15:03:30 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.35 2004/04/23 17:17:43 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -177,7 +177,7 @@ function delIt() {
 
 	</td>
 	<td width="50%" valign="top">
-		<strong><?=$AppUI->_('Status log')?></strong>
+		<strong><?=$AppUI->_('Status Log')?></strong>
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Created')?>:</td>

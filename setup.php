@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.23 2004/04/23 19:32:28 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.24 2004/04/23 20:04:34 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -176,6 +176,13 @@ class CSetupHelpDesk {
           )
         ";
 
+        $sql = "SELECT syskey_id
+                FROM syskeys
+                WHERE syskey_name = 'HelpDeskList'";
+        $syskey_id = db_loadResult( $sql );
+
+        $sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
+        $sv->store();
         break;
       default:
         return false;
