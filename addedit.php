@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.42 2004/05/12 23:14:19 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.43 2004/05/13 00:16:37 bloaterpaste Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -181,7 +181,10 @@ function updateStatus(obj){
 $ua = $_SERVER['HTTP_USER_AGENT'];
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
 
-print "\nvar projects = new Array(".isset($projects)?implode( ",\n", $projects ):"".")"; 
+
+print "\nvar projects = new Array(";
+print isset($projects) ? implode(",\n", $projects ) : "";
+print ")"; 
 ?>
 
 // Dynamic project list handling functions

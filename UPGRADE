@@ -1,6 +1,7 @@
 ===== Version 0.2+  =====
 Added
-* Configuration options, available through the View Modules page of the System Admin module.  You can modify any of the following:
+* Configuration options, available through the View Modules page of the System
+  Admin module.  You can modify any of the following:
    * Defaults that "assigned to" field to be that of the current user.  	
    * Defaults the "notify by email" field to on. 	
    * Defaults the "company" field to be that of the current user. 	
