@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.21 2004/04/23 18:28:10 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.22 2004/04/23 18:31:05 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -20,7 +20,7 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 
 class CSetupHelpDesk {
 	function install() {
-		$sql[] = "
+		$sql = "
 			CREATE TABLE helpdesk_items (
 			  `item_id` int(11) unsigned NOT NULL auto_increment,
 			  `item_title` varchar(64) NOT NULL default '',
@@ -49,30 +49,31 @@ class CSetupHelpDesk {
 			  `item_company_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM";
+		db_exec($sql);
+		if (db_error())
+			return false;
 
-		$sql[] = "
+		$sql = "
 		      ALTER TABLE `task_log`
 		      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
 		    ";
+		db_exec($sql);
+		if (db_error())
+			return false;
 
-		$sql[] = "
+		$sql = "
 		  CREATE TABLE `helpdesk_item_status` (
 		    `status_id` INT NOT NULL AUTO_INCREMENT,
 		    `status_item_id` INT NOT NULL,
-		    `status_code` INT(3) NOT NULL,
+		    `status_code` TINYINT NOT NULL,
 		    `status_date` TIMESTAMP NOT NULL,
 		    `status_modified_by` INT NOT NULL,
 		    `status_comment` VARCHAR(64) DEFAULT '',
 		    PRIMARY KEY (`status_id`)
 		  )";
-
-	    foreach ($sql as $s) {
-	      db_exec($s);
-
-	      if (db_error()) {
-		return false;
-	      }
-	    }
+		db_exec($sql);
+		if (db_error())
+			return false;
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
@@ -98,46 +99,40 @@ class CSetupHelpDesk {
 		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskStatus', "0|Unassigned\n1|Open\n2|Closed\n3|On Hold" );
 		$sv->store();
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary" );
+		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
 		$sv->store();
 		
 		return true;
 	}
 
 	function remove() {
-    $sql = array();
-		$sql[] = "DROP TABLE helpdesk_items";
-		$sql[] = "DROP TABLE helpdesk_item_status";
-		$sql[] = "ALTER TABLE `task_log`
-              DROP COLUMN `task_log_help_desk_id`";
-
-    foreach ($sql as $s) {
-      db_exec($s);
-
-      if (db_error()) {
-        return false;
-      }
-        return true;
-    }
-
-    unset($sql);
+		$sql = "DROP TABLE helpdesk_items";
+		db_exec($sql);
+		if (db_error())
+			return false;
+		$sql = "DROP TABLE helpdesk_item_status";
+		db_exec($sql);
+		if (db_error())
+			return false;
+		$sql = "ALTER TABLE `task_log`
+	              DROP COLUMN `task_log_help_desk_id`";
+		db_exec($sql);
+		if (db_error())
+			return false;
 
 		$sql = "SELECT syskey_id
-            FROM syskeys
-            WHERE syskey_name = 'HelpDeskList'";
+		    FROM syskeys
+		    WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
 
-    $sql = array();
-		$sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
-		$sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
-
-    foreach ($sql as $s) {
-      db_exec($s);
-
-      if (db_error()) {
-        return false;
-      }
-    }
+		$sql = "DELETE FROM syskeys WHERE syskey_id = $id";
+		db_exec($sql);
+		if (db_error())
+			return false;
+		$sql = "DELETE FROM sysvals WHERE sysval_key_id = $id";
+		db_exec($sql);
+		if (db_error())
+			return false;
 
 		return null;
 	}
@@ -147,7 +142,7 @@ class CSetupHelpDesk {
 
     switch ($old_version) {
       case "0.1":
-        $sql[] = "
+        $sql = "
           ALTER TABLE `helpdesk_items`
           ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
           ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
@@ -160,25 +155,34 @@ class CSetupHelpDesk {
           DROP `item_receipted`,
           DROP `item_resolve_target`,
           DROP `item_resolve_custom`,
-          DROP `item_resolved`;
+          DROP `item_resolved`
         ";
+	db_exec($sql);
+	if (db_error())
+		return false;
 
-        $sql[] = "
+        $sql = "
           ALTER TABLE `task_log`
-          ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+          ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
         ";
+	db_exec($sql);
+	if (db_error())
+		return false;
 
-        $sql[] = "
+        $sql = "
           CREATE TABLE `helpdesk_item_status` (
             `status_id` INT NOT NULL AUTO_INCREMENT,
             `status_item_id` INT NOT NULL,
-            `status_code` INT(3) NOT NULL,
+            `status_code` TINYINT NOT NULL,
             `status_date` TIMESTAMP NOT NULL,
             `status_modified_by` INT NOT NULL,
             `status_comment` VARCHAR(64) DEFAULT '',
             PRIMARY KEY (`status_id`)
-          );
+          )
         ";
+	db_exec($sql);
+	if (db_error())
+		return false;
         break;
       default:
         return false;
