@@ -43,11 +43,23 @@ if (!db_loadHash( $sql, $hditem )) {
 
   $assigned_email = $hditem["assigned_email"];
 
-	$ts = db_dateTime2unix( @$hditem["item_created"] );
-	$tc = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
+	// format date and time
+	$df = $AppUI->getPref('SHDATEFORMAT');
+	$tf = $AppUI->getPref('TIMEFORMAT');
+	$format = $df." ".$tf;
 
-	$ts = db_dateTime2unix( $hditem["item_modified"] );
-	$tm = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
+	if(@$hditem["item_created"]){
+		$created = new CDate( @$hditem["item_created"] );
+		$tc = $created->format( $format );
+	}
+	if(@$hditem["item_modified"]){
+		$modified = new CDate( @$hditem["item_modified"] );
+		$tm = $created->format( $format );
+	}
+	if(@$hditem["item_resolved"]){
+		$resolved = new CDate( @$hditem["item_resolved"] );
+		$tr = $resolved->format( $format );
+	}
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
                                  $m, 'ID_HELP_HELPDESK_IDX' );
@@ -153,7 +165,6 @@ function delIt() {
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
       <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
     </tr>
-
 		</table>
 
 	</td>
@@ -168,6 +179,10 @@ function delIt() {
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
       <td class="hilite" width="100%"><?=$tm;?></td>
+    </tr>
+    <tr>
+      <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
+      <td class="hilite" width="100%"><?=$tr;?></td>
     </tr>
 
 		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>
