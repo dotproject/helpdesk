@@ -61,64 +61,64 @@ $config_options = array(
 		"value" => 1,
 		'type' => 'checkbox'
 	),
-	"hr2" => "<hr><b>".$AppUI->_('Search Options').'<b>',
+	"hr2" => "<hr><b>".$AppUI->_('Available Search Options').'<b>',
 	"search_criteria_search" => array(
-		"description" => $AppUI->_('Show the search option for Title Search.'),
+		"description" => $AppUI->_('Title Search'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_call_type" => array(
-		"description" => $AppUI->_('Show the search option for Call Type.'),
+		"description" => $AppUI->_('Call Type'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_company" => array(
-		"description" => $AppUI->_('Show the search option for Company.'),
+		"description" => $AppUI->_('Company'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_status" => array(
-		"description" => $AppUI->_('Show the search option for Status.'),
+		"description" => $AppUI->_('Status'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_call_source" => array(
-		"description" => $AppUI->_('Show the search option for Call Source.'),
+		"description" => $AppUI->_('Call Source'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_project" => array(
-		"description" => $AppUI->_('Show the search option for Project.'),
+		"description" => $AppUI->_('Project'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_assigned_to" => array(
-		"description" => $AppUI->_('Show the search option for Assigned To.'),
+		"description" => $AppUI->_('Assigned To'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_priority" => array(
-		"description" => $AppUI->_('Show the search option for Priority.'),
+		"description" => $AppUI->_('Priority'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_application" => array(
-		"description" => $AppUI->_('Show the search option for Application.'),
+		"description" => $AppUI->_('Application'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_requestor" => array(
-		"description" => $AppUI->_('Show the search option for Requestor.'),
+		"description" => $AppUI->_('Requestor'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_severity" => array(
-		"description" => $AppUI->_('Show the search option for Severity.'),
+		"description" => $AppUI->_('Severity'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"search_criteria_os" => array(
-		"description" => $AppUI->_('Show the search option for Operation System.'),
+		"description" => $AppUI->_('Operation System'),
 		"value" => 1,
 		'type' => 'checkbox'
 	)
@@ -201,7 +201,7 @@ foreach ($config_options as $key=>$value){
 		<?php
 			} else {
 		?>
-		<td align="left"><?=$value['description']?></td>
+		<td align="right"><?=$value['description']?></td>
 		<td><?php
 				switch($value['type']){
 					case 'checkbox': ?>
