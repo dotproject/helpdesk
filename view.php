@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.56 2004/05/24 19:07:22 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.57 2004/05/25 13:16:44 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -240,7 +240,8 @@ $tabBox->show();
     <?php
     if ($total_logs > $status_log_items_per_page) {
       $pages_per_side = $HELPDESK_CONFIG['pages_per_side'];
-      $pages = ceil($total_logs / $status_log_items_per_page);
+      $pages = ceil($total_logs / $status_log_items_per_page) - 1;
+
       $link = "?m=helpdesk&a=view&item_id=$item_id&page=";
 
       if ($page < $pages_per_side) {
@@ -249,8 +250,8 @@ $tabBox->show();
         $start = $page - $pages_per_side;
       }
 
-      if ($page >= ($pages - $pages_per_side)) {
-        $end = ($pages - 1);
+      if ($page > ($pages - $pages_per_side)) {
+        $end = $pages;
       } else {
         $end = $page + $pages_per_side;
       }
@@ -267,7 +268,7 @@ $tabBox->show();
         }
       }
 
-      if ($page < ($pages - 1)) {
+      if ($page < $pages) {
         print "&nbsp;&nbsp;<a href=\"$link".($page + 1)."\">Next &rarr;</a>";
       }
     }

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.50 2004/05/24 19:07:22 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.51 2004/05/25 13:16:44 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -441,7 +441,7 @@ print "$s\n";
 
 if ($total_results > $items_per_page) {
   $pages_per_side = $HELPDESK_CONFIG['pages_per_side'];
-  $pages = ceil($total_results / $items_per_page);
+  $pages = ceil($total_results / $items_per_page) - 1; 
 
   if ($page < $pages_per_side) {
     $start = 0;
@@ -449,16 +449,20 @@ if ($total_results > $items_per_page) {
     $start = $page - $pages_per_side;
   }
 
-  if ($page >= ($pages - $pages_per_side)) {
-    $end = ($pages - 1);
+  if ($page > ($pages - $pages_per_side)) {
+    $end = $pages;
   } else {
     $end = $page + $pages_per_side;
   }
 
   print "<tr><td colspan=\"8\" align=\"center\">";
 
+  $link = "?m=helpdesk&a=list&page=";
+
   if ($page > 0) {
-    print "<a href=\"?m=helpdesk&a=list&page="
+    print "<a href=\"{$link}0\">&larr; First</a>&nbsp;&nbsp;";
+
+    print "<a href=\"$link"
         . ($page - 1)
         . "\">&larr; Prev</a>&nbsp;&nbsp;";
   }
@@ -467,24 +471,36 @@ if ($total_results > $items_per_page) {
     if ($i == $page) {
       print " <b>".($i + 1)."</b> ";
     } else {
-      print " <a href=\"?m=helpdesk&a=list&page=$i\">"
+      print " <a href=\"$link$i\">"
           . ($i + 1)
           . "</a> ";
     }
   }
 
-  if ($page < ($pages - 1)) {
-    print "&nbsp;&nbsp;<a href=\"?m=helpdesk&a=list&page="
+  if ($page < $pages) {
+    print "&nbsp;&nbsp;<a href=\"$link"
         . ($page + 1)
         . "\">Next &rarr;</a>";
+
+    print "&nbsp;&nbsp;<a href=\"$link$pages\">Last &rarr;</a>";
   }
 
   print "</td></tr>";
 }
 ?>
 </table>
-
 <?php
+  print "<center><small>$total_results "
+      . (($total_results == 1) ? "item" : "items")
+      . " found";
+      
+  if ($pages > 0) {
+    print ", "
+        . ($pages + 1)
+        . " pages";
+  }
+      
+  print "</small></center>";
 
 // Returns a header link used to sort results
 // TODO Probably need a better up/down arrow
