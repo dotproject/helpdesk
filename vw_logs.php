@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.1 2004/04/22 17:37:56 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.2 2004/04/29 14:12:07 agorski Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -42,12 +42,26 @@ $logs = db_loadList( $sql );
 
 $s = '';
 $hrs = 0;
+
+// Pull help desk item details
+$sql = "SELECT item_company_id,item_created_by
+        FROM helpdesk_items hi
+        WHERE item_id = '$item_id'";
+
+db_loadHash( $sql, $hditem );
+
+//Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
+$canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
+if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
+  $canEdit = 1;
+}
+
 foreach ($logs as $row) {
 	$task_log_date = intval( $row['task_log_date'] ) ? new CDate( $row['task_log_date'] ) : null;
 
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= "\n\t<td>";
-	if (!getDenyEdit($m, $item_id) ) {
+	if ($canEdit) {
 		$s .= "\n\t\t<a href=\"?m=helpdesk&a=view&item_id=$item_id&tab=1&task_log_id=".@$row['task_log_id']."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_edit-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
@@ -77,11 +91,11 @@ foreach ($logs as $row) {
 			
 	$s .= '</td>';
 	$s .= "\n\t<td>";
-//	if ($canEdit) {
+	if ($canEdit) {
 		$s .= "\n\t\t<a href=\"javascript:delIt2({$row['task_log_id']});\" title=\"".$AppUI->_('delete log')."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_delete-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
-//	}
+	}
 	$s .= "\n\t</td>";
 	$s .= '</tr>';
 	$hrs += (float)$row["task_log_hours"];

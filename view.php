@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.50 2004/05/17 19:09:42 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.51 2004/05/19 17:02:18 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -89,9 +89,8 @@ if (!db_loadHash( $sql, $hditem )) {
   }
   
   if(!$canRead && !$canEdit){
-	$AppUI->redirect( "m=public&a=access_denied" );
+	  $AppUI->redirect( "m=public&a=access_denied" );
   }
-  
 
   $name = $hditem['item_requestor'];
   $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
@@ -242,16 +241,12 @@ function toggle_comment(id){
 <?php 
 
 $tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
-//if ( $obj->task_dynamic == 0 ) {
-	// tabbed information boxes
 $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
-	// fixed bug that dP automatically jumped to access denied if user does not
-	// have read-write permissions on task_id and this tab is opened by default (session_vars)
-	// only if user has r-w perms on this task, new or edit log is beign showed
-//	if (!getDenyEdit( $m, $task_id )) {
-$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
-//	}
-//}
+
+if ($canEdit) {
+  $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
+}
+
 $tabBox->show();
 } 
 ?>
