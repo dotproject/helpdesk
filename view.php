@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.31 2004/04/22 17:37:27 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.32 2004/04/22 18:12:15 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -138,56 +138,32 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($ics[$hditem["item_source"]]) ?
-              $ics[$hditem["item_source"]] :
-              $ics[0];
-      ?></td>
+			<td class="hilite" width="100%"><?=@$ics[$hditem["item_source"]]?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Status')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($ist[$hditem["item_status"]]) ?
-              $ist[$hditem["item_status"]] :
-              $ist[0]
-      ?></td>
+			<td class="hilite" width="100%"><?=@$ist[$hditem["item_status"]]?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Priority')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($ipr[$hditem["item_priority"]]) ?
-              $ipr[$hditem["item_priority"]] :
-              $ipr[0];
-      ?></td>
+			<td class="hilite" width="100%"><?=@$ipr[$hditem["item_priority"]]?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
-      <td class="hilite" width="100%"><?php
-        print isset($ics[$hditem["item_severity"]]) ?
-              $ics[$hditem["item_severity"]] :
-              $ics[0];
-      ?></td>
+      <td class="hilite" width="100%"><?=@$ics[$hditem["item_severity"]]?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Operating System')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($ios[$hditem["item_os"]]) ?
-              $ios[$hditem["item_os"]] :
-              $ios[0];
-      ?></td>
+			<td class="hilite" width="100%"><?=@$ios[$hditem["item_os"]]?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($iap[$hditem["item_application"]]) ?
-              $iap[$hditem["item_application"]] :
-              $iap[0];
-        ?></td>
+			<td class="hilite" width="100%"><?=@$iap[$hditem["item_application"]]?></td>
 		</tr>
 		</table>
 

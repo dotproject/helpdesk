@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.13 2004/04/22 16:36:05 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.14 2004/04/22 17:25:11 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -109,28 +109,34 @@ class CSetupHelpDesk {
 
     switch ($old_version) {
       case "0.1":
-        $sql = "
+        $sql[] = "
           ALTER TABLE `helpdesk_items`
-          ADD `item_requestor_phone` varchar(30) NOT NULL default ''AFTER `item_requestor_email`,
+          ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
           ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
           ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`;
-          ALTER TABLE `task_log` ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+        ";
+
+        $sql[] = "
+          ALTER TABLE `task_log`
+          ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
         ";
         break;
       default:
         return false;
     }
 
-    // Returns true if success, false otherwise
-    db_exec($sql);
+    foreach ($sql as $s) {
+      db_exec($s);
 
-    if (db_error()) {
-      /* Setting a message with $AppUI-setMsg would be pointless since it's
-         just overwritten */
-      return false;
-    } else {
-      return true;
+      if (db_error()) {
+        /* Setting a message with $AppUI-setMsg would be pointless since it's
+           just overwritten */
+        return false;
+      }
     }
+  
+    // NOTE: Need to return true, not null, if all is good
+    return true;
 	}
 }
 
