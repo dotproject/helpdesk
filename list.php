@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.17 2004/01/23 16:32:37 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.18 2004/01/23 16:33:44 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -55,8 +55,14 @@ LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
 LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
 LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
 $where
-ORDER BY hi.$orderby
-";
+ORDER BY ";
+
+if ($orderby == "project_name") {
+  $sql .= "p.project_name";
+} else {
+  $sql .= "hi.$orderby";
+}
+
 //echo "<pre>$sql</pre>";
 $rows = db_loadList( $sql );
 
