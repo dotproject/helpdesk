@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.20 2004/04/20 20:36:51 gatny Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.21 2004/04/21 17:42:52 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -9,24 +9,10 @@ $sql = "SELECT *
 
 db_loadHash( $sql, $hditem );
 
-$tsm = $rightNow = time();
-$hditem["item_modified"] = db_unix2dateTime( $rightNow );
-
-if ($item_id) { 
-  $tsc = db_dateTime2unix( $hditem["item_created"] );
-} else {
-  $tsc = $rightNow;
-  $hditem["item_created"] = db_unix2dateTime( $rightNow );
-}
-
 if(!@$hditem["item_assigned_to"]){
 	@$hditem["item_assigned_to"] = $AppUI->user_id;
 	@$hditem["item_status"] = 1;
 }
-
-$tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
-$tm = $tsm < 0 ? null : date( "m/d/y g:i a", $tsm );
-
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
         FROM users
         ORDER BY user_first_name";
@@ -58,6 +44,15 @@ if ($item_id) {
 }
 
 $titleBlock->show();
+
+if ($item_id) { 
+  $tsc = db_dateTime2unix( $hditem["item_created"] );
+} else {
+  $tsc = $rightNow;
+  $hditem["item_created"] = db_unix2dateTime( $rightNow );
+}
+
+$tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
 
 ?>
 
@@ -147,7 +142,6 @@ function updateStatus(obj){
 	<input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
 	<input type="hidden" name="item_requestor_type" value="<?=$item_requestor_type?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
-  <input type="hidden" name="item_modified" value="<?=@$hditem["item_modified"]?>" />
   <tr>
 	<td valign="top" width="50%">
 		<table cellspacing="0" cellpadding="2" border="0">

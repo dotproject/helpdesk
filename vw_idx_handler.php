@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.2 2004/04/21 17:54:55 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.3 2004/04/21 18:02:07 bloaterpaste Exp $*/
 function vw_idx_handler ($opened) {
   global $m, $ipr, $AppUI;
 
@@ -72,9 +72,8 @@ function vw_idx_handler ($opened) {
     }
     ?>
     <tr>
-      <td><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a>
-          <?=dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')?>
-      </td>
+      <td><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>
+          <?=dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')?></td>
       <td nowrap=\"nowrap\">
       <?php
       if ($row["item_requestor_email"]) {

@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.24 2004/04/20 23:37:13 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.25 2004/04/21 17:45:27 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -42,10 +42,12 @@ $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"
 		$created = new CDate( @$hditem["item_created"] );
 		$tc = $created->format( $format );
 	}
+
 	if(@$hditem["item_modified"]){
 		$modified = new CDate( @$hditem["item_modified"] );
-		$tm = $created->format( $format );
+		$tm = $modified->format( $format );
 	}
+
 	if(@$hditem["item_resolved"]){
 		$resolved = new CDate( @$hditem["item_resolved"] );
 		$tr = $resolved->format( $format );
@@ -163,16 +165,16 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Opened')?>:</td>
-			<td class="hilite" width="100%"><?=$tc;?></td>
+			<td class="hilite" width="100%"><?=$tc?></td>
 		</tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
-      <td class="hilite" width="100%"><?=$tm;?></td>
+      <td class="hilite" width="100%"><?=$tm?></td>
     </tr>
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
-      <td class="hilite" width="100%"><?=$tr;?></td>
+      <td class="hilite" width="100%"><?=$tr?></td>
     </tr>
 
 		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>

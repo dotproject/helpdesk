@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.7 2004/04/20 23:40:40 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.9 2004/04/21 17:34:34 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -61,20 +61,43 @@ class CHelpDeskItem extends CDpObject {
 			$this->item_created = db_unix2dateTime( time() );
 		}
 		
+		// TODO More checks
+		return NULL;
+	}
+
+	function store() {
+		//if the status is changed to #2 "Closed" mark as resolved.
+		if ($this->item_status==2) { 
+			$this->item_resolved = db_unix2dateTime( time() );
+		}
+
+    // Update the last modified time
+    $this->item_modified = db_unix2dateTime( time() );
+
 		//if type indicates a contact or a user, then look up that phone and email for those entries
 		switch ($this->item_requestor_type) {
 			case '0'://it's not a user or a contact
 				break;
 			case '1'://it's a system user
-				$sql = "SELECT user_id as id, user_email as email, user_phone as phone, CONCAT(user_first_name,' ', user_last_name) as name FROM users WHERE user_id='".$this->item_requestor_id."'";
+				$sql = "SELECT user_id as id,
+                user_email as email,
+                user_phone as phone,
+                CONCAT(user_first_name,' ', user_last_name) as name
+                FROM users
+                WHERE user_id='{$this->item_requestor_id}'";
 				break;
 			case '2':
-				$sql = "SELECT contact_id as id, contact_email as email, contact_phone as phone, CONCAT(contact_first_name,' ', contact_last_name) as name FROM contacts WHERE contact_id='".$this->item_requestor_id."'";
-				break;
+				$sql = "SELECT contact_id as id,
+                contact_email as email,
+                contact_phone as phone,
+                CONCAT(contact_first_name,' ', contact_last_name) as name
+                FROM contacts
+                WHERE contact_id='{$this->item_requestor_id}'";
 				break;
 			default:
 				break;
 		}
+
 		if($sql){
 			db_loadHash( $sql, $result );
 			$this->item_requestor_email = $result['email'];
@@ -82,15 +105,6 @@ class CHelpDeskItem extends CDpObject {
 			$this->item_requestor = $result['name'];
 		}
 			
-		//if the status is changed to #2 "Closed" mark as resolved.
-		if ($this->item_status==2) { 
-			$this->item_resolved = db_unix2dateTime( time() );
-		}
-		// TODO More checks
-		return NULL;
-	}
-
-	function store() {
     return parent::store();
 	}
 
