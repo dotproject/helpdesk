@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.31 2004/04/23 20:04:34 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.32 2004/04/23 20:28:19 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -8,8 +8,6 @@ $sql = "SELECT *
         WHERE item_id = '$item_id'";
 
 db_loadHash( $sql, $hditem );
-
-$old_status = @$hditem["item_status"];
 
 if(!@$hditem["item_assigned_to"]){
   @$hditem["item_assigned_to"] = $AppUI->user_id;
@@ -221,7 +219,6 @@ function selectList( listName, target ) {
       print $AppUI->user_id;
     }
   ?>" />
-  <input type="hidden" name="old_status" value="<?=$old_status?>" />
   <tr>
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
