@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.3 2004/04/05 19:15:45 adam Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.4 2004/04/09 19:05:23 root Exp $ */
 /*
 dotProject Module
 
@@ -71,7 +71,7 @@ class CSetupHelpDesk {
 			  `item_resolve_custom` int(1) unsigned NOT NULL default '0',
 			  `item_resolved` datetime default NULL,
 			  `item_parent` int(10) unsigned NOT NULL default '0',
-        `item_project_id` int(11) NOT NULL default '0',
+			  `item_project_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM
 		";
