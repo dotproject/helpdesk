@@ -1,4 +1,6 @@
 <?php /* HELPDESK $Id: addedit.php,v 1.13 2004/04/19 21:06:45 gatny Exp $ */
+$AppUI->savePlace();
+
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -95,6 +97,14 @@ function setRequestor( key, val ) {
 		oldRequestor = val;
 	}
 }
+
+function updateStatus(obj){
+	var f = document.frmHelpDeskItem;
+
+	if(obj.options[obj.selectedIndex].value>0){
+		f.item_status.selectedIndex=1;
+	}
+}
 </script>
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
@@ -143,7 +153,7 @@ function setRequestor( key, val ) {
 
 		<tr>
 			<td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
-			<td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium"',
+			<td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?></td>
 		</tr>
 
