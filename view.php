@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.63 2004/06/02 17:00:01 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.64 2004/06/03 20:04:51 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -146,10 +146,9 @@ function toggle_comment(id){
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
       <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
     </tr>
-
-</table></td><td valign="top">
-<table cellspacing="1" cellpadding="2" width="100%">
-
+  </table>
+  </td><td valign="top">
+  <table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Type')?>:</td>
 			<td class="hilite" width="100%"><?php
