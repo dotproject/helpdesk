@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.42 2004/04/27 15:31:27 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.43 2004/04/27 16:26:15 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -79,12 +79,8 @@ function delIt() {
 
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td width="60%" valign="top">
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top">
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
-<form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">
-  <input type="hidden" name="dosql" value="do_item_aed">
-  <input type="hidden" name="del" value="1" />
-  <input type="hidden" name="item_id" value="<?=$item_id?>" />
-</form>
 <tr>
 	<td valign="top" width="50%">
 		<strong><?=$AppUI->_('Details')?></strong>
@@ -182,8 +178,28 @@ function delIt() {
 	</td>
 </tr>
 </table>
+</td></tr>
+<tr><td valign="top">
+<?php 
+
+$tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
+//if ( $obj->task_dynamic == 0 ) {
+	// tabbed information boxes
+$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
+	// fixed bug that dP automatically jumped to access denied if user does not
+	// have read-write permissions on task_id and this tab is opened by default (session_vars)
+	// only if user has r-w perms on this task, new or edit log is beign showed
+//	if (!getDenyEdit( $m, $task_id )) {
+$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
+//	}
+//}
+$tabBox->show();
+} 
+?>
+</td></tr></table>
+
 </td>
-<td width="40%" rowspan="2" valign="top">
+<td width="40%" valign="top">
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
 <tr><td>
 		<strong><?=$AppUI->_('Status Log')?></strong>
@@ -220,22 +236,9 @@ function delIt() {
     ?>
 		</table>
 </td></tr></table>
-</td></tr>
-<tr><td valign="top">
-<?php 
-
-$tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
-//if ( $obj->task_dynamic == 0 ) {
-	// tabbed information boxes
-$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
-	// fixed bug that dP automatically jumped to access denied if user does not
-	// have read-write permissions on task_id and this tab is opened by default (session_vars)
-	// only if user has r-w perms on this task, new or edit log is beign showed
-//	if (!getDenyEdit( $m, $task_id )) {
-$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
-//	}
-//}
-$tabBox->show();
-} 
-?>
 </td></tr></table>
+<form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">
+  <input type="hidden" name="dosql" value="do_item_aed">
+  <input type="hidden" name="del" value="1" />
+  <input type="hidden" name="item_id" value="<?=$item_id?>" />
+</form>
