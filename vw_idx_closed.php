@@ -1,10 +1,14 @@
-<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.5 2004/04/19 18:51:28 adam Exp $*/
+<?php /* HELPDESK $Id: vw_idx_closed.php,v 1.5 2004/04/19 21:07:53 gatny Exp $*/
 global $m, $ipr;
+
+$df = $AppUI->getPref( 'SHDATEFORMAT' );
+$tf = $AppUI->getPref( 'TIMEFORMAT' );
+$format = $df." ".$tf;
 
 /*  select items created today with 'closed' status
  *  unassigned = 0, open = 1, closed = 2, on hold = 3
  */
-$sql = "SELECT item_id, item_title, item_created, user_username
+$sql = "SELECT item_id, item_title, item_created, item_resolved, user_username
         FROM helpdesk_items
         LEFT JOIN users ON user_id = item_assigned_to
         WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
@@ -37,11 +41,14 @@ $newitems = db_loadList( $sql );
 
     $email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
 
-		$df = $AppUI->getPref( 'SHDATEFORMAT' );
-		$tf = $AppUI->getPref( 'TIMEFORMAT' );
 
-		$ts = db_dateTime2unix( $row["item_resolved"] );
-		$tc = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
+		if($row["item_resolved"]){
+			$resolved = new CDate( $row["item_resolved"] );
+			$tc = $resolved->format( $format );
+		}
+
+//		$ts = db_dateTime2unix( $row["item_resolved"] );
+//		$tc = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
 
 		$s .= '<tr>';
 		$s .= '<td><a href="?m=helpdesk&a=view&item_id='
