@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.27 2004/04/15 17:32:01 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.28 2004/04/15 18:50:16 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -6,6 +6,13 @@ if (isset( $_GET['orderby'] )) {
 	$AppUI->setState( 'HelpDeskIdxOrderBy', $_GET['orderby'] );
 }
 $orderby = $AppUI->getState( 'HelpDeskIdxOrderBy' ) ? $AppUI->getState( 'HelpDeskIdxOrderBy' ) : 'item_id';
+
+// check sort order way (asc/desc)
+if (isset($_GET['orderdesc'])) {
+  $AppUI->setState('HelpDeskIdxOrderDesc', $_GET['orderdesc']);
+}
+
+$orderdesc = $AppUI->getState('HelpDeskIdxOrderDesc') ? $AppUI->getState('HelpDeskIdxOrderDesc') : 0;
 
 // check for search text
 if (isset( $_GET['search'] )) {
@@ -71,8 +78,14 @@ ORDER BY ";
 
 if ($orderby == "project_name") {
   $sql .= "p.project_name";
+} else if ($orderby == "item_assigned_to") {
+  $sql .= "assigned_fullname";
 } else {
   $sql .= "hi.$orderby";
+}
+
+if ($orderdesc) {
+  $sql .= " DESC";
 }
 
 $rows = db_loadList( $sql );
@@ -120,34 +133,28 @@ function changeList() {
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
 	<td align="right" nowrap>&nbsp;</td>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_id" class="hdr"><?=$AppUI->_('Number')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_requestor" class="hdr"><?=$AppUI->_('Requestor')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_title" class="hdr"><?=$AppUI->_('Title')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_assigned_to" class="hdr"><?=$AppUI->_('Assigned To')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_status" class="hdr"><?=$AppUI->_('Status')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?=$AppUI->_('Priority')?></a>
-	</th>
-	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=project_name" class="hdr"><?=$AppUI->_('Project')?></a>
-	</th>
+	<th nowrap="nowrap"><?=sort_header("item_id", $AppUI->_('Number'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_requestor", $AppUI->_('Requestor'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_title", $AppUI->_('Title'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_status", $AppUI->_('Status'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_priority", $AppUI->_('Priority'))?></th>
+	<th nowrap="nowrap"><?=sort_header("project_name", $AppUI->_('Project'))?></th>
 </tr>
 <?php
 $s = '';
 
 foreach ($rows as $row) {
-	$name = $row["item_requestor_id"] ? $row["user_fullname"] : $row["item_requestor"];
-	$email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
+  /* We need to check if the user who requested the item is still in the
+     system. Just because we have a requestor id does not mean we'll be
+     able to retrieve a full name */
+  if ($row["item_requestor_id"]) {
+	  $name = $row["user_fullname"] ? $row["user_fullname"] : $row["item_requestor"];
+  } else {
+    $name = $row['item_requestor'];
+  }
+
+  $email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
 
 	$s .= $CR . '<form method="post">';
 	$s .= $CR . '<tr>';
@@ -192,3 +199,21 @@ foreach ($rows as $row) {
 print "$s\n";
 ?>
 </table>
+
+<?php
+  function sort_header($field, $name) {
+    global $orderby, $orderdesc;
+
+    $link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
+
+    if ($orderby == $field) {
+      $link .= $orderdesc ? "0" : "1";
+    } else {
+      $link .= "0";
+    }
+
+    $link .= "\">$name</a>";
+
+    return $link;
+  }
+?>

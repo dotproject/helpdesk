@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.8 2004/04/15 17:32:01 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.9 2004/04/15 18:50:16 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -81,21 +81,19 @@ function submitIt() {
 } 
 
 function popDialog() {
-	var f = document.frmHelpDeskItem;
 	window.open('./index.php?m=public&a=selector&callback=setRequestor&table=users&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable')
 }
 
 var oldRequestor = '';
+
 // Callback function for the generic selector
 function setRequestor( key, val ) {
 	var f = document.frmHelpDeskItem;
+
 	if (val != '') {
 		f.item_requestor_id.value = key;
 		f.item_requestor.value = val;
 		oldRequestor = val;
-	} else {
-		f.permission_item.value = '0';
-		f.permission_item_name.value = '';
 	}
 }
 </script>
@@ -128,7 +126,12 @@ function setRequestor( key, val ) {
 		<tr>
 			<td align="right" nowrap><font color=red>* <?=$AppUI->_('Your Name');?>:</font></td>
 			<td valign="top">
-				<input type="text" class="text" id="large" name="item_requestor" value="<?=@$hditem["item_requestor"]?>" maxlength="64" onchange="if(this.value!=oldRequestor) {document.frmHelpDeskItem.item_requestor_id.value=0;oldRequestor=this.value}" />
+				<input type="text" class="text" id="large" name="item_requestor"
+        value="<?=@$hditem["item_requestor"]?>" maxlength="64"
+        onchange="if (this.value!=oldRequestor) {
+                    document.frmHelpDeskItem.item_requestor_id.value = 0;
+                    oldRequestor = this.value;
+                  }" />
 				<input type="button" class="button" value="..." onclick="popDialog();" />
 			</td>
 			<td align="left">&nbsp; </td>

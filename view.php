@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.16 2004/04/15 17:32:01 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.17 2004/04/15 18:50:16 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -25,10 +25,19 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk", "Index" );
 	$titleBlock->show();
 } else {
+  /* We need to check if the user who requested the item is still in the
+     system. Just because we have a requestor id does not mean we'll be
+     able to retrieve a full name */
+  if ($hditem["item_requestor_id"]) {
+	  $name = $hditem["user_fullname"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
+  } else {
+    $name = $hditem['item_requestor'];
+  }
+
+	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
+
 	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
   $assigned_email = $hditem["assigned_email"];
-	$name = $hditem["item_requestor_id"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
-	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
 	$ts = db_dateTime2unix( @$hditem["item_created"] );
 	$tc = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
