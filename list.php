@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.15 2004/01/23 16:31:24 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.16 2004/01/23 16:31:57 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -149,7 +149,7 @@ foreach ($rows as $row) {
 		$s .= $CR . '<a href="mailto:' . $email . '"><img src="images/obj/email.gif" width="16" height="16" border="0" alt="' . $email . '"></a>';
 	}
 	if ($canEdit) {
-		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='.$row["item_id"].'"><img src="./images/icons/pencil.gif" alt="edit" border="0" width="12" height="12"></a>';
+		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='.$row["item_id"].'"><img src="./images/icons/pencil.gif" alt="edit" border="0" width="12" height="12"></a>&nbsp;';
 	}
 	$s .= $CR . '</td>';
 	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id=' . $row["item_id"] . '">'
