@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.14 2004/04/22 17:25:11 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.15 2004/04/22 18:30:33 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -20,7 +20,7 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 
 class CSetupHelpDesk {
 	function install() {
-		$sql = "
+		$sql[] = "
 			CREATE TABLE helpdesk_items (
 			  `item_id` int(11) unsigned NOT NULL auto_increment,
 			  `item_title` varchar(64) NOT NULL default '',
@@ -53,10 +53,18 @@ class CSetupHelpDesk {
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM";
 
-		db_exec( $sql );
+		$sql[] = "
+      ALTER TABLE `task_log`
+      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+    ";
 
-		$sql = "ALTER TABLE `task_log` ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`";
-		db_exec( $sql );
+    foreach ($sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
@@ -86,20 +94,33 @@ class CSetupHelpDesk {
 	}
 
 	function remove() {
-		$sql = "DROP TABLE helpdesk_items";
-		db_exec( $sql );
-		
-		$sql = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
-		db_exec( $sql );
+		$sql[] = "DROP TABLE helpdesk_items";
+		$sql[] = "ALTER TABLE `task_log`
+              DROP COLUMN `task_log_help_desk_id`";
 
-		$sql = "SELECT syskey_id FROM syskeys WHERE syskey_name = 'HelpDeskList'";
+    foreach ($sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
+
+		$sql = "SELECT syskey_id
+            FROM syskeys
+            WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
 
-		$sql = "DELETE FROM syskeys WHERE syskey_id = $id";
-		db_exec( $sql );
+		$sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
+		$sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
 
-		$sql = "DELETE FROM sysvals WHERE sysval_key_id = $id";
-		db_exec( $sql );
+    foreach ($sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
 
 		return null;
 	}
@@ -129,8 +150,6 @@ class CSetupHelpDesk {
       db_exec($s);
 
       if (db_error()) {
-        /* Setting a message with $AppUI-setMsg would be pointless since it's
-           just overwritten */
         return false;
       }
     }

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.32 2004/04/21 19:46:39 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.33 2004/04/22 17:04:08 agorski Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -42,7 +42,8 @@ $priority = $AppUI->getState( 'HelpDeskPriority' ) !== null ? $AppUI->getState( 
 $tarr = array();
 
 if (isset($search)) {
-	$tarr[] = "(hi.item_title LIKE '%$search%' OR hi.item_summary LIKE '%$search%')";
+	$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
+              OR lower(hi.item_summary) LIKE lower('%$search%'))";
 }
 
 if ($calltype >= 0) {
