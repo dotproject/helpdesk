@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.46 2004/05/27 14:33:23 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.47 2004/05/28 13:17:39 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -7,6 +7,10 @@ require_once("helpdesk.functions.php");
 if (getDenyRead($m)) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
+
+// Define log types
+define("STATUS_LOG", 1);
+define("TASK_LOG", 2);
 
 // Pull in some standard arrays
 $ict = dPgetSysVal( 'HelpDeskCallType' );
@@ -88,7 +92,7 @@ class CHelpDeskItem extends CDpObject {
     return NULL;
   }
 
-  function store($status_log_id) {
+  function store() {
     global $AppUI;
 
     // Update the last modified time and user
@@ -128,15 +132,13 @@ class CHelpDeskItem extends CDpObject {
     }
       
 
-    //if the store is successful, pull the new id value and insert it into the object.
+    /* if the store is successful, pull the new id value and insert it into the 
+       object. */
     if (($msg = parent::store())) {
 	    return $msg;
     } else {
 	    if(!$this->item_id){  
 	    	$this->item_id = mysql_insert_id();
-	    }
-	    if ($this->item_notify) {
-	      $this->notify($status_log_id);
 	    }
 	    return $msg;
     }
@@ -147,10 +149,11 @@ class CHelpDeskItem extends CDpObject {
     return parent::delete();
   }
   
-  function notify($status_log_id) {
+  function notify($type, $log_id) {
     global $AppUI, $ist, $ict, $isa;
 
-    if ($this->item_assigned_to == $AppUI->user_id) {
+    if (!$this->item_notify ||
+        ($this->item_assigned_to == $AppUI->user_id)) {
       return;
     }
 
@@ -161,33 +164,56 @@ class CHelpDeskItem extends CDpObject {
 
     $assigned_to_email = db_loadResult($sql);
 
-    // Pull up the last status log entry
-    if (is_numeric($status_log_id)) {
-      $sql = "SELECT status_code, status_comment
-              FROM helpdesk_item_status
-              WHERE status_id=$status_log_id";
-
+    if (is_numeric($log_id)) {
+      switch ($type) {
+        case STATUS_LOG:
+          $sql = "SELECT status_code, status_comment
+                  FROM helpdesk_item_status
+                  WHERE status_id=$log_id";
+          break;
+        case TASK_LOG:
+          $sql = "SELECT task_log_name,task_log_description
+                  FROM task_log
+                  WHERE task_log_id=$log_id";
+          break;
+      }
+        
       db_loadHash($sql, $log);
     }
 
     $mail = new Mail;
 
     if ($mail->ValidEmail($assigned_to_email)) {
-      $body = "Title: {$this->item_title}\n"
-            . "Call Type: {$ict[$this->item_calltype]}\n"
-            . "Status: {$ist[$this->item_status]}\n";
-            
-      if(!is_numeric($status_log_id)){
-        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} Created");
-      } else {
-        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} Updated");
-        $body .= "Update: {$isa[$log['status_code']]} {$log['status_comment']}\n";
-      }
+      $subject = $AppUI->cfg['page_title']." Help Desk Item #{$this->item_id}";
 
-      $body .= "Link: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
-             . "\nSummary:\n\n"
-             . $this->item_summary
-             . "\n\n-- \n"
+      switch ($type) {
+        case STATUS_LOG:
+          $body = "Title: {$this->item_title}\n"
+                . "Call Type: {$ict[$this->item_calltype]}\n"
+                . "Status: {$ist[$this->item_status]}\n";
+
+          if($log['status_code'] == 0){
+            $mail->Subject("$subject Created");
+          } else {
+            $mail->Subject("$subject Updated");
+            $body .= "Update: {$isa[$log['status_code']]} {$log['status_comment']}\n";
+          }
+
+          $body .= "Link: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+                 . "\nSummary:\n"
+                 . $this->item_summary;
+          break;
+        case TASK_LOG:
+          $mail->Subject("$subject Task Log Update");
+          $body = "Summary: "
+                . $log['task_log_name']
+                . "\nLink: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+                . "\nComments:\n" 
+                . $log['task_log_description'];
+          break;
+      }
+      
+      $body .= "\n\n-- \n"
              . "Sincerely,\nThe dotProject Help Desk module";
 
       if ($mail->ValidEmail($AppUI->user_email)) {

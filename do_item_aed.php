@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.19 2004/05/19 17:48:07 agorski Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.20 2004/05/27 14:22:56 agorski Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -9,15 +9,19 @@ if($do_task_log=="1"){
 	//first update the status on to current helpdesk item.
 	$hditem = new CHelpDeskItem();
 	$hditem->load( $item_id );
+
 	$new_status = dPgetParam( $_POST, 'item_status', 0 );
+
 	if($new_status!=$hditem->item_status){
 		$status_log_id = $hditem->log_status(11, "changed from \"{$ist[$hditem->item_status]}\" to \"{$ist[$new_status]}\"");
 		$hditem->item_status = $new_status;
 
-		if (($msg = $hditem->store($status_log_id))) {
+		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 			$AppUI->redirect();
-		}
+		} else {
+      $hditem->notify(STATUS_LOG, $status_log_id);
+    }
 	}
 
 	//then create/update the task log
@@ -40,6 +44,7 @@ if($do_task_log=="1"){
     $AppUI->setMsg( $msg, UI_MSG_ERROR );
     $AppUI->redirect();
   } else {
+    $hditem->notify(TASK_LOG, $obj->task_log_id);
     $AppUI->setMsg( @$_POST['task_log_id'] ? 'updated' : 'added', UI_MSG_OK, true );
   }
 
@@ -67,12 +72,14 @@ if($do_task_log=="1"){
 	} else {
     $status_log_id = $hditem->log_status_changes();
 
-		if (($msg = $hditem->store($status_log_id))) {
+		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
       if($new_item){
         $status_log_id = $hditem->log_status(0,"Created");
       }
+
+      $hditem->notify(STATUS_LOG, $status_log_id);
 
 			$AppUI->setMsg( $new_item ? 'added' : 'updated' , UI_MSG_OK, true );
 			$AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
