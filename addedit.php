@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.24 2004/04/22 00:30:32 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.25 2004/04/22 14:18:31 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -110,6 +110,10 @@ function setRequestor( key, val ) {
     f.item_requestor_id.value = key;
     f.item_requestor.value = val;
     oldRequestor = val;
+
+    // Since we probably chose someone else, wipe the e-mail and phone fields
+    f.item_requestor_email.value = '';
+    f.item_requestor_phone.value = '';
   }
 }
 
