@@ -63,12 +63,18 @@ $config_options = array(
 		"description" => $AppUI->_('The company which handles Help Desk items:'),
 		"value" => '',
 		'type' => 'select',
-    'list' => $companies
+		'list' => $companies
 	),
 	"no_company_editable" => array(
 		"description" => $AppUI->_('Items with no company should be editable by anyone:'),
 		"value" => '0',
 		'type' => 'checkbox',
+	),
+	'minimum_edit_level' => array(
+		'description' => $AppUI->_('Minimum user level to edit others logs.'),
+		'value' => 0,
+		'type' => 'select',
+		'list' => @$user_types
 	),
 	"hr2" => " <hr><b>".$AppUI->_('New Item Default Selections').'<b>',
 	"default_assigned_to_current_user" => array(
@@ -146,12 +152,6 @@ $config_options = array(
 		"description" => $AppUI->_('Operation System'),
 		"value" => 1,
 		'type' => 'checkbox'
-	),
-	'minimum_edit_level' => array(
-		'description' => $AppUI->_('Minimum user level to edit others logs.'),
-		'value' => 0,
-		'type' => 'select',
-		'list' => @$user_types
 	)
 
 );

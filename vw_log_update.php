@@ -1,4 +1,4 @@
-<?php /* $Id: vw_log_update.php,v 1.4 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.5 2004/05/26 21:54:43 grahamjb Exp $ */
 GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
@@ -13,8 +13,8 @@ if ($task_log_id) {
 	$log->load( $task_log_id );
 
 	//Prevent users from editing other ppls timecards.
-	$can_edit_other_timesheets = $HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type;
-	if (!$can_edit_other_timesheets)
+	$can_edit_task_logs = $HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type;
+	if (!$can_edit_task_logs)
 	{
 		if($log->task_log_creator!= $AppUI->user_id)
 		{
