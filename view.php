@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.36 2004/04/23 20:28:19 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.37 2004/04/23 22:43:46 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -180,15 +180,6 @@ function delIt() {
 	<td width="50%" valign="top">
 		<strong><?=$AppUI->_('Status Log')?></strong>
 		<table cellspacing="1" cellpadding="2" border="0" width="100%" bgcolor="black">
-<!--
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Created')?>:</td>
-			<td class="hilite" width="100%">On <?=$tc?> by
-      <?php
-        print $hditem['created_by_fullname'] ? $hditem['created_by_fullname'] : "?";
-      ?></td>
-		</tr>
--->
     <?php
     $last_date = "";
     foreach ($status_log as $log) {
@@ -208,11 +199,13 @@ function delIt() {
       <tr>
         <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
         <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
-        <td class="hilite" nowrap="nowrap" width="98%"><?=($log['status_comment']?$log['status_comment']:(trim($isa[$log['status_code']])." ".$AppUI->_('changed')) )?></td>
-<!--
-        <td align="right" nowrap="nowrap"><?=trim($isa[$log['status_code']])?>:</td>
-        <td class="hilite" width="100%">On <?=$date?> by <?=$log['modified_by']?></td>
--->
+        <td class="hilite" nowrap="nowrap" width="98%"><?php
+        if ($log['status_comment']) {
+          print trim($isa[$log['status_code']])." ".$log['status_comment'];
+        } else {
+          print trim($isa[$log['status_code']]);
+        }
+        ?></td>
       </tr>
       <?php
     }

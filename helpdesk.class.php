@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.17 2004/04/23 18:11:49 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.18 2004/04/23 22:36:49 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -41,6 +41,28 @@ class CHelpDeskItem extends CDpObject {
   var $item_created_by = NULL;
   var $item_modified = NULL;
   var $item_modified_by = NULL;
+
+  var $field_event_map = array(
+      //0=>Created
+        1=>"item_title",            //Title
+        2=>"item_requestor",        //Requestor Name
+        3=>"item_requestor_email",  //Requestor E-mail
+        4=>"item_requestor_phone",  //Requestor Phone
+        5=>"item_assigned_to",      //Assigned To
+        6=>"item_notify",           //Notify by e-mail
+        7=>"item_company_id",       //Company
+        8=>"item_project_id",       //Project
+        9=>"item_calltype",         //Call Type
+        10=>"item_source",          //Call Source
+        11=>"item_status",          //Status
+        12=>"item_priority",        //Priority
+        13=>"item_severity",        //Severity
+        14=>"item_os",              //Operating System
+        15=>"item_application",     //Application
+        16=>"item_summary",         //Summary
+      //17=>Deleted
+  );
+
 
   function CHelpDeskItem() {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
@@ -148,66 +170,98 @@ class CHelpDeskItem extends CDpObject {
       $mail->Send();
     }
   }
+  
+  function log_status_changes() {
+    global $ist, $ict, $ics, $ios, $iap, $ipr, $isv, $ist, $isa;
 
-  function log_status_changes(){
+    $hditem = new CHelpDeskItem();
+    $hditem->load( dPgetParam( $_POST, "item_id") );
 
-	$hditem = new CHelpDeskItem();
-	$hditem->load( dPgetParam( $_POST, "item_id") );
+    foreach($this->field_event_map as $key => $value){
+      if ($hditem->$value != $this->$value){
+        switch($key){
 
-	//0=>Created
-	$field_event_map = array(
-		1=>"item_title",//Title
-		2=>"item_requestor",//Requestor Name
-		3=>"item_requestor_email",//Requestor E-mail
-		4=>"item_requestor_phone",//Requestor Phone
-		5=>"item_assigned_to",//Assigned To
-		6=>"item_notify",//Notify by e-mail
-		7=>"item_company_id",//Company
-		8=>"item_project_id",//Project
-		9=>"item_calltype",//Call Type
-		10=>"item_source",//Call Source
-		11=>"item_status",//Status
-		12=>"item_priority",//Priority
-		13=>"item_severity",//Severity
-		14=>"item_os",//Operating System
-		15=>"item_application",//Application
-		16=>"item_summary",//Summary
-	);
-	//19=>Deleted
+          case '2':  // Requestor Name
+          case '3':  // Requestor E-mail
+          case '4':  // Requestor Phone
+            $this->log_status($key, " changed to {$this->$value}");
+            break;
+          case '5':  // Assigned To
+            $sql = "SELECT CONCAT(user_first_name,' ',user_last_name) fullname
+                    FROM users
+                    WHERE user_id='{$this->$value}'";
 
-	$c=0;
-	foreach($field_event_map as $key => $value){
-		if(!eval("return \$hditem->$value == \$this->$value;")){
-			switch($key){
-      // Create the comments here
-//					case '':
-//						break;
-				default:
-					$this->log_status($key);
-				break;
-			}
-		}
-		$c++;
-	}
+            $name = db_loadResult($sql);
+            $this->log_status($key, " changed to {$name}");
+            break;
+          case '6':  // Notify by e-mail
+            $this->log_status($key, $this->$value ? " turned on" : " turned off");
+            break;
+          case '7':  // Company
+            $sql = "SELECT company_name
+                    FROM companies
+                    WHERE company_id='{$this->$value}'";
 
+            $company = db_loadResult($sql);
+            $this->log_status($key, " changed to $company");
+            break;
+          case '8':  // Project
+            $sql = "SELECT project_name
+                    FROM projects
+                    WHERE project_id='{$this->$value}'";
+
+            $project = db_loadResult($sql);
+            $this->log_status($key, " changed to $project");
+            break;
+          case '9':  // Call Type
+            $this->log_status($key, " changed to ".$ict[$this->$value]);
+            break;
+          case '10': // Call Source
+            $this->log_status($key, " changed to ".$ics[$this->$value]);
+            break;
+          case '11':
+            $this->log_status($key, " changed to ".$ist[$this->$value]);
+            break;
+          case '12': // Priority
+            $this->log_status($key, " changed to ".$ipr[$this->$value]);
+            break;
+          case '13': // Severity
+            $this->log_status($key, " changed to ".$isv[$this->$value]);
+            break;
+          case '14': // Operating System
+            $this->log_status($key, " changed to ".$ios[$this->$value]);
+            break;
+          case '15': // Application
+            $this->log_status($key, " changed to ".$iap[$this->$value]);
+            break;
+          case '1':  // Title
+          case '16': // Summary
+            $this->log_status($key, " updated");
+            break;
+          default:
+            $this->log_status($key);
+            break;
+        }
+      }
+    }
   }
   
   function log_status ($audit_code, $comment="") {
     global $AppUI;
 
-      $sql = "
-        INSERT INTO helpdesk_item_status
-        (status_item_id,status_code,status_date,status_modified_by,status_comment)
-        VALUES('{$this->item_id}','{$audit_code}',NOW(),'{$AppUI->user_id}','$comment')
-      ";
+    $sql = "
+      INSERT INTO helpdesk_item_status
+      (status_item_id,status_code,status_date,status_modified_by,status_comment)
+      VALUES('{$this->item_id}','{$audit_code}',NOW(),'{$AppUI->user_id}','$comment')
+    ";
 
-      db_exec($sql);
-      if (db_error()) {
-      	return false;
-      }
-      
-      return true;
+    db_exec($sql);
 
+    if (db_error()) {
+      return false;
+    }
+    
+    return true;
   }
 }
 
@@ -215,24 +269,24 @@ class CHelpDeskItem extends CDpObject {
 * CTask Class
 */
 class CTaskLog extends CDpObject {
-	var $task_log_id = NULL;
-	var $task_log_task = NULL;
-	var $task_log_help_desk_id = NULL;
-	var $task_log_name = NULL;
-	var $task_log_description = NULL;
-	var $task_log_creator = NULL;
-	var $task_log_hours = NULL;
-	var $task_log_date = NULL;
-	var $task_log_costcode = NULL;
+  var $task_log_id = NULL;
+  var $task_log_task = NULL;
+  var $task_log_help_desk_id = NULL;
+  var $task_log_name = NULL;
+  var $task_log_description = NULL;
+  var $task_log_creator = NULL;
+  var $task_log_hours = NULL;
+  var $task_log_date = NULL;
+  var $task_log_costcode = NULL;
 
-	function CTaskLog() {
-		$this->CDpObject( 'task_log', 'task_log_id' );
-	}
+  function CTaskLog() {
+    $this->CDpObject( 'task_log', 'task_log_id' );
+  }
 
-// overload check method
-	function check() {
-		$this->task_log_hours = (float) $this->task_log_hours;
-		return NULL;
-	}
+  // overload check method
+  function check() {
+    $this->task_log_hours = (float) $this->task_log_hours;
+    return NULL;
+  }
 }
 ?>
