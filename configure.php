@@ -30,13 +30,18 @@ done
 //then be sure to include a 'list' entry with the options.
 $config_options = array(
 	"items_per_page" => array(
-		"description" => $AppUI->_('Number of items displayed per page on the list view..'),
+		"description" => $AppUI->_('Number of items displayed per page on the list view.'),
 		"value" => 30,
 		'type' => 'text'
 	),
 	"status_log_items_per_page" => array(
-		"description" => $AppUI->_('Number of status log items displayed per page in item view..'),
+		"description" => $AppUI->_('Number of status log items displayed per page in item view.'),
 		"value" => 15,
+		'type' => 'text'
+	),
+	"pages_per_set" => array(
+		"description" => $AppUI->_('Number of pages to display per page set.'),
+		"value" => 5,
 		'type' => 'text'
 	),
 	"default_assigned_to_current_user" => array(

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.44 2004/05/17 18:09:04 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.45 2004/05/17 18:18:16 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -429,32 +429,55 @@ print "$s\n";
 // Pagination
 
 if ($total_results > $items_per_page) {
+  $pages_per_set = $HELPDESK_CONFIG['pages_per_set'];
+  $pages = ceil($total_results / $items_per_page);
+  $set_start = intval($page / $pages_per_set) * $pages_per_set;
+  $set_end = min(($set_start + $pages_per_set), $pages);
+
   print "<tr><td colspan=\"8\" align=\"center\">";
+
+  if ($set_start > 0) {
+    print "<a href=\"?m=helpdesk&a=list&page="
+        . ($set_start - 1)
+        . "\">"
+        . dPshowImage("./images/navfirst.gif", 14, 15, "edit")
+        . "</a> ";
+  }
 
   if ($page > 0) {
     print "<a href=\"?m=helpdesk&a=list&page="
         . ($page - 1)
-        . "\">&larr; Previous</a>&nbsp;&nbsp;";
+        . "\">"
+        . dPshowImage("./images/navleft.gif", 14, 15, "edit")
+        . "</a>&nbsp;&nbsp;";
   }
 
-  $pages = ceil($total_results / $items_per_page);
-
-  for ($i = 0; $i < $pages; $i++) {
+  for ($i = $set_start; $i < $set_end; $i++) {
     if ($i == $page) {
-      print " <b>".($i + 1)."</b>";
+      print " [<b>".($i + 1)."</b>] ";
     } else {
-      print " <a href=\"?m=helpdesk&a=list&page=$i\">"
+      print " [<a href=\"?m=helpdesk&a=list&page=$i\">"
           . ($i + 1)
-          . "</a>";
+          . "</a>] ";
     }
   }
 
   if ($page < ($pages - 1)) {
     print "&nbsp;&nbsp;<a href=\"?m=helpdesk&a=list&page="
         . ($page + 1)
-        . "\">Next &rarr;</a>";
+        . "\">"
+        . dPshowImage("./images/navright.gif", 14, 15, "edit")
+        . "</a>";
   }
 
+  if ($set_end < $pages) {
+    print " <a href=\"?m=helpdesk&a=list&page=$set_end\">"
+        . dPshowImage("./images/navlast.gif", 14, 15, "edit")
+        . "</a>&nbsp;&nbsp;";
+  }
+
+  print "<br>$total_results ".(($total_results == 1) ? "item" : "items").", ";
+  print "$pages ".(($pages == 1) ? "page" : "pages"); 
   print "</td></tr>";
 }
 ?>

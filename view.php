@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.52 2004/05/19 17:23:17 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.53 2004/05/19 17:48:07 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -255,8 +255,35 @@ $tabBox->show();
 </td>
 <td width="40%" valign="top">
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
-<tr><td>
-		<strong><?=$AppUI->_('Status Log')?></strong>
+<tr>
+  <td><strong><?=$AppUI->_('Status Log')?></strong></td>
+  <td align="right">
+    <?php
+    if ($total_logs > $status_log_items_per_page) {
+      $link = "?m=helpdesk&a=view&item_id=$item_id&page=";
+
+      if ($page > 0) {
+        print "<a href=\"$link".($page - 1)."\">&larr; Previous</a>&nbsp;&nbsp;";
+      }
+
+      $pages = ceil($total_logs / $status_log_items_per_page);
+
+      for ($i = 0; $i < $pages; $i++) {
+        if ($i == $page) {
+          print " <b>".($i + 1)."</b>";
+        } else {
+          print " <a href=\"$link$i\">".($i + 1)."</a>";
+        }
+      }
+
+      if ($page < ($pages - 1)) {
+        print "&nbsp;&nbsp;<a href=\"$link".($page + 1)."\">Next &rarr;</a>";
+      }
+    }
+    ?></td>
+  </tr>
+  <tr>
+    <td colspan="2">
 		<table cellspacing="1" cellpadding="2" border="0" width="100%" bgcolor="black">
     <?php
     $last_date = "";
@@ -309,33 +336,6 @@ $tabBox->show();
     }
     ?>
 		</table>
-  </td>
-</tr>
-<tr>
-  <td align="center">
-    <?php
-    if ($total_logs > $status_log_items_per_page) {
-      $link = "?m=helpdesk&a=view&item_id=$item_id&page=";
-
-      if ($page > 0) {
-        print "<a href=\"$link".($page - 1)."\">&larr; Previous</a>&nbsp;&nbsp;";
-      }
-
-      $pages = ceil($total_logs / $status_log_items_per_page);
-
-      for ($i = 0; $i < $pages; $i++) {
-        if ($i == $page) {
-          print " <b>".($i + 1)."</b>";
-        } else {
-          print " <a href=\"$link$i\">".($i + 1)."</a>";
-        }
-      }
-
-      if ($page < ($pages - 1)) {
-        print "&nbsp;&nbsp;<a href=\"$link".($page + 1)."\">Next &rarr;</a>";
-      }
-    }
-    ?>
 </td></tr></table>
 </td></tr></table>
 <form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">
