@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.7 2004/05/05 16:11:51 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.8 2004/05/06 13:22:53 agorski Exp $*/
 
   /*
    * opened = 0
@@ -20,8 +20,9 @@ function vw_idx_handler ($type) {
   	case 1:// Closed
   		$date_field_title = $AppUI->_('Closed On');
   		$date_field_name = "status_date";
-		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0)
-		             AND his.status_code = 2";
+		$where .= "item_status=2
+        	AND status_code=11
+        	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)";
   		break;
   	case 2: // Mine
   		$date_field_title = $AppUI->_('Opened On');
@@ -48,7 +49,9 @@ function vw_idx_handler ($type) {
    * Testing = 5
    */
 
-  $sql = "SELECT hi.*,
+  $sql = "SELECT 
+          distinct(hi.item_id),
+          hi.*,
           CONCAT(u.user_first_name,' ',u.user_last_name) assigned_fullname,
           u.user_email as assigned_email,
           p.project_id,
