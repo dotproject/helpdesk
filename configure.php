@@ -8,6 +8,8 @@ if (!$canEdit) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
+@include_once( "./functions/admin_func.php" );
+
 $CONFIG_FILE = "./modules/helpdesk/config.php";
 
 $AppUI->savePlace();
@@ -24,66 +26,88 @@ done
 */
 
 //All config options, their descriptions and their default values are defined here.  
+//Add new config options here.  type can be "checkbox", "text", or "select".  If it's "select"
+//then be sure to include a 'list' entry with the options.
 $config_options = array(
+	"items_per_page" => array(
+		"description" => $AppUI->_('Number of items displayed per page on the list view..'),
+		"value" => 30,
+		'type' => 'text'
+	),
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Defaults that "assigned to" field to be that of the current user.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"default_notify_by_email" => array(
 		"description" => $AppUI->_('Defaults the "notify by email" field to on.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"default_company_current_company" => array(
 		"description" => $AppUI->_('Defaults the "company" field to be that of the current user.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_search" => array(
 		"description" => $AppUI->_('Show the search option for Title Search.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_call_type" => array(
 		"description" => $AppUI->_('Show the search option for Call Type.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_company" => array(
 		"description" => $AppUI->_('Show the search option for Company.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_status" => array(
 		"description" => $AppUI->_('Show the search option for Status.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_call_source" => array(
 		"description" => $AppUI->_('Show the search option for Call Source.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_project" => array(
 		"description" => $AppUI->_('Show the search option for Project.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_assigned_to" => array(
 		"description" => $AppUI->_('Show the search option for Assigned To.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_priority" => array(
 		"description" => $AppUI->_('Show the search option for Priority.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_application" => array(
 		"description" => $AppUI->_('Show the search option for Application.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_requestor" => array(
 		"description" => $AppUI->_('Show the search option for Requestor.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_severity" => array(
 		"description" => $AppUI->_('Show the search option for Severity.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	),
 	"search_criteria_os" => array(
 		"description" => $AppUI->_('Show the search option for Operation System.'),
-		"value" => 1
+		"value" => 1,
+		'type' => 'checkbox'
 	)
 
 );
@@ -102,9 +126,22 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 			exit;
 		} else {
 			foreach ($config_options as $key=>$value){
-				$val = isset($_POST[$key])?"1":"0";
-
-				fwrite($handle, "\$HELPDESK_CONFIG['".$key."'] = ".$val.";\n");
+				$val="";
+				switch($value['type']){
+					case 'checkbox': 
+						$val = isset($_POST[$key])?"1":"0";
+						break;
+					case 'text': 
+						$val = isset($_POST[$key])?$_POST[$key]:"";
+						break;
+					case 'select': 
+						$val = isset($_POST[$key])?$_POST[$key]:"0";
+						break;
+					default:
+						break;
+				}
+				
+				fwrite($handle, "\$HELPDESK_CONFIG['".$key."'] = '".$val."';\n");
 			}
 
 			fwrite($handle, "?> \n");
@@ -117,6 +154,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 } else if(dPgetParam( $_POST, "Cancel", '' )!=''){
 	$AppUI->redirect("m=system&a=viewmods");
 }
+
 
 $HELPDESK_CONFIG = array();
 require_once( $CONFIG_FILE );
@@ -144,7 +182,23 @@ foreach ($config_options as $key=>$value){
 ?>
 	<tr>
 		<td align="left"><?=$value['description']?></td>
-		<td><input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked":""?>></td>
+		<td><?php
+		switch($value['type']){
+			case 'checkbox': ?>
+				<input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked=\"checked\"":""?>>
+				<?php
+				break;
+			case 'text': ?>
+				<input type="text" name="<?=$key?>" value="<?=$value['value']?>">
+				<?php
+				break;
+			case 'select': 
+				print arraySelect( $value["list"], $key, 'class=text size=1', $value["value"] );
+				break;
+			default:
+				break;
+		}
+		?></td>
 	</tr>
 <?php	
 }
