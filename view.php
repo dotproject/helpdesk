@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.60 2004/05/26 00:17:36 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.61 2004/05/26 18:22:54 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -40,11 +40,9 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 	$titleBlock->show();
 } else {
-
-
   // Check permissions on this record
-  $canRead = hditemReadable($hditem['item_company_id'], $hditem['item_created_by']);
-  $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
+  $canRead = hditemReadable($hditem);
+  $canEdit = hditemEditable($hditem);
 
   if(!$canRead && !$canEdit){
 	  $AppUI->redirect( "m=public&a=access_denied" );

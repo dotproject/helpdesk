@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.50 2004/05/26 15:45:07 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.51 2004/05/27 13:41:03 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -14,7 +14,7 @@ db_loadHash( $sql, $hditem );
 // Check permissions for this record
 if ($item_id) {
   // Already existing item
-  $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
+  $canEdit = hditemEditable($hditem);
 } else {
   // Make sure we can create items
   if (!hditemCreate()) {

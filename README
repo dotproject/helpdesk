@@ -1,4 +1,4 @@
-$Id: README,v 1.5 2004/05/25 18:45:57 agorski Exp $
+$Id: README,v 1.6 2004/05/26 18:48:03 agorski Exp $
 
 ABOUT
 
@@ -13,7 +13,9 @@ PERMISSIONS
     Let our example user be Joe
 
     1. Joe will always have permission to edit his own Help Desk items, as long
-    as he has at least read-only permissions to the Help Desk.
+    as he has at least read-only permissions to the Help Desk. That means that
+    items he created, he as assigned or he requested will always be editable by
+    him.
 
     2. Permissions to the Help Desk module overwrite company permissions. For
     instance, if Joe has read-write access to a company but has read only

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.58 2004/05/27 13:41:03 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.59 2004/05/27 14:23:01 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -360,7 +360,7 @@ function changeList() {
 $s = '';
 
 foreach ($rows as $row) {
-  $canEdit = hditemEditable($row['item_company_id'], $row['item_created_by']);
+  $canEdit = hditemEditable($row);
 
   /* We need to check if the user who requested the item is still in the
      system. Just because we have a requestor id does not mean we'll be

@@ -11,29 +11,28 @@ if (isset($_GET['page'])) {
 
 $page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage') : 0;
 
+// Load status log
+$sql = "SELECT *,
+        TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by,
+        u.user_email as email
+        FROM helpdesk_item_status h
+        LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
+        WHERE h.status_item_id='{$hditem['item_id']}'
+        ORDER BY h.status_date";
 
-  // Load status log
-  $sql = "SELECT *,
-          TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by,
-          u.user_email as email
-          FROM helpdesk_item_status h
-          LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
-          WHERE h.status_item_id='{$hditem['item_id']}'
-          ORDER BY h.status_date";
+// Pagination
+$status_log_items_per_page = $HELPDESK_CONFIG['status_log_items_per_page'];
 
-  // Pagination
-  $status_log_items_per_page = $HELPDESK_CONFIG['status_log_items_per_page'];
+// Figure out number of total log entries
+$total_logs = db_num_rows(db_exec($sql));
 
-  // Figure out number of total log entries
-  $total_logs = db_num_rows(db_exec($sql));
+// Now lets do the offset
+$offset = $page * $status_log_items_per_page;
 
-  // Now lets do the offset
-  $offset = $page * $status_log_items_per_page;
+// Limit the results to enable pagination
+$sql .= " LIMIT $offset,$status_log_items_per_page";
 
-  // Limit the results to enable pagination
-  $sql .= " LIMIT $offset,$status_log_items_per_page";
-
-  $status_log = db_loadList($sql);
+$status_log = db_loadList($sql);
   
 ?>
 
@@ -79,55 +78,55 @@ $page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage'
     ?></td>
   </tr>
 </table>
-		<table cellspacing="1" cellpadding="2" border="0" width="100%" class="std">
-    <?php
-    $last_date = "";
+<table cellspacing="1" cellpadding="2" border="0" width="100%" class="std">
+<?php
+$last_date = "";
 
-    if (is_array($status_log)) {
-      foreach ($status_log as $log) {
-        $log_date = new CDate($log['status_date']);
-        $date = $log_date->format( $df );
-        if($date!=$last_date){
-          $last_date = $date;
-        ?>
-        <tr>
-          <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
-        </tr>
-        <?php
-        }
-      
-        $time = $log_date->format( $tf );
-        ?>
-        <tr>
-          <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
-          <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
-          <td class="hilite" width="98%"><?php
-            if($log['status_code']==0 || $log['status_code']==17){
-              // Created or Deleted
-              print $isa[$log['status_code']];
-            } else if ($log['status_code'] == 16) {
-              // Comment
-              print "<a href=\"javascript:void(0);\"
-                        onClick=\"toggle_comment('{$log['status_id']}_short');
-                                  toggle_comment('{$log['status_id']}_long');\">"
-                  . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
-                  . "</a>";
-
-              print "<span style='display: inline' id='{$log['status_id']}_short'> "
-                  . "{$isa[$log['status_code']]} "
-                  . htmlspecialchars(substr($log['status_comment'],0,8))
-                  . "</span><span style='display: none' id='{$log['status_id']}_long'> "
-                  . "{$isa[$log['status_code']]} "
-                  . htmlspecialchars($log['status_comment'])
-                  . "</span>";
-            } else {
-              // Everything else
-              print $isa[$log['status_code']]." ".$log['status_comment'];
-            }
-          ?></td>
-        </tr>
-        <?php
-      }
-    }
+if (is_array($status_log)) {
+  foreach ($status_log as $log) {
+    $log_date = new CDate($log['status_date']);
+    $date = $log_date->format( $df );
+    if($date!=$last_date){
+      $last_date = $date;
     ?>
-		</table>
+    <tr>
+      <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
+    </tr>
+    <?php
+    }
+  
+    $time = $log_date->format( $tf );
+    ?>
+    <tr>
+      <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
+      <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+      <td class="hilite" width="98%"><?php
+        if($log['status_code']==0 || $log['status_code']==17){
+          // Created or Deleted
+          print $isa[$log['status_code']];
+        } else if ($log['status_code'] == 16) {
+          // Comment
+          print "<a href=\"javascript:void(0);\"
+                    onClick=\"toggle_comment('{$log['status_id']}_short');
+                              toggle_comment('{$log['status_id']}_long');\">"
+              . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
+              . "</a>";
+
+          print "<span style='display: inline' id='{$log['status_id']}_short'> "
+              . "{$isa[$log['status_code']]} "
+              . htmlspecialchars(substr($log['status_comment'],0,8))
+              . "</span><span style='display: none' id='{$log['status_id']}_long'> "
+              . "{$isa[$log['status_code']]} "
+              . htmlspecialchars($log['status_comment'])
+              . "</span>";
+        } else {
+          // Everything else
+          print $isa[$log['status_code']]." ".$log['status_comment'];
+        }
+      ?></td>
+    </tr>
+    <?php
+  }
+}
+?>
+</table>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.15 2004/05/26 19:15:28 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.16 2004/05/27 13:41:03 agorski Exp $*/
 
   /*
    * opened = 0
@@ -86,10 +86,11 @@ function vw_idx_handler ($type) {
        system. Just because we have a requestor id does not mean we'll be
        able to retrieve a full name */
 
-	if ($row[$date_field_name]) {
-		$date = new CDate( $row[$date_field_name] );
-		$tc = $date->format( $format );
-	}
+    if ($row[$date_field_name]) {
+      $date = new CDate( $row[$date_field_name] );
+      $tc = $date->format( $format );
+    }
+
     ?>
     <tr>
       <td><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>

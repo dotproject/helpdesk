@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.45 2004/05/27 14:23:01 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.46 2004/05/27 14:33:23 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -149,6 +149,10 @@ class CHelpDeskItem extends CDpObject {
   
   function notify($status_log_id) {
     global $AppUI, $ist, $ict, $isa;
+
+    if ($this->item_assigned_to == $AppUI->user_id) {
+      return;
+    }
 
     // Pull up the assignee's e-mail
     $sql = "SELECT user_email

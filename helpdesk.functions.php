@@ -101,22 +101,41 @@ function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_comp
   return $sql;
 }
 
-function hditemReadable($item_company_id, $item_created_by) {
+function hditemReadable($hditem) {
   global $AppUI;
 
-  $canReadCompany = !getDenyRead("companies", $item_company_id);
+  $company_id = $hditem['item_company_id'];
+  $created_by = $hditem['item_created_by'];
 
-  if($canReadCompany || ($item_created_by == $AppUI->user_id)){
+  $canReadCompany = !getDenyRead("companies", $company_id);
+
+  if($canReadCompany || ($created_by == $AppUI->user_id)){
     return true;
   } else {
     return false;
   }
 }
 
-function hditemEditable($item_company_id, $item_created_by) {
+function hditemEditable($hditem) {
   global $HELPDESK_CONFIG, $AppUI;
 
+  $company_id = $hditem['item_company_id'];
+  $created_by = $hditem['item_created_by'];
+  $assigned_to = $hditem['item_assigned_to'];
+  $requested_by = $hditem['item_requestor_id'];
 
+  /* Items can be edited by a user if
+    1. He is the creator
+    2. He is the assignee
+    3. He is the requestor
+  */
+  if (($created_by == $AppUI->user_id) ||
+      ($assigned_to == $AppUI->user_id) ||
+      ($requested_by == $AppUI->user_id)) {
+    return true;
+  }
+
+  // If the item is not assigned to a company, figure out who can access it
   if ($item_company_id == 0) {
     if ($HELPDESK_CONFIG['no_company_editable']) {
       $canEditCompany = 1;
@@ -127,9 +146,9 @@ function hditemEditable($item_company_id, $item_created_by) {
     $canEditCompany = !getDenyEdit("companies", $item_company_id);
   }
 
-  if (!hditemCreate() && ($item_created_by != $AppUI->user_id)) {
+  if (!hditemCreate()) {
     return false;
-  } else if($canEditCompany || ($item_created_by == $AppUI->user_id)){
+  } else if($canEditCompany){
     return true;
   } else {
     return false;

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.3 2004/05/19 17:23:18 agorski Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.4 2004/05/24 19:07:22 agorski Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -50,7 +50,7 @@ $sql = "SELECT item_company_id,item_created_by
 
 db_loadHash( $sql, $hditem );
 
-$canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
+$canEdit = hditemEditable($hditem);
 
 foreach ($logs as $row) {
 	$task_log_date = intval( $row['task_log_date'] ) ? new CDate( $row['task_log_date'] ) : null;
