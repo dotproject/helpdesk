@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.36 2004/04/28 20:33:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.37 2004/04/29 14:12:07 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -232,6 +232,7 @@ function selectList( listName, target ) {
   <input type="hidden" name="dosql" value="do_item_aed" />
   <input name="del" type="hidden" value="0" />
   <input type="hidden" name="item_id" value="<?=$item_id?>" />
+  <input type="hidden" name="item_requestor_type" value="<?=@$hditem["item_requestor_type"]?>" />
   <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
   <?php if(!$item_id){ ?>
