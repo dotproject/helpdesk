@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.35 2004/04/23 17:17:43 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.36 2004/04/23 20:28:19 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -13,6 +13,7 @@ $sql = "SELECT hi.*,
         CONCAT(u.user_first_name,' ',u.user_last_name) assigned_to_fullname,
         CONCAT(u1.user_first_name,' ',u1.user_last_name) created_by_fullname,
         CONCAT(u2.user_first_name,' ',u2.user_last_name) modified_by_fullname,
+        u2.user_email as modified_by_email,
         u.user_email as assigned_email,
         p.project_id,
         p.project_name,
@@ -33,7 +34,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->show();
 } else {
   $sql = "SELECT *,
-          CONCAT(u.user_first_name,' ',u.user_last_name) modified_by
+          TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by, u.user_email as email
           FROM helpdesk_item_status h
           LEFT JOIN users u ON u.user_id = h.status_modified_by
           WHERE h.status_item_id='{$hditem['item_id']}'
@@ -58,7 +59,7 @@ if (!db_loadHash( $sql, $hditem )) {
 
 	if(@$hditem["item_modified"]){
 		$modified = new CDate( @$hditem["item_modified"] );
-		$tm = $modified->format( $format );
+		$tm = $modified->format( $tf );
 	}
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
@@ -178,7 +179,8 @@ function delIt() {
 	</td>
 	<td width="50%" valign="top">
 		<strong><?=$AppUI->_('Status Log')?></strong>
-		<table cellspacing="1" cellpadding="2" border="0" width="100%">
+		<table cellspacing="1" cellpadding="2" border="0" width="100%" bgcolor="black">
+<!--
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Created')?>:</td>
 			<td class="hilite" width="100%">On <?=$tc?> by
@@ -186,24 +188,39 @@ function delIt() {
         print $hditem['created_by_fullname'] ? $hditem['created_by_fullname'] : "?";
       ?></td>
 		</tr>
+-->
     <?php
+    $last_date = "";
     foreach ($status_log as $log) {
 		  $log_date = new CDate($log['status_date']);
-		  $date = $log_date->format( $format );
+		  $date = $log_date->format( $df );
+		  if($date!=$last_date){
+		  	$last_date = $date;
+		  ?>
+      <tr>
+        <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
+      </tr>
+		  <?php
+		  }
+		
+		  $time = $log_date->format( $tf );
       ?>
       <tr>
-        <td align="right" nowrap="nowrap"><?=trim($ist[$log['status_code']])?>:</td>
+        <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
+        <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+        <td class="hilite" nowrap="nowrap" width="98%"><?=($log['status_comment']?$log['status_comment']:(trim($isa[$log['status_code']])." ".$AppUI->_('changed')) )?></td>
+<!--
+        <td align="right" nowrap="nowrap"><?=trim($isa[$log['status_code']])?>:</td>
         <td class="hilite" width="100%">On <?=$date?> by <?=$log['modified_by']?></td>
+-->
       </tr>
       <?php
     }
     ?>
     <tr>
-      <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
-      <td class="hilite" width="100%">On <?=$tm?> by
-      <?php
-        print $hditem['modified_by_fullname'] ? $hditem['modified_by_fullname'] : "?";
-      ?></td>
+        <td class="hilite" nowrap="nowrap" width="1%"><?=$tm?></td>
+        <td class="hilite" nowrap="nowrap" width="1%"><?=($hditem['modified_by_fullname'] ? ($hditem['modified_by_email']?"<a href=\"mailto: {$hditem['modified_by_email']}\">{$hditem['modified_by_fullname']}</a>":$hditem['modified_by_fullname']) : $AppUI->_('unknown')) ?></td>
+        <td class="hilite" nowrap="nowrap" width="98%"><?=$AppUI->_('Last Modified')?></td>
     </tr>
 		</table>
 	</td>
