@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.13 2004/04/26 20:16:33 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.14 2004/04/26 21:09:51 bloaterpaste Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -7,6 +7,23 @@ $new_item = !($item_id>0);
 
 if($do_task_log=="1"){
 
+	//first update the status on to current helpdesk item.
+	$hditem = new CHelpDeskItem();
+	$hditem->load( $item_id );
+	$new_status = dPgetParam( $_POST, 'item_status', 0 );
+	if($new_status!=$hditem->item_status){
+		$hditem->log_status(11, "changed from \"".$ist[$hditem->item_status]."\" to \"".$ist[$new_status]."\"");
+		$hditem->item_status = $new_status;
+
+		if (($msg = $hditem->store())) {
+			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->redirect();
+		}
+	}
+
+
+
+	//then create/update the task log
 	$obj = new CTaskLog();
 
 	if (!$obj->bind( $_POST )) {
