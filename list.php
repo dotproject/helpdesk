@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.43 2004/05/13 16:46:56 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.44 2004/05/17 18:09:04 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -299,9 +299,7 @@ $total_results = db_num_rows(db_exec($sql));
 $offset = $page * $items_per_page;
 
 // Limit the results to enable pagination
-$sql .= " LIMIT $items_per_page
-          OFFSET $offset";
-
+$sql .= " LIMIT $offset,$items_per_page";
 
 // Get the actual, paginated results
 $rows = db_loadList( $sql );
