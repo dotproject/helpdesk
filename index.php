@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.6 2004/04/19 21:06:46 gatny Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.7 2004/04/21 15:08:54 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -26,7 +26,7 @@ $numtotal = db_loadResult ($sql);
 
 $sql = "SELECT COUNT(item_id)
         FROM helpdesk_items
-        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_resolved) = 0)
         AND (item_status = 2)";
 
 $numclosed = db_loadResult ($sql);
