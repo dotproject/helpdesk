@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.17 2004/05/28 13:17:39 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.18 2004/06/14 20:58:11 agorski Exp $*/
 
   /*
    * opened = 0
@@ -12,20 +12,20 @@ function vw_idx_handler ($type) {
 
   switch($type){
   	case 0:// Opened
-  		$date_field_title = $AppUI->_('helpdeskOpenedOn');
+  		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
 		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0)
 		             AND his.status_code = 0";
   		break;
   	case 1:// Closed
-  		$date_field_title = $AppUI->_('helpdeskClosedOn');
+  		$date_field_title = $AppUI->_('Closed On');
   		$date_field_name = "status_date";
 		$where .= "item_status=2
         	     AND status_code=11
         	     AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)";
   		break;
   	case 2: // Mine
-  		$date_field_title = $AppUI->_('helpdeskOpenedOn');
+  		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
       		$where .= "item_assigned_to={$AppUI->user_id}
                  AND item_status !=2
@@ -71,13 +71,13 @@ function vw_idx_handler ($type) {
   ?>
   <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
   <tr>
-    <th><?=$AppUI->_('helpdeskNumber')?></th>
-    <th><?=$AppUI->_('helpdeskRequestor')?></th>
-    <th><?=$AppUI->_('helpdeskTitle')?></th>
-    <th nowrap="nowrap"><?=$AppUI->_('helpdeskAssignedTo')?></th>
-    <th><?=$AppUI->_('helpdeskStatus')?></th>
-    <th><?=$AppUI->_('helpdeskPriority')?></th>
-    <th><?=$AppUI->_('helpdeskProject')?></th>
+    <th><?=$AppUI->_('Number')?></th>
+    <th><?=$AppUI->_('Requestor')?></th>
+    <th><?=$AppUI->_('Title')?></th>
+    <th nowrap="nowrap"><?=$AppUI->_('Assigned To')?></th>
+    <th><?=$AppUI->_('Status')?></th>
+    <th><?=$AppUI->_('Priority')?></th>
+    <th><?=$AppUI->_('Project')?></th>
     <th nowrap="nowrap"><?=$date_field_title?></th>
   </tr>
   <?php
@@ -93,7 +93,7 @@ function vw_idx_handler ($type) {
 
     ?>
     <tr>
-      <td><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>
+      <td nowrap="nowrap"><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>
           <?=dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')?></td>
       <td nowrap=\"nowrap\">
       <?php
@@ -118,7 +118,7 @@ function vw_idx_handler ($type) {
       <td align="center" nowrap><?=$AppUI->_($ipr[@$row["item_priority"]])?></td>
       <td align="center" style="background-color: #<?=$row['project_color_identifier']?>;" nowrap>
       <?php if ($row['project_id']) { ?>
-        <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>"><?=$row['project_name']?></a>
+        <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>" style="color: <?= bestColor( $row["project_color_identifier"] ) ?>;"><?=$row['project_name']?></a>
       <?php } else { ?>
         -
       <?php } ?>

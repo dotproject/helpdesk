@@ -103,7 +103,7 @@ if (is_array($status_log)) {
       <td class="hilite" width="98%"><?php
         if($log['status_code']==0 || $log['status_code']==17){
           // Created or Deleted
-          print $isa[$log['status_code']];
+          print $AppUI->_($isa[$log['status_code']]);
         } else if ($log['status_code'] == 16) {
           // Comment
           print "<a href=\"javascript:void(0);\"
@@ -113,15 +113,15 @@ if (is_array($status_log)) {
               . "</a>";
 
           print "<span style='display: inline' id='{$log['status_id']}_short'> "
-              . "{$isa[$log['status_code']]} "
+              . $AppUI->_($isa[$log['status_code']])
               . htmlspecialchars(substr($log['status_comment'],0,8))
               . "</span><span style='display: none' id='{$log['status_id']}_long'> "
-              . "{$isa[$log['status_code']]} "
+              . $AppUI->_($isa[$log['status_code']])
               . htmlspecialchars($log['status_comment'])
               . "</span>";
         } else {
           // Everything else
-          print $isa[$log['status_code']]." ".$log['status_comment'];
+          print $AppUI->_($isa[$log['status_code']])." ".$log['status_comment'];
         }
       ?></td>
     </tr>

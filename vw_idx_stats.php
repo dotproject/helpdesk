@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.9 2004/05/27 13:41:03 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.10 2004/06/14 20:58:11 agorski Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();
@@ -17,7 +17,7 @@ foreach ($ict as $k => $v) {
 ?>
 <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
 <tr>
-	<th colspan="2"><?=$AppUI->_('helpdeskType')?></th>
+	<th colspan="2"><?=$AppUI->_('Type')?></th>
 <?php
 	$s = '';
 	foreach ($ist as $k => $v) {

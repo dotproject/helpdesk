@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.49 2004/06/03 18:22:05 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.50 2004/06/14 20:58:11 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -83,7 +83,7 @@ class CHelpDeskItem extends CDpObject {
 
   function check() {
     if ($this->item_id === NULL) {
-      return $AppUI->_('helpdeskErrorIDNull');
+      return $AppUI->_('Help Desk Item ID is NULL');
     }
     if (!$this->item_created) { 
       $this->item_created = db_unix2dateTime( time() );
@@ -184,38 +184,38 @@ class CHelpDeskItem extends CDpObject {
     $mail = new Mail;
 
     if ($mail->ValidEmail($assigned_to_email)) {
-      $subject = $AppUI->cfg['page_title']." ".$AppUI->_('helpdeskHDItem')." #{$this->item_id}";
+      $subject = $AppUI->cfg['page_title']." ".$AppUI->_('Help Desk Item')." #{$this->item_id}";
 
       switch ($type) {
         case STATUS_LOG:
-          $body = $AppUI->_('helpdeskTitle').": {$this->item_title}\n"
-                . $AppUI->_('helpdeskCallType').": {$ict[$this->item_calltype]}\n"
-                . $AppUI->_('helpdeskStatus').": {$ist[$this->item_status]}\n";
+          $body = $AppUI->_('Title').": {$this->item_title}\n"
+                . $AppUI->_('Call Type').": {$ict[$this->item_calltype]}\n"
+                . $AppUI->_('Status').": {$ist[$this->item_status]}\n";
 
           if($log['status_code'] == 0){
-            $mail->Subject("$subject ".$AppUI->_('helpdeskCreated'));
+            $mail->Subject("$subject ".$AppUI->_('Created'));
           } else {
-            $mail->Subject("$subject ".$AppUI->_('helpdeskUpdated'));
-            $body .= $AppUI->_('helpdeskUpdate').": {$isa[$log['status_code']]} {$log['status_comment']}\n";
+            $mail->Subject("$subject ".$AppUI->_('Updated'));
+            $body .= $AppUI->_('Update').": {$isa[$log['status_code']]} {$log['status_comment']}\n";
           }
 
-          $body .= $AppUI->_('helpdeskLink')
+          $body .= $AppUI->_('Link')
                  . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
                  . "\n"
-                 . $AppUI->_('helpdeskSummary')
+                 . $AppUI->_('Summary')
                  . ":\n"
                  . $this->item_summary;
           break;
         case TASK_LOG:
-          $mail->Subject("$subject ".$AppUI->_('helpdeskTaskLog')." ".$AppUI->_('helpdeskUpdate'));
-          $body = $AppUI->_('helpdeskSummary')
+          $mail->Subject("$subject ".$AppUI->_('Task Log')." ".$AppUI->_('Update'));
+          $body = $AppUI->_('Summary')
                 . ": "
                 . $log['task_log_name']
                 . "\n"
-                . $AppUI->_('helpdeskLink')
+                . $AppUI->_('Link')
                 . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
                 . "\n"
-                . $AppUI->_('helpdeskComments')
+                . $AppUI->_('Comments')
                 . ":\n" 
                 . $log['task_log_description'];
           break;
@@ -322,24 +322,24 @@ class CHelpDeskItem extends CDpObject {
               }
               break;
             case 'item_calltype':
-              $old = $ict[$hditem->$value];
-              $new = $ict[$this->$value];
+              $old = $AppUI->_($ict[$hditem->$value]);
+              $new = $AppUI->_($ict[$this->$value]);
               break;
             case 'item_source':
               $old = $ics[$hditem->$value];
               $new = $ics[$this->$value];
               break;
             case 'item_status':
-              $old = $ist[$hditem->$value];
-              $new = $ist[$this->$value];
+              $old = $AppUI->_($ist[$hditem->$value]);
+              $new = $AppUI->_($ist[$this->$value]);
               break;
             case 'item_priority':
-              $old = $ipr[$hditem->$value];
-              $new = $ipr[$this->$value];
+              $old = $AppUI->_($ipr[$hditem->$value]);
+              $new = $AppUI->_($ipr[$this->$value]);
               break;
             case 'item_severity':
-              $old = $isv[$hditem->$value];
-              $new = $isv[$this->$value];
+              $old = $AppUI->_($isv[$hditem->$value]);
+              $new = $AppUI->_($isv[$this->$value]);
               break;
             case 'item_os':
               $old = $ios[$hditem->$value];
@@ -350,8 +350,8 @@ class CHelpDeskItem extends CDpObject {
               $new = $iap[$this->$value];
               break;
             case 'item_notify':
-              $old = $hditem->$value ? $AppUI->_('helpdeskOn') : $AppUI->_('helpdeskOff');
-              $new = $this->$value ? $AppUI->_('helpdeskOn') : $AppUI->_('helpdeskOff');
+              $old = $hditem->$value ? $AppUI->_('On') : $AppUI->_('Off');
+              $new = $this->$value ? $AppUI->_('On') : $AppUI->_('Off');
               break;
             default:
               $old = $hditem->$value;
@@ -359,11 +359,11 @@ class CHelpDeskItem extends CDpObject {
               break;
 				  }
 
-				  $last_status_log_id = $this->log_status($key, $AppUI->_('helpdeskChangedFrom')
+				  $last_status_log_id = $this->log_status($key, $AppUI->_('changed from')
                                                       . " \""
                                                       . addslashes($old)
                                                       . "\" "
-                                                      . $AppUI->_('helpdeskChangedTo')
+                                                      . $AppUI->_('to')
                                                       . " \""
                                                       . addslashes($new)
                                                       . "\"");
