@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.11 2004/04/21 21:04:14 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.12 2004/04/22 14:54:21 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -129,8 +129,11 @@ class CHelpDeskItem extends CDpObject {
       $body = "Title: {$this->item_title}\n"
             . "Call Type: {$ict[$this->item_calltype]}\n"
             . "Status: {$ist[$this->item_status]}\n"
+            . "Link: {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
             . "\nSummary:\n\n"
-            . $this->item_summary;
+            . $this->item_summary
+            . "\n\n-- \n"
+            . "Sincerely,\nThe dotProject Help Desk module";
 
       if ($mail->ValidEmail($this->item_requestor_email)) {
         $email = $this->item_requestor_email;

@@ -1,29 +1,16 @@
-<?php /* HELPDESK $Id: setup.php,v 1.11 2004/04/20 20:36:53 gatny Exp $ */
-/*
-dotProject Module
+<?php /* HELPDESK $Id: setup.php,v 1.12 2004/04/21 00:00:11 bloaterpaste Exp $ */
 
-Name:      HelpDesk
-Directory: HelpDesk
-Version:   0.1
-Class:     user
-UI Name:   HelpDesk
-UI Icon:
-
-This file does no action in itself.
-If it is accessed directory it will give a summary of the module parameters.
-*/
-
-// MODULE CONFIGURATION DEFINITION
+/* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.1';
+$config['mod_version'] = '0.2';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
 $config['mod_ui_name'] = 'Help Desk';
 $config['mod_ui_icon'] = 'helpdesk.png';
-$config['mod_description'] = 'Help Desk is a bug, feature request,
-                              complaint and suggestion tracking centre';
+$config['mod_description'] = 'Help Desk is a bug, feature request, '
+                           . 'complaint and suggestion tracking centre';
 
 if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
@@ -31,17 +18,7 @@ if (@$a == 'setup') {
 
 require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
 
-/*
-  MODULE SETUP CLASS
-	This class must contain the following methods:
-	install - creates the required db tables
-	remove - drop the appropriate db tables
-	upgrade - upgrades tables from previous versions
-*/
 class CSetupHelpDesk {
-/*
-	Install routine
-*/
 	function install() {
 		$sql = "
 			CREATE TABLE helpdesk_items (
@@ -55,7 +32,6 @@ class CSetupHelpDesk {
 			  `item_priority` int(3) unsigned NOT NULL default '0',
 			  `item_severity` int(3) unsigned NOT NULL default '0',
 			  `item_status` int(3) unsigned NOT NULL default '0',
-
 			  `item_assigned_to` int(11) NOT NULL default '0',
 			  `item_requestor` varchar(48) NOT NULL default '',
 			  `item_requestor_id` int(11) NOT NULL default '0',
@@ -65,7 +41,6 @@ class CSetupHelpDesk {
 			  `item_assetno` varchar(24) NOT NULL default '',
 			  `item_created` datetime default NULL,
 			  `item_modified` datetime default NULL,
-
 			  `item_receipt_target` datetime default NULL,
 			  `item_receipt_custom` int(1) unsigned NOT NULL default '0',
 			  `item_receipted` datetime default NULL,
@@ -76,8 +51,8 @@ class CSetupHelpDesk {
 			  `item_project_id` int(11) NOT NULL default '0',
 			  `item_company_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY (item_id)
-			) TYPE=MyISAM
-		";
+			) TYPE=MyISAM";
+
 		db_exec( $sql );
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
@@ -106,9 +81,7 @@ class CSetupHelpDesk {
 
 		return null;
 	}
-/*
-	Removal routine
-*/
+
 	function remove() {
 		$sql = "DROP TABLE helpdesk_items";
 		db_exec( $sql );
@@ -124,11 +97,32 @@ class CSetupHelpDesk {
 
 		return null;
 	}
-/*
-	Upgrade routine
-*/
-	function upgrade() {
-		return null;
+
+	function upgrade($old_version) {
+    global $AppUI;
+
+    switch ($old_version) {
+      case "0.1":
+        $sql = "
+          ALTER TABLE `helpdesk_items`
+          ADD `item_requestor_phone` varchar(30) NOT NULL default ''AFTER `item_requestor_email`,
+          ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
+          ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`;";
+        break;
+      default:
+        return false;
+    }
+
+    // Returns true if success, false otherwise
+    db_exec($sql);
+
+    if (db_error()) {
+      /* Setting a message with $AppUI-setMsg would be pointless since it's
+         just overwritten */
+      return false;
+    } else {
+      return true;
+    }
 	}
 }
 
