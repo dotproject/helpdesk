@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.28 2004/04/15 18:50:16 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.29 2004/04/15 20:21:54 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -94,11 +94,12 @@ $rows = db_loadList( $sql );
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 if ($canEdit) {
 	$titleBlock->addCell(
-		'<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
+		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
 }
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 $titleBlock->show();
 
 ?>
@@ -124,7 +125,7 @@ function changeList() {
 	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority', 'size="1" class="text" onchange="changeList()"', $priority )?>
 	</td>
 	<td align="right">
-		<input type="submit" value="<?=$AppUI->_('search')?>" class="button" />
+		<input type="submit" value="<?=$AppUI->_('Search')?>" class="button" />
 	</td>
 </tr>
 </form>
@@ -208,11 +209,12 @@ print "$s\n";
 
     if ($orderby == $field) {
       $link .= $orderdesc ? "0" : "1";
+      $arrow .= $orderdesc ? "&uarr;" : "&darr;";
     } else {
       $link .= "0";
     }
 
-    $link .= "\">$name</a>";
+    $link .= "\">$name</a> $arrow";
 
     return $link;
   }

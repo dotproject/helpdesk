@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.18 2004/04/15 19:15:53 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.19 2004/04/15 20:21:54 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -22,7 +22,8 @@ WHERE item_id = '$item_id'
 
 if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock = new CTitleBlock( 'Invalid Helpdesk ID', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_VIEW' );
-	$titleBlock->addCrumb( "?m=helpdesk", "Index" );
+	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 	$titleBlock->show();
 } else {
   /* We need to check if the user who requested the item is still in the
@@ -47,10 +48,11 @@ if (!db_loadHash( $sql, $hditem )) {
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
+  $titleBlock->addCrumbDelete("Delete this item", $canDelete);
 	if ($canEdit) {
 		$titleBlock->addCell(
-			'<input type="submit" class="button" value="'.$AppUI->_('new item').'">', '',
+			'<input type="submit" class="button" value="'.$AppUI->_('New Item').'">', '',
 			'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 		);
 		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", "Edit this item" );
@@ -58,7 +60,20 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->show();
 ?>
 
+<script language="JavaScript">
+function delIt() {
+  if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {
+    document.frmDelete.submit();
+  }
+}
+</script>
+
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
+<form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">
+  <input type="hidden" name="dosql" value="do_item_aed">
+  <input type="hidden" name="del" value="1" />
+  <input type="hidden" name="item_id" value="<?=$item_id?>" />
+</form>
 <tr>
 	<td valign="top" width="50%">
 		<strong><?=$AppUI->_('Details')?></strong>

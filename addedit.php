@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.10 2004/04/15 19:11:48 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.11 2004/04/15 20:21:54 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -40,7 +40,7 @@ $projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 $ttl = $item_id > 0 ? "Editing Item #$item_id" : "Adding Item";
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "View this item" );
 $titleBlock->show();
 
@@ -223,8 +223,8 @@ function setRequestor( key, val ) {
 	</td>
 </tr>
 <tr>
-	<td><input type="button" value="<?=$AppUI->_('back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
-	<td align="right"><input type="button" value="<?=$AppUI->_('submit')?>" class="button" onClick="submitIt()" /></td>
+	<td><input type="button" value="<?=$AppUI->_('Back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
+	<td align="right"><input type="button" value="<?=$AppUI->_('Submit')?>" class="button" onClick="submitIt()" /></td>
 </tr>
 </form>
 </table>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.4 2004/04/15 17:32:01 adam Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.5 2004/04/15 20:21:54 adam Exp $ */
 
 // enable debug output
 #include( "../../misc/debug.php" );
@@ -14,14 +14,14 @@ $tab = $AppUI->getState( 'HelpDeskIdxTab' ) !== NULL ? $AppUI->getState( 'HelpDe
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 if ($canEdit) {
 	$titleBlock->addCell(
-		'<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
+		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
+	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 }
 $titleBlock->show();
-?>
 
+?>
 <table cellspacing="0" cellpadding="2" border="0" width="100%">
 <tr>
 	<td width="80%" valign="top">

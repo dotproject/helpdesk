@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.4 2004/04/15 17:32:01 adam Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.5 2004/04/15 20:21:54 adam Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -20,7 +20,8 @@ if ($del) {
 	if (($msg = $hditem->delete())) {
 		$AppUI->setMsg( $msg, UI_MSG_ERROR );
 	} else {
-		$AppUI->setMsg( "Help Desk item deleted", UI_MSG_ALERT );
+		$AppUI->setMsg( "Help Desk item deleted", UI_MSG_OK );
+    $AppUI->redirect('', -1);
 	}
 } else {
 	if (($msg = $hditem->store())) {
