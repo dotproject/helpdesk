@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.68 2004/07/12 17:34:43 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.69 2004/07/14 16:36:41 agorski Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -193,12 +193,12 @@ if (!db_loadHash( $sql, $hditem )) {
   <?php 
 
   $tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
-  $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
+  $tabBox->add( dPgetConfig('root_dir') . '/modules/helpdesk/vw_logs', 'Task Logs' );
 
   if ($canEdit) {
-    $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
+    $tabBox->add( dPgetConfig('root_dir') . '/modules/helpdesk/vw_log_update', 'New Log' );
   }
-  $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_history", 'Item History' );
+  $tabBox->add( dPgetConfig('root_dir') . '/modules/helpdesk/vw_history', 'Item History' );
 
   $tabBox->show();
 } 
