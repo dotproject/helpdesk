@@ -1,4 +1,4 @@
-<?php /* HELPDEKS $Id: $ */
+<?php /* HELPDESK $Id: configure.php,v 1.1 2004/04/29 14:13:31 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset($_POST['update'])) {
