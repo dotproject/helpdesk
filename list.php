@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.55 2004/05/25 22:15:32 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.56 2004/05/26 15:45:07 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -36,10 +36,8 @@ $selectors = array();
 
 // check for search text
 if($HELPDESK_CONFIG['search_criteria_search']){
-	if (isset( $_GET['search'] )) {
-	  $AppUI->setState('HelpDeskSearch', trim($_GET['search']));
-	}
-	$search = $AppUI->getState('HelpDeskSearch');
+	$search = $_GET['search'];
+
 	if(strlen(trim($search))>0){
 
 		$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
