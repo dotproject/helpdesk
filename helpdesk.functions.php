@@ -49,7 +49,7 @@ function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_comp
     }
 	}
 
-  if ($get_all) {
+  if (isset($get_all) && $get_all) {
     $sql = "SELECT company_id FROM companies";
     $list = db_loadColumn( $sql );
   } else {
