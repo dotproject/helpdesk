@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.12 2004/04/05 19:15:45 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.13 2004/04/05 20:06:19 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -14,7 +14,8 @@ $sql = "
 SELECT hi.*,
 	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
 	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
-	u1.user_email,
+	u1.user_email as user_email,
+  u2.user_email as assigned_email,
   p.project_id,
   p.project_name,
   p.project_color_identifier
@@ -37,6 +38,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	#writeDebug( "true", "db_loadHash", __FILE__, __LINE__ );
 	
 	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
+  $assigned_email = $hditem["assigned_email"];
 	$name = $hditem["item_requestor_id"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
 	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
@@ -76,7 +78,7 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Requestor');?>:</td>
-			<td class="hilite" width="100%"><?php echo $name;?></td>
+			<td class="hilite" width="100%"><?php print $email ? "<a href=\"mailto:$email\">$name</a>" : $name;?></td>
 		</tr>
 
 		<tr>
@@ -89,12 +91,13 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Assigned To');?>:</td>
-			<td class="hilite" width="100%"><?php echo $assigned_to_name;?></td>
+			<td class="hilite" width="100%"><?php print $assigned_email ? "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" : $assigned_to_name;?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Call Type');?>:</td>
-			<td class="hilite" width="100%"><?php echo $ict[$hditem["item_calltype"]];?></td>
+			<td class="hilite" width="100%"><?php echo '<img src="'.dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ).'" align="center" width="15" height="17" border=0 alt="' . $ict[@$hditem["item_calltype"]] . '" /> ';
+                                            echo $ict[$hditem["item_calltype"]];?></td>
 		</tr>
 
 		<tr>
@@ -130,6 +133,7 @@ if (!db_loadHash( $sql, $hditem )) {
 
 		<tr><td align="right" nowrap="nowrap" colspan="2">&nbsp;</td></tr>
 
+    <?php /* Commented out until implemented 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Receipt Target');?>:</td>
 			<td class="hilite" width="100%"><?php echo $hditem["item_receipt_target"];?></td>
@@ -157,6 +161,7 @@ if (!db_loadHash( $sql, $hditem )) {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Resolved Actual');?>:</td>
 			<td class="hilite" width="100%"><?php echo $hditem["item_resolved"];?></td>
 		</tr>
+    */ ?>
 		</table>
 	</td>
 </tr>
