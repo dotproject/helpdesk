@@ -1,8 +1,8 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.4 2004/04/15 19:11:48 adam Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.5 2004/04/19 18:24:12 adam Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
-// some standard arrays
+// Pull in some standard arrays
 $ict = dPgetSysVal( 'HelpDeskCallType' );
 $ics = dPgetSysVal( 'HelpDeskSource' );
 $ios = dPgetSysVal( 'HelpDeskOS' );
@@ -11,10 +11,7 @@ $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $isv = dPgetSysVal( 'HelpDeskSeverity' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
 
-##
-## CHelpDeskItem Class
-##
-
+// Help Desk class
 class CHelpDeskItem extends CDpObject {
 	var $item_id = NULL;
 	var $item_title = NULL;
@@ -60,8 +57,8 @@ class CHelpDeskItem extends CDpObject {
 		if (!$this->item_created) { 
 			$this->item_created = db_unix2dateTime( time() );
 		}
-		// TODO MORE
-		return NULL; // object is ok
+		// TODO More checks
+		return NULL;
 	}
 
 	function store() {

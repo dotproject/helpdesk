@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.29 2004/04/15 20:21:54 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.30 2004/04/19 18:24:12 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -61,21 +61,21 @@ if (count( $tarr )) {
 	$where = 'WHERE ' . implode(' AND ', $tarr);
 }
 
-$sql = "
-SELECT hi.*,
-	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
-	u1.user_email,
-	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
-  p.project_id,
-  p.project_name,
-  p.project_color_identifier
-FROM helpdesk_items hi
-LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
-LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
-LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
-$where
-ORDER BY ";
+$sql = "SELECT hi.*,
+	      CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
+	      u1.user_email,
+	      CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
+        p.project_id,
+        p.project_name,
+        p.project_color_identifier
+        FROM helpdesk_items hi
+        LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
+        LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+        LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
+        $where
+        ORDER BY ";
 
+// Do custom order by if needed, default at the end
 if ($orderby == "project_name") {
   $sql .= "p.project_name";
 } else if ($orderby == "item_assigned_to") {
@@ -84,20 +84,23 @@ if ($orderby == "project_name") {
   $sql .= "hi.$orderby";
 }
 
+// Ascending or Descending
 if ($orderdesc) {
   $sql .= " DESC";
 }
 
 $rows = db_loadList( $sql );
 
-// setup the title block
+// Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
+
 if ($canEdit) {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
 }
+
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );
 $titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 $titleBlock->show();
@@ -108,27 +111,29 @@ function changeList() {
 	document.filterFrm.submit();
 }
 </script>
+
 <table border="0" cellpadding="2" cellspacing="1" class="std" width="100%">
-<form name="filterFrm" action="?index.php" method="get">
-	<input type="hidden" name="m" value="<?=$m?>" />
-	<input type="hidden" name="a" value="<?=$a?>" />
-<tr>
-	<td><?=$AppUI->_('Search')?>:</td>
-	<td><input type="text" name="search" class="text" value="<?=$search;?>"></td>
-	<td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
-	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype', 'size="1" class="text" onchange="changeList()"', $calltype )?>
-	</td>
-	<td align="right"><?=$AppUI->_('Status')?>:</td>
-	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status', 'size="1" class="text" onchange="changeList()"', $status )?>
-	</td>
-	<td align="right"><?=$AppUI->_('Priority')?>:</td>
-	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority', 'size="1" class="text" onchange="changeList()"', $priority )?>
-	</td>
-	<td align="right">
-		<input type="submit" value="<?=$AppUI->_('Search')?>" class="button" />
-	</td>
-</tr>
-</form>
+  <form name="filterFrm" action="?index.php" method="get">
+  <input type="hidden" name="m" value="<?=$m?>" />
+  <input type="hidden" name="a" value="<?=$a?>" />
+  <tr>
+    <td><?=$AppUI->_('Search')?>:</td>
+    <td><input type="text" name="search" class="text" value="<?=$search;?>"></td>
+    <td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
+    <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype',
+                                           'size="1" class="text" onchange="changeList()"',
+                                           $calltype )?></td>
+    <td align="right"><?=$AppUI->_('Status')?>:</td>
+    <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status',
+                                           'size="1" class="text" onchange="changeList()"',
+                                           $status )?></td>
+    <td align="right"><?=$AppUI->_('Priority')?>:</td>
+    <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority',
+                                           'size="1" class="text" onchange="changeList()"',
+                                           $priority )?></td>
+    <td align="right"><input type="submit" value="<?=$AppUI->_('Search')?>" class="button" /></td>
+  </tr>
+  </form>
 </table>
 <br>
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
@@ -160,11 +165,13 @@ foreach ($rows as $row) {
 	$s .= $CR . '<form method="post">';
 	$s .= $CR . '<tr>';
 	$s .= $CR . '<td align="right" nowrap>';
+
 	if ($email) {
 		$s .= $CR . "<a href=\"mailto:$email\">"
               . dPshowImage("images/obj/email.gif", 16, 16, "$email")
               . "</a>";
 	}
+
 	if ($canEdit) {
 		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='
               . $row["item_id"]
@@ -172,6 +179,7 @@ foreach ($rows as $row) {
               . dPshowImage("./images/icons/pencil.gif", 12, 12, "edit")
               . '</a>&nbsp;';
 	}
+
 	$s .= $CR . '</td>';
 	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id='
             . $row["item_id"]
@@ -202,20 +210,22 @@ print "$s\n";
 </table>
 
 <?php
-  function sort_header($field, $name) {
-    global $orderby, $orderdesc;
+// Returns a header link used to sort results
+// TODO Probably need a better up/down arrow
+function sort_header($field, $name) {
+  global $orderby, $orderdesc;
 
-    $link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
+  $link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
 
-    if ($orderby == $field) {
-      $link .= $orderdesc ? "0" : "1";
-      $arrow .= $orderdesc ? "&uarr;" : "&darr;";
-    } else {
-      $link .= "0";
-    }
-
-    $link .= "\">$name</a> $arrow";
-
-    return $link;
+  if ($orderby == $field) {
+    $link .= $orderdesc ? "0" : "1";
+    $arrow .= $orderdesc ? "&uarr;" : "&darr;";
+  } else {
+    $link .= "0";
   }
+
+  $link .= "\">$name</a> $arrow";
+
+  return $link;
+}
 ?>

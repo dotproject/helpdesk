@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.5 2004/04/15 20:21:54 adam Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.6 2004/04/19 18:24:12 adam Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -10,9 +10,6 @@ if ( !$hditem->bind( $_POST )) {
 	$AppUI->setMsg( $hditem->error, UI_MSG_ERROR );
 	$AppUI->redirect();
 }
-
-//print "<pre><font color=red>"; print_r( $hditem ); print "</font></pre>\n";
-//print "<pre><font color=red>"; print_r( $_POST ); print "</font></pre>\n";
 
 $AppUI->setMsg( "Help Desk item", UI_MSG_OK );
 
@@ -34,8 +31,6 @@ if ($del) {
     }
 	}
 }
-
-//die( "Debugging output enabled in do_item_aed.php" );
 
 $AppUI->redirect();
 ?>

@@ -1,24 +1,22 @@
-<?php /* COMPANIES $Id: view.php,v 1.20 2004/04/15 20:39:46 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.21 2004/04/19 18:24:12 adam Exp $ */
 $AppUI->savePlace();
 
-$item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
+$item_id = dPgetParam( $_POST, 'item_id', 0 );
 
-// pull data
-$sql = "
-SELECT hi.*,
-	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
-	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
-	u1.user_email as user_email,
-  u2.user_email as assigned_email,
-  p.project_id,
-  p.project_name,
-  p.project_color_identifier
-FROM helpdesk_items hi
-LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
-LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
-LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
-WHERE item_id = '$item_id'
-";
+// Pull data
+$sql = "SELECT hi.*,
+        CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
+        CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
+        u1.user_email as user_email,
+        u2.user_email as assigned_email,
+        p.project_id,
+        p.project_name,
+        p.project_color_identifier
+        FROM helpdesk_items hi
+        LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
+        LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+        LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
+        WHERE item_id = '$item_id'";
 
 if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock = new CTitleBlock( 'Invalid Helpdesk ID', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_VIEW' );
@@ -46,7 +44,8 @@ if (!db_loadHash( $sql, $hditem )) {
 	$ts = db_dateTime2unix( $hditem["item_modified"] );
 	$tm = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
 
-	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
+	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
+                                 $m, 'ID_HELP_HELPDESK_IDX' );
 	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 
@@ -83,10 +82,12 @@ function delIt() {
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Item Number')?>:</td>
 			<td class="hilite" width="100%"><?=$hditem["item_id"]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Title')?>:</td>
 			<td class="hilite" width="100%"><?=$hditem["item_title"]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor')?>:</td>
 			<td class="hilite" width="100%"><?php print $email ? "<a href=\"mailto:$email\">$name</a>" : $name;?></td>
@@ -96,10 +97,12 @@ function delIt() {
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Status')?>:</td>
 			<td class="hilite" width="100%"><?=$ist[$hditem["item_status"]]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Priority')?>:</td>
 			<td class="hilite" width="100%"><?=$ipr[$hditem["item_priority"]]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Assigned To')?>:</td>
 			<td class="hilite" width="100%"><?php print $assigned_email ? "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" : $assigned_to_name;?></td>
@@ -115,18 +118,22 @@ function delIt() {
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_source"]]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Operating System')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_os"]]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_application"]]?></td>
 		</tr>
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_severity"]]?></td>
 		</tr>
+
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
       <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
@@ -141,6 +148,7 @@ function delIt() {
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Opened')?>:</td>
 			<td class="hilite" width="100%"><?=$tc;?></td>
 		</tr>
+
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
       <td class="hilite" width="100%"><?=$tm;?></td>
@@ -190,13 +198,14 @@ function delIt() {
 		</table>
 	</td>
 	<td valign="top"> &nbsp;
-<!--		<strong><?=$AppUI->_('Action Log')?></strong>
-		<br />
-		<?php
-			//$log = array( 'this is', 'the history', 'log', 'TODO' );
-			//echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
-		?>
--->
+<?php
+/* This is interesting, but I'm not sure where it was going...
+<strong><?=$AppUI->_('Action Log')?></strong>
+<br>
+//$log = array( 'this is', 'the history', 'log', 'TODO' );
+//echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
+*/
+?>
 	</td>
 </tr>
 </table>
