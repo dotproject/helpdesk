@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.15 2004/04/22 17:35:00 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.16 2004/04/23 17:17:43 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -28,6 +28,7 @@ class CHelpDeskItem extends CDpObject {
   var $item_company_id = NULL;
 
   var $item_assigned_to = NULL;
+  var $item_notify = 0;
   var $item_requestor = NULL;
   var $item_requestor_id = NULL;
   var $item_requestor_email = NULL;
@@ -51,7 +52,7 @@ class CHelpDeskItem extends CDpObject {
 
   function check() {
     if ($this->item_id === NULL) {
-      return 'helpdesk item id is NULL';
+      return 'Help Desk item id is NULL';
     }
     if (!$this->item_created) { 
       $this->item_created = db_unix2dateTime( time() );
@@ -99,6 +100,10 @@ class CHelpDeskItem extends CDpObject {
       $this->item_requestor = $result['name'];
     }
       
+    if ($this->item_notify) {
+      $this->notify();
+    }
+
     return parent::store();
   }
 

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.28 2004/04/22 17:23:32 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.29 2004/04/23 17:17:43 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -270,7 +270,9 @@ function selectList( listName, target ) {
       <td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
       <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
-        <input type="checkbox" name="notify" value="1" checked />
+        <input type="checkbox" name="item_notify" value="1"
+        <?php print $hditem["item_notify"] ? "checked" : ""; ?>
+        />
         <?=$AppUI->_( 'Notify by e-mail' );?></td>
     </tr>
 
