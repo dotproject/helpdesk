@@ -29,8 +29,13 @@ if ($del) {
     if ($notify) {
       $hditem->notify();
     }
+
+    if ($item_id) {
+      $AppUI->redirect();
+    } else {
+      $AppUI->redirect('?m=helpdesk&a=view&item_id='.$hditem->item_id);
+    }
 	}
 }
 
-$AppUI->redirect();
 ?>

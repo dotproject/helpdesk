@@ -1,6 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.13 2004/04/19 18:24:12 adam Exp $ */
-$AppUI->savePlace();
-
+<?php /* HELPDESK $Id: addedit.php,v 1.13 2004/04/19 21:06:45 gatny Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
