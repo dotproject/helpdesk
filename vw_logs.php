@@ -1,4 +1,4 @@
-<?php /* TASKS $Id: vw_logs.php,v 1.10 2004/03/09 19:18:41 jcgonz Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.1 2004/04/22 17:37:56 bloaterpaste Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 

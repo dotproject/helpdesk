@@ -1,11 +1,11 @@
-<?php /* COMPANIES $Id: view.php,v 1.44 2004/04/27 17:06:17 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.44 2004/04/27 17:06:17 bloaterpaste Exp $ */
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
 // check permissions for this record
 $canReadModule = !getDenyRead( $m );
 
-if (!$canRead) {
+if (!$canReadModule) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -98,7 +98,6 @@ if (!db_loadHash( $sql, $hditem )) {
 	}
 	$titleBlock->show();
 ?>
-
 <script language="JavaScript">
 function delIt() {
   if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {

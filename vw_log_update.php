@@ -1,4 +1,4 @@
-<?php /* TASKS $Id: vw_log_update.php,v 1.2 2004/04/26 20:18:07 bloaterpaste Exp $ */
+<?php /* $Id: HELPDESK vw_log_update.php,v 1.3 2004/04/27 17:07:11 bloaterpaste Exp $ */
 GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions

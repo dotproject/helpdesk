@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.30 2004/04/27 15:51:18 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.31 2004/04/28 20:33:49 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -7,6 +7,7 @@ $config['mod_version'] = '0.2';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
+$config['mod_config'] = true;
 $config['mod_ui_name'] = 'Help Desk';
 $config['mod_ui_icon'] = 'helpdesk.png';
 $config['mod_description'] = 'Help Desk is a bug, feature request, '
@@ -203,6 +204,16 @@ class CSetupHelpDesk {
 		// NOTE: Need to return true, not null, if all is good
 		return $success;
 	}
+
+  /* NOTE: Configuration handling in dotProject is iffy at best. We're working
+     with what we have *shrugs* */
+  function configure() {
+    global $AppUI;
+
+    $AppUI->redirect("?m=helpdesk&a=configure");
+
+    return true;
+  }
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?php /* PUBLIC $Id: selector.php,v 1.9 2003/12/05 02:37:28 jcgonz Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.1 2004/04/21 17:41:40 bloaterpaste Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;

@@ -1,7 +1,8 @@
-<?php /* HELPDESK $Id: list.php,v 1.37 2004/04/28 23:40:19 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.38 2004/04/29 00:17:47 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
+
 if (!$canReadModule) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }

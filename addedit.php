@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.35 2004/04/27 00:24:57 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.36 2004/04/28 20:33:49 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -87,7 +87,6 @@ if ($item_id) {
 $tc = isset($tsc) ? date( "m/d/y g:i a", $tsc ) : null;
 
 ?>
-
 <script language="javascript">
 function submitIt() {
   var f   = document.frmHelpDeskItem;
@@ -228,7 +227,6 @@ function selectList( listName, target ) {
 }
 
 </script>
-
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
   <form name="frmHelpDeskItem" action="?m=helpdesk" method="post">
   <input type="hidden" name="dosql" value="do_item_aed" />
@@ -368,7 +366,7 @@ function selectList( listName, target ) {
 
 <tr>
   <td colspan="2" align="left">
-    <textarea cols="90" rows="15" class="textarea"
+    <textarea id="summary" cols="90" rows="15" class="textarea"
               name="item_summary"><?=@$hditem["item_summary"]?></textarea>
   </td>
 </tr>

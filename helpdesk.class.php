@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.27 2004/04/28 20:33:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.28 2004/04/29 00:17:47 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -351,12 +351,13 @@ class CTaskLog extends CDpObject {
 
 }
 
-  //Function to build a where clause to be appended to any sql that will narrow down the returned data to only permitted entities
-  function getPermsWhereClause($mod, $field){
-	//figure out the perms.  Build a list of companies that can be viewed
+// Function to build a where clause to be appended to any sql that will narrow
+// down the returned data to only permitted entities
+
+function getPermsWhereClause($mod, $field){
 	GLOBAL $perms;
-	//print "<pre>".print_r($perms, 1)."</pre>";
-	//get starting list of companies.  If all companies perms are granted, start with all companies, otherwise start with an empty list.
+
+  // Figure out the module and field
 	switch($mod){
 		case "companies":
 			$id_field = "company_id";
@@ -373,34 +374,42 @@ class CTaskLog extends CDpObject {
 		default:
 			return null;
 	}
-	if((isset($perms[$mod]) && ($perms[$mod][-1]==1 || $perms[$mod][-1]==-1)) || (isset($perms["all"]) && ($perms["all"][-1]==1 || $perms["all"][-1]==-1))){
+
+	if((isset($perms[$mod]) && ($perms[$mod][-1]==1 || $perms[$mod][-1]==-1)) || 
+     (isset($perms["all"]) && ($perms["all"][-1]==1 || $perms["all"][-1]==-1))) {
 		$sql = "SELECT $id_field FROM $mod";
-		$companies = db_loadColumn( $sql );
+		$list = db_loadColumn( $sql );
 	} else {
-		$companies = array();
+		$list = array();
 	}
-	$companies[]="''";
+
+	$list[] = "''";
+
 	if(isset($perms[$mod])){
 		foreach($perms[$mod] as $key => $value){
-			//-1 is all perms, and not a specific company
+			//-1 is all perms, so not a specific one
+
 			if($key=='-1')
 				continue;
+
 			switch($value){
-				case '-1'://edit
-					$companies[]=$key;
+				case '-1': //edit
+					$list[] = $key;
 					break;
 				case '0'://deny
-					unset($companies[array_search($key, $companies)]);
+					unset($list[array_search($key, $list)]);
 					break;
 				case '1'://read
-					$companies[]=$key;
+					$list[] = $key;
 					break;
 				default:
 					break;
 			}
 		}
 	}
-	$companies = array_unique($companies);
-	return " $field in (".implode(",",$companies).")";
+
+	$list = array_unique($list);
+
+	return " $field in (".implode(",",$list).")";
 }
 ?>
