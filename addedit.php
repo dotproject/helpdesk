@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.15 2004/04/20 16:38:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.16 2004/04/20 16:40:44 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
@@ -19,6 +19,11 @@ if ($item_id) {
 } else {
   $tsc = $rightNow;
   $hditem["item_created"] = db_unix2dateTime( $rightNow );
+}
+
+if(!@$hditem["item_assigned_to"]){
+	@$hditem["item_assigned_to"] = $AppUI->user_id;
+	@$hditem["item_status"] = 1;
 }
 
 $tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
@@ -105,6 +110,7 @@ function updateStatus(obj){
 		f.item_status.selectedIndex=1;
 	}
 }
+
 </script>
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
