@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.4 2004/01/19 21:40:33 mike Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.5 2004/01/22 18:24:24 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -13,11 +13,13 @@ foreach( $_GET as $key => $value ) {
 $sql = "
 SELECT hi.*,
 	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
+	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
 	u1.user_email,
   p.project_id,
   p.project_name
 FROM helpdesk_items hi
 LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
+LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
 LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
 WHERE item_id = '$item_id'
 ";
@@ -35,6 +37,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	
 	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
 	$name = $hditem["item_requestor_id"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
+	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
 	$ts = db_dateTime2unix( @$hditem["item_created"] );
 	$tc = $ts < 0 ? null : date( "m/d/y g:i a", $ts );
@@ -82,7 +85,7 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Priority');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $ipr[$hditem["item_assigned_to"]];?></strong></td>
+			<td class="hilite" width="100%"><strong><?php echo $assigned_to_name;?></strong></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Assigned To');?>:</td>
