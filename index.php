@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.17 2004/05/13 00:16:37 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.18 2004/05/13 16:46:56 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -21,7 +21,8 @@ if ($canEdit) {
 		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
-	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
+	$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('Home') );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
 }
 
 $titleBlock->show();
