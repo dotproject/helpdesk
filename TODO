@@ -1,16 +1,14 @@
 For anyone interested, here is a list of things we'd like to get done
 
+1. E-mail integration. E-mails sent to HelpDesk should create new HelpDesk
+   entries.
+
+2. Add immediate population of phone number and contact e-mail fields when a
+   requestor is selected from the pop-up box.
+
+3. Possible use of HTMLArea for the comments box.
+
+In Progress:
 1. Integration with Files. HelpDesk items should be allowed to have file
    attachements.
 
-2. E-mail integration. E-mails sent to HelpDesk should create new HelpDesk
-   entries.
-
-3. Extend configuration to totally turn off data fields which aren't selected.
-   For instance, turning off "Operating System" will turn off the field not
-   only on the list screen, but also on the add/edit and view screens as well.
-
-4. Add immediate population of phone number and contact e-mail fields when a
-   requestor is selected from the pop-up box.
-
-5. Possible use of HTMLArea for the comments box.
