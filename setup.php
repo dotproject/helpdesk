@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.35 2004/05/12 23:06:21 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.36 2004/05/13 00:16:37 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -70,7 +70,7 @@ class CSetupHelpDesk {
       db_exec($s);
 
       if (db_error()) {
-	$success = 0;
+	      $success = 0;
       }
     }
 
@@ -101,7 +101,7 @@ class CSetupHelpDesk {
 		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
 		$sv->store();
 		
-	        return $success;
+	  return $success;
 	}
 
 	function remove() {
@@ -123,7 +123,7 @@ class CSetupHelpDesk {
 			WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
 
-    		unset($bulk_sql);
+  	unset($bulk_sql);
 
 		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
 		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
@@ -140,61 +140,61 @@ class CSetupHelpDesk {
 	function upgrade($old_version) {
 		$success = 1;
 
-	    switch ($old_version) {
-	      case "0.1":
-		$bulk_sql[] = "
-		  ALTER TABLE `helpdesk_items`
-		  ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
-		  ADD `item_project_id` int(11) NOT NULL default '0' AFTER `item_parent`, 
-		  ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
-		  ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
-		  ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
-		  ADD `item_created_by` int(11) NOT NULL default '0',
-		  DROP `item_receipt_target`,
-		  DROP `item_receipt_custom`,
-		  DROP `item_receipted`,
-		  DROP `item_resolve_target`,
-		  DROP `item_resolve_custom`,
-		  DROP `item_resolved`,
-		  DROP `item_assetno`
-		";
+	  switch ($old_version) {
+	    case "0.1":
+        $bulk_sql[] = "
+          ALTER TABLE `helpdesk_items`
+          ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
+          ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
+          ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
+          ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
+          ADD `item_created_by` int(11) NOT NULL default '0',
+          DROP `item_receipt_target`,
+          DROP `item_receipt_custom`,
+          DROP `item_receipted`,
+          DROP `item_resolve_target`,
+          DROP `item_resolve_custom`,
+          DROP `item_resolved`,
+          DROP `item_assetno`
+        ";
 
-		$bulk_sql[] = "
-		  ALTER TABLE `task_log`
-		  ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
-		";
+        $bulk_sql[] = "
+          ALTER TABLE `task_log`
+          ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
+        ";
 
-		$bulk_sql[] = "
-		  CREATE TABLE `helpdesk_item_status` (
-		    `status_id` INT NOT NULL AUTO_INCREMENT,
-		    `status_item_id` INT NOT NULL,
-		    `status_code` TINYINT NOT NULL,
-		    `status_date` TIMESTAMP NOT NULL,
-		    `status_modified_by` INT NOT NULL,
-		    `status_comment` TEXT DEFAULT '',
-		    PRIMARY KEY (`status_id`)
-		  )
-		";
+        $bulk_sql[] = "
+          CREATE TABLE `helpdesk_item_status` (
+            `status_id` INT NOT NULL AUTO_INCREMENT,
+            `status_item_id` INT NOT NULL,
+            `status_code` TINYINT NOT NULL,
+            `status_date` TIMESTAMP NOT NULL,
+            `status_modified_by` INT NOT NULL,
+            `status_comment` TEXT DEFAULT '',
+            PRIMARY KEY (`status_id`)
+          )
+        ";
 
-		$sql = "SELECT syskey_id
-			FROM syskeys
-			WHERE syskey_name = 'HelpDeskList'";
-		$syskey_id = db_loadResult( $sql );
+        $sql = "SELECT syskey_id
+          FROM syskeys
+          WHERE syskey_name = 'HelpDeskList'";
+        $syskey_id = db_loadResult( $sql );
 
-		$sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
-		$sv->store();
+        $sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
+        $sv->store();
 
 
-		$sql = "UPDATE sysvals
-			SET sysval_value='0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing'
-			WHERE sysval_title='HelpDeskStatus'
-			LIMIT 1";
+        $sql = "UPDATE sysvals
+          SET sysval_value='0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing'
+          WHERE sysval_title='HelpDeskStatus'
+          LIMIT 1";
 
-		db_exec($sql);
-		break;
-	      default:
-		$success = 0;
-	    }
+        db_exec($sql);
+
+        break;
+      default:
+        $success = 0;
+	  }
 
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
