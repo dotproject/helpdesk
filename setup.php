@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.31 2004/04/28 20:33:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.32 2004/04/29 14:12:07 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -207,13 +207,14 @@ class CSetupHelpDesk {
 
   /* NOTE: Configuration handling in dotProject is iffy at best. We're working
      with what we have *shrugs* */
+/*
   function configure() {
     global $AppUI;
 
-    $AppUI->redirect("?m=helpdesk&a=configure");
+    $AppUI->redirect("m=helpdesk&a=configure");
 
     return true;
   }
 }
-
+*/
 ?>
