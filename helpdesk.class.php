@@ -13,68 +13,90 @@ $ist = dPgetSysVal( 'HelpDeskStatus' );
 
 // Help Desk class
 class CHelpDeskItem extends CDpObject {
-  var $item_id = NULL;
-  var $item_title = NULL;
-  var $item_summary = NULL;
+	var $item_id = NULL;
+	var $item_title = NULL;
+	var $item_summary = NULL;
 
-  var $item_calltype = NULL;
-  var $item_source = NULL;
-  var $item_os = NULL;
-  var $item_application = NULL;
-  var $item_priority = NULL;
-  var $item_severity = NULL;
-  var $item_status = NULL;
-  var $item_project_id = NULL;
-  var $item_company_id = NULL;
+	var $item_calltype = NULL;
+	var $item_source = NULL;
+	var $item_os = NULL;
+	var $item_application = NULL;
+	var $item_priority = NULL;
+	var $item_severity = NULL;
+	var $item_status = NULL;
+  	var $item_project_id = NULL;
+  	var $item_company_id = NULL;
 
-  var $item_assigned_to = NULL;
-  var $item_requestor = NULL;
-  var $item_requestor_id = NULL;
-  var $item_requestor_email = NULL;
-  var $item_requestor_phone = NULL;
-  var $item_assetno = NULL;
+	var $item_assigned_to = NULL;
+	var $item_requestor = NULL;
+	var $item_requestor_id = NULL;
+	var $item_requestor_email = NULL;
+  	var $item_requestor_phone = NULL;
+  	var $item_requestor_type = NULL;
+	var $item_assetno = NULL;
 
-  var $item_created = NULL;
-  var $item_modified = NULL;
-  var $item_receipt_target = NULL;
-  var $item_receipt_custom = NULL;
-  var $item_receipted = NULL;
-  var $item_resolve_target = NULL;
-  var $item_resolve_custom = NULL;
-  var $item_resolved = NULL;
+	var $item_created = NULL;
+	var $item_modified = NULL;
+	var $item_receipt_target = NULL;
+	var $item_receipt_custom = NULL;
+	var $item_receipted = NULL;
+	var $item_resolve_target = NULL;
+	var $item_resolve_custom = NULL;
+	var $item_resolved = NULL;
 
-  function CHelpDeskItem() {
-    $this->CDpObject( 'helpdesk_items', 'item_id' );
-  }
+	function CHelpDeskItem() {
+		$this->CDpObject( 'helpdesk_items', 'item_id' );
+	}
 
-  function load( $oid ) {
-    $sql = "SELECT * FROM helpdesk_items WHERE item_id = $oid";
-    return db_loadObject( $sql, $this );
-  }
+	function load( $oid ) {
+		$sql = "SELECT * FROM helpdesk_items WHERE item_id = $oid";
+		return db_loadObject( $sql, $this );
+	}
 
-  function check() {
-    if ($this->item_id === NULL) {
-      return 'helpdesk item id is NULL';
-    }
-    if (!$this->item_created) { 
-      $this->item_created = db_unix2dateTime( time() );
-    }
-    
-    //if the status is changed to #2 "Closed" mark as resolved.
-    if ($this->item_status==2) { 
-      $this->item_resolved = db_unix2dateTime( time() );
-    }
-    // TODO More checks
-    return NULL;
-  }
+	function check() {
+		if ($this->item_id === NULL) {
+			return 'helpdesk item id is NULL';
+		}
+		if (!$this->item_created) { 
+			$this->item_created = db_unix2dateTime( time() );
+		}
+		
+		//if type indicates a contact or a user, then look up that phone and email for those entries
+		switch ($this->item_requestor_type) {
+			case '0'://it's not a user or a contact
+				break;
+			case '1'://it's a system user
+				$sql = "SELECT user_id as id, user_email as email, user_phone as phone, CONCAT(user_first_name,' ', user_last_name) as name FROM users WHERE user_id='".$this->item_requestor_id."'";
+				break;
+			case '2':
+				$sql = "SELECT contact_id as id, contact_email as email, contact_phone as phone, CONCAT(contact_first_name,' ', contact_last_name) as name FROM contacts WHERE contact_id='".$this->item_requestor_id."'";
+				break;
+				break;
+			default:
+				break;
+		}
+		if($sql){
+			db_loadHash( $sql, $result );
+			$this->item_requestor_email = $result['email'];
+			$this->item_requestor_phone = $result['phone'];
+			$this->item_requestor = $result['name'];
+		}
+			
+		//if the status is changed to #2 "Closed" mark as resolved.
+		if ($this->item_status==2) { 
+			$this->item_resolved = db_unix2dateTime( time() );
+		}
+		// TODO More checks
+		return NULL;
+	}
 
-  function store() {
+	function store() {
     return parent::store();
-  }
+	}
 
-  function delete() {
+	function delete() {
     return parent::delete();
-  }
+	}
   
   function notify() {
     global $AppUI;
