@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.22 2004/01/23 22:00:04 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.23 2004/01/28 18:38:45 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -8,7 +8,7 @@ if (isset( $_GET['orderby'] )) {
 $orderby = $AppUI->getState( 'HelpDeskIdxOrderBy' ) ? $AppUI->getState( 'HelpDeskIdxOrderBy' ) : 'item_id';
 
 // check for search text
-$search = dPgetParam( $_GET, 'Search', '' );
+$search = dPgetParam( $_GET, 'search', '' );
 
 // check for calltype filter
 if (isset( $_GET['item_calltype'] )) {
@@ -49,7 +49,7 @@ if ($priority >= 0) {
 $where = '';
 
 if (count( $tarr )) {
-	$where = 'WHERE ' . implode( ' AND ', $tarr );
+	$where = 'WHERE ' . implode(' AND ', $tarr);
 }
 
 $sql = "
@@ -93,34 +93,33 @@ function changeList() {
 	document.filterFrm.submit();
 }
 </script>
-
-<table border="0" cellpadding="2" cellspacing="1" class="std">
+<table border="0" cellpadding="2" cellspacing="1" class="std" width="100%">
 <form name="filterFrm" action="?index.php" method="get">
-	<input type="hidden" name="m" value="<?php echo $m;?>" />
-	<input type="hidden" name="a" value="<?php echo $a;?>" />
+	<input type="hidden" name="m" value="<?=$m?>" />
+	<input type="hidden" name="a" value="<?=$a?>" />
 <tr>
-	<td><?php echo $AppUI->_('search');?>:</td>
-	<td><input type="text" name="search" class="text" value="<?php echo $search;?>"></td>
-	<td align="right" nowrap><?php echo $AppUI->_('Call Type');?>:</td>
+	<td><?=$AppUI->_('Search')?>:</td>
+	<td><input type="text" name="search" class="text" value="<?=$search;?>"></td>
+	<td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
 	<td>
 <?php
 	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype', 'size="1" class="text" onchange="changeList()"', $calltype );
 ?>
 	</td>
-	<td align="right"><?php echo $AppUI->_('Status');?>:</td>
+	<td align="right"><?=$AppUI->_('Status')?>:</td>
 	<td>
 <?php
 	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status', 'size="1" class="text" onchange="changeList()"', $status );
 ?>
 	</td>
-	<td align="right"><?php echo $AppUI->_('Priority');?>:</td>
+	<td align="right"><?=$AppUI->_('Priority')?>:</td>
 	<td>
 <?php
 	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority', 'size="1" class="text" onchange="changeList()"', $priority );
 ?>
 	</td>
-	<td align="right" width="100%">
-		<input type="submit" value="<?php echo $AppUI->_('search');?>" class="button" />
+	<td align="right">
+		<input type="submit" value="<?=$AppUI->_('search')?>" class="button" />
 	</td>
 </tr>
 </form>
@@ -130,27 +129,26 @@ function changeList() {
 <tr>
 	<td align="right" nowrap>&nbsp;</td>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_id" class="hdr"><?php echo $AppUI->_('Number');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_id" class="hdr"><?=$AppUI->_('Number')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_requestor" class="hdr"><?php echo $AppUI->_('Requestor');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_requestor" class="hdr"><?=$AppUI->_('Requestor')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_title" class="hdr"><?php echo $AppUI->_('Title');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_title" class="hdr"><?=$AppUI->_('Title')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_assigned_to" class="hdr"><?php echo $AppUI->_('Assigned To');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_assigned_to" class="hdr"><?=$AppUI->_('Assigned To')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_status" class="hdr"><?php echo $AppUI->_('Status');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_status" class="hdr"><?=$AppUI->_('Status')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?php echo $AppUI->_('Priority');?></a>
+		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?=$AppUI->_('Priority')?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=project_name" class="hdr"><?php echo $AppUI->_('Project');?></a>
+		<a href="?m=helpdesk&a=list&orderby=project_name" class="hdr"><?=$AppUI->_('Project')?></a>
 	</th>
-	<th>&nbsp;</th>
 </tr>
 <?php
 $s = '';
@@ -162,24 +160,37 @@ foreach ($rows as $row) {
 	$s .= $CR . '<tr>';
 	$s .= $CR . '<td align="right" nowrap>';
 	if ($email) {
-		$s .= $CR . '<a href="mailto:' . $email . '"><img src="images/obj/email.gif" width="16" height="16" border="0" alt="' . $email . '"></a>';
+		$s .= $CR . "<a href=\"mailto:$email\"><img src=\"images/obj/email.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"$email\"></a>";
 	}
 	if ($canEdit) {
-		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='.$row["item_id"].'"><img src="./images/icons/pencil.gif" alt="edit" border="0" width="12" height="12"></a>&nbsp;';
+		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='
+              . $row["item_id"]
+              . '"><img src="./images/icons/pencil.gif" alt="edit" border="0" width="12" height="12"></a>&nbsp;';
 	}
 	$s .= $CR . '</td>';
-	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id=' . $row["item_id"] . '">'
-		.'<strong># ' . $row["item_id"] .'</strong></a></td>';
-	$s .= $CR . '<td nowrap>' . $name . '</td>';
-	$s .= $CR . '<td width="99%">' . $CR. '<table cellspacing="0" cellpadding="0" border="0">' . $CR . '<tr>'
-		. $CR .'<td width="17"><img src="'.dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ).'" width="15" height="17" border=0 alt="' . $ict[@$row["item_calltype"]] . '" /></td>'
-		. $CR .'<td><a href="?m=helpdesk&a=view&item_id='.$row["item_id"].'">'
-		. $row["item_title"] . '</a></td></tr></table></td>';
+	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id='
+            . $row["item_id"]
+            . '">'
+		        . '<strong>'
+            . $row["item_id"]
+            . '</strong></a> <img src="'
+            . dPfindImage( 'ct'.$row["item_calltype"].'.png', $m )
+            . '" width="15" height="17" border=0 align=center alt="'
+            . $ict[@$row["item_calltype"]]
+            . '" /></td>';
+	$s .= $CR . "<td nowrap>$name</td>";
+	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
+            . $row["item_id"]
+            . '">'
+		        . $row["item_title"]
+            . '</a></td>';
 	$s .= $CR . '<td align="center" nowrap>' . @$row["assigned_fullname"] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" style="background-color: #'.$row['project_color_identifier'].';" nowrap><a href="./index.php?m=projects&a=view&project_id='.$row['project_id'].'">'.$row['project_name'].'</a></td>';
-	$s .= $CR . '<td align="center" nowrap><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
+	$s .= $CR . '<td align="center" style="background-color: #'
+            . $row['project_color_identifier']
+            . ';" nowrap><a href="./index.php?m=projects&a=view&project_id='
+            . $row['project_id'].'">'.$row['project_name'].'</a></td>';
 	$s .= $CR . '</tr></form>';
 }
 echo "$s\n";
