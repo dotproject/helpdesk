@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.40 2004/05/24 19:07:22 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.41 2004/05/25 16:38:54 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -12,6 +12,10 @@ $config['mod_ui_name'] = 'Help Desk';
 $config['mod_ui_icon'] = 'helpdesk.png';
 $config['mod_description'] = 'Help Desk is a bug, feature request, '
                            . 'complaint and suggestion tracking centre';
+//This will allow permissions to be applied to this module based on the following database criteria
+$config['permissions_item_table'] = 'companies';
+$config['permissions_item_label'] = 'company_name';
+$config['permissions_item_field'] = 'company_id';
 
 if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
