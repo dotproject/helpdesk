@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.38 2004/04/29 00:17:47 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.39 2004/04/29 14:12:07 agorski Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -24,7 +24,7 @@ $orderdesc = $AppUI->getState('HelpDeskIdxOrderDesc') ? $AppUI->getState('HelpDe
 
 // check for search text
 if (isset( $_GET['search'] )) {
-  $AppUI->setState('HelpDeskSearch', $_GET['search']);
+  $AppUI->setState('HelpDeskSearch', trim($_GET['search']));
 }
   
 $search = $AppUI->getState('HelpDeskSearch');
