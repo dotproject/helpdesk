@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.58 2004/12/10 17:14:51 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.59 2004/12/10 17:48:55 cyberhorse Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -109,7 +109,7 @@ function submitIt() {
   }
 
   if( msg.length > 0) {
-    alert('<?=$AppUI->_('helpdeskSubmitError')?>:' + msg)
+    alert('<?php echo $AppUI->_('helpdeskSubmitError', UI_OUTPUT_JS); ?>:' + msg)
   } else {
     f.submit();
   }
