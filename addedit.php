@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.57 2004/07/14 16:36:41 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.58 2004/12/10 17:14:51 cyberhorse Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -12,15 +12,9 @@ db_loadHash( $sql, $hditem );
 // Check permissions for this record
 if ($item_id) {
   // Already existing item
-  $canEdit = hditemEditable($hditem);
+  $canEdit = $perms->checkModuleItem($m, 'edit', $item_id);
 } else {
-  // Make sure we can create
-  if (!hditemCreate()) {
-    $AppUI->redirect( "m=public&a=access_denied" );
-  }
-
-  // New record
-  $canEdit = 1;
+  $canEdit = $perms->checkModule($m, 'add');
 }
 
 if(!$canEdit){

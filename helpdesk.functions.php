@@ -112,6 +112,7 @@ function hditemEditable($hditem) {
 function hditemPerm($hditem, $perm_type) {
   global $HELPDESK_CONFIG, $AppUI, $m;
 
+  $perms = & $AppUI->acl();
   $created_by = $hditem['item_created_by'];
   $company_id = isset($hditem['item_company_id'])?$hditem['item_company_id']:'';
   $assigned_to = isset($hditem['item_assigned_to'])?$hditem['item_assigned_to']:'';
@@ -119,7 +120,7 @@ function hditemPerm($hditem, $perm_type) {
 
   switch($perm_type) {
     case PERM_READ:
-      $company_perm = !getDenyRead($m, $company_id);
+      $company_perm = $perms->checkModuleItem($m, 'view', $company_id);
       break;
     case PERM_EDIT:
       // If the item is not assigned to a company, figure out if we can edit it
@@ -130,7 +131,7 @@ function hditemPerm($hditem, $perm_type) {
           $company_perm = 0;
         }
       } else {
-        $company_perm = !getDenyEdit($m, $company_id);
+      $company_perm = $perms->checkModuleItem($m, 'edit', $company_id);
       }
       break;
     default:
@@ -154,25 +155,13 @@ function hditemPerm($hditem, $perm_type) {
 }
 
 function hditemCreate() {
-  global $perms, $m;
+  global $m, $AppUI;
 
-  /* A user can create items only if he has write access to at least one
-     company */
-  $create = FALSE;
+  $perms = & $AppUI->acl();
+  if ($perms->checkModule($m, 'add'))
+        return true;
 
-	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_EDIT)) || 
-     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_EDIT))) {
-    $create = true;
-  } else if (is_array($perms[$m])) {
-    foreach ($perms[$m] as $perm) {
-      if ($perm == PERM_EDIT) {
-        $create = true;
-        break;
-      }
-    }
-  }
-
-  return $create;
+  return false;
 }
 
 function dump ($var) {
