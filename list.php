@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.30 2004/04/19 18:24:12 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.30 2004/04/19 21:06:46 gatny Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -62,14 +62,12 @@ if (count( $tarr )) {
 }
 
 $sql = "SELECT hi.*,
-	      CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
-	      u1.user_email,
-	      CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
+       CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
+       u2.user_email as assigned_email,
         p.project_id,
         p.project_name,
         p.project_color_identifier
         FROM helpdesk_items hi
-        LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
         $where
@@ -154,21 +152,14 @@ foreach ($rows as $row) {
   /* We need to check if the user who requested the item is still in the
      system. Just because we have a requestor id does not mean we'll be
      able to retrieve a full name */
-  if ($row["item_requestor_id"]) {
-	  $name = $row["user_fullname"] ? $row["user_fullname"] : $row["item_requestor"];
-  } else {
-    $name = $row['item_requestor'];
-  }
-
-  $email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
 
 	$s .= $CR . '<form method="post">';
 	$s .= $CR . '<tr>';
 	$s .= $CR . '<td align="right" nowrap>';
 
-	if ($email) {
-		$s .= $CR . "<a href=\"mailto:$email\">"
-              . dPshowImage("images/obj/email.gif", 16, 16, "$email")
+	if ($row["item_requestor_email"]) {
+		$s .= $CR . "<a href=\"mailto:".$row["item_requestor_email"]."\">"
+              . dPshowImage("images/obj/email.gif", 16, 16, $row["item_requestor_email"])
               . "</a>";
 	}
 
@@ -189,19 +180,41 @@ foreach ($rows as $row) {
             . '</strong></a> '
             . dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')
             . '</td>';
-	$s .= $CR . "<td nowrap>$name</td>";
+
+	$s .= $CR . "<td nowrap align=\"center\">";
+	if ($row["item_requestor_email"]) {
+		$s .= $CR . "<a href=\"mailto:".$row["item_requestor_email"]."\">"
+              . $row['item_requestor']
+              . "</a>";
+	} else {
+		$s .= $CR . "<td nowrap>".$row['item_requestor']."</td>";
+	}
+	$s .= $CR . "</td>";
+
 	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
             . $row["item_id"]
             . '">'
 		        . $row["item_title"]
             . '</a></td>';
-	$s .= $CR . '<td align="center" nowrap>' . @$row["assigned_fullname"] . '</td>';
+	$s .= $CR . "<td nowrap align=\"center\">";
+	if ($row["assigned_email"]) {
+		$s .= $CR . "<a href=\"mailto:".$row["assigned_email"]."\">"
+              . $row['assigned_fullname']
+              . "</a>";
+	} else {
+		$s .= $CR . "<td nowrap>".$row['assigned_fullname']."</td>";
+	}
+	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" style="background-color: #'
-            . $row['project_color_identifier']
-            . ';" nowrap><a href="./index.php?m=projects&a=view&project_id='
-            . $row['project_id'].'">'.$row['project_name'].'</a></td>';
+	if($row['project_id']){
+		$s .= $CR . '<td align="center" style="background-color: #'
+		    . $row['project_color_identifier']
+		    . ';" nowrap><a href="./index.php?m=projects&a=view&project_id='
+		    . $row['project_id'].'">'.$row['project_name'].'</a></td>';
+	} else {
+		$s .= $CR . '<td align="center">-</td>';
+	}
 	$s .= $CR . '</tr></form>';
 }
 
