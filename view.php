@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.44 2004/04/27 17:06:17 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.46 2004/04/29 14:12:07 agorski Exp $ */
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -180,7 +180,7 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
-      <td class="hilite" width="100%"><?=@$ics[$hditem["item_severity"]]?></td>
+      <td class="hilite" width="100%"><?=@$isv[$hditem["item_severity"]]?></td>
 		</tr>
 
 		<tr>
