@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.25 2004/04/23 20:28:19 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.26 2004/04/26 16:41:23 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -183,6 +183,14 @@ class CSetupHelpDesk {
 
         $sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
         $sv->store();
+
+
+        $sql = "UPDATE sysvals
+                SET sysval_value='0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing'
+                WHERE sysval_title='HelpDeskStatus'
+                LIMIT 1";
+
+        db_exec($sql);
         break;
       default:
         return false;
