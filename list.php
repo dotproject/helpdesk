@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.6 2004/01/23 16:16:56 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.7 2004/01/23 16:19:00 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -82,7 +82,7 @@ function changeList() {
 <tr>
 	<td><?php echo $AppUI->_('search');?>:</td>
 	<td><input type="text" name="search" class="text" value="<?php echo $search;?>"></td>
-	<td align="right"><?php echo $AppUI->_('Call Type');?>:</td>
+	<td align="right" nowrap><?php echo $AppUI->_('Call Type');?>:</td>
 	<td>
 <?php
 	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype', 'size="1" class="text" onchange="changeList()"', $calltype );
