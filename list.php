@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.3 2003/04/12 00:16:54 eddieajau Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -120,7 +120,7 @@ function changeList() {
 		<a href="?m=helpdesk&a=list&orderby=item_title" class="hdr"><?php echo $AppUI->_('Title');?></a>
 	</th>
 	<th nowrap="nowrap">
-		<?php echo $AppUI->_('Next Date');?>
+		<a href="?m=helpdesk&a=list&orderby=item_assigned_to" class="hdr"><?php echo $AppUI->_('Assigned To');?></a>
 	</th>
 	<th nowrap="nowrap">
 		<a href="?m=helpdesk&a=list&orderby=item_status" class="hdr"><?php echo $AppUI->_('Status');?></a>
@@ -129,7 +129,7 @@ function changeList() {
 		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?php echo $AppUI->_('Priority');?></a>
 	</th>
 	<th nowrap="nowrap">
-		<a href="?m=helpdesk&a=list&orderby=item_assigned_to" class="hdr"><?php echo $AppUI->_('Assigned To');?></a>
+		<?php echo $AppUI->_('Next Date');?>
 	</th>
 	<th>&nbsp;</th>
 </tr>
@@ -156,10 +156,10 @@ foreach ($rows as $row) {
 		. $CR .'<td width="17"><img src="'.dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ).'" width="15" height="17" border=0 alt="' . $ict[@$row["item_calltype"]] . '" /></td>'
 		. $CR .'<td><a href="?m=helpdesk&a=view&item_id='.$row["item_id"].'">'
 		. $row["item_title"] . '</a></td></tr></table></td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . 'TODO' . '</td>';
+	$s .= $CR . '<td align="center" nowrap="nowrap">' . @$row["assigned_fullname"] . '</td>';
 	$s .= $CR . '<td align="center" nowrap="nowrap">' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap="nowrap">' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . @$row["assigned_fullname"] . '</td>';
+	$s .= $CR . '<td align="center" nowrap="nowrap">' . 'TODO' . '</td>';
 	$s .= $CR . '<td align="center" nowrap="nowrap"><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
 	$s .= $CR . '</tr></form>';
 }
