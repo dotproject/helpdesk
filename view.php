@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.5 2004/01/22 18:24:24 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.6 2004/01/22 18:35:56 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -85,11 +85,11 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Priority');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $assigned_to_name;?></strong></td>
+			<td class="hilite" width="100%"><strong><?php echo $ipr[$hditem["item_priority"]];?></strong></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Assigned To');?>:</td>
-			<td class="hilite" width="100%"><strong><?php echo $ipr[$hditem["item_priority"]];?></strong></td>
+			<td class="hilite" width="100%"><strong><?php echo $assigned_to_name;?></strong></td>
 		</tr>
 
 		<tr>
