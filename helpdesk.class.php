@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.16 2004/04/23 17:17:43 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.17 2004/04/23 18:11:49 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -10,6 +10,7 @@ $iap = dPgetSysVal( 'HelpDeskApplic' );
 $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $isv = dPgetSysVal( 'HelpDeskSeverity' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
+$isa = dPgetSysVal( 'HelpDeskAuditTrail' );
 
 // Help Desk class
 class CHelpDeskItem extends CDpObject {
@@ -148,21 +149,65 @@ class CHelpDeskItem extends CDpObject {
     }
   }
 
-  function log_status ($old_status) {
-    global $AppUI;
+  function log_status_changes(){
 
-    if ($old_status != $this->item_status) {
+	$hditem = new CHelpDeskItem();
+	$hditem->load( dPgetParam( $_POST, "item_id") );
+
+	//0=>Created
+	$field_event_map = array(
+		1=>"item_title",//Title
+		2=>"item_requestor",//Requestor Name
+		3=>"item_requestor_email",//Requestor E-mail
+		4=>"item_requestor_phone",//Requestor Phone
+		5=>"item_assigned_to",//Assigned To
+		6=>"item_notify",//Notify by e-mail
+		7=>"item_company_id",//Company
+		8=>"item_project_id",//Project
+		9=>"item_calltype",//Call Type
+		10=>"item_source",//Call Source
+		11=>"item_status",//Status
+		12=>"item_priority",//Priority
+		13=>"item_severity",//Severity
+		14=>"item_os",//Operating System
+		15=>"item_application",//Application
+		16=>"item_summary",//Summary
+	);
+	//19=>Deleted
+
+	$c=0;
+	foreach($field_event_map as $key => $value){
+		if(!eval("return \$hditem->$value == \$this->$value;")){
+			switch($key){
       // Create the comments here
-      $comment = "";
+//					case '':
+//						break;
+				default:
+					$this->log_status($key);
+				break;
+			}
+		}
+		$c++;
+	}
+
+  }
+  
+  function log_status ($audit_code, $comment="") {
+    global $AppUI;
 
       $sql = "
         INSERT INTO helpdesk_item_status
         (status_item_id,status_code,status_date,status_modified_by,status_comment)
-        VALUES('{$this->item_id}','{$this->item_status}',NOW(),'{$AppUI->user_id}','$comment');
+        VALUES('{$this->item_id}','{$audit_code}',NOW(),'{$AppUI->user_id}','$comment')
       ";
 
       db_exec($sql);
-    }
+      if (db_error()) {
+      	return false;
+      }
+      
+      return true;
+
   }
 }
 
