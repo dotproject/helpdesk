@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.39 2004/05/25 13:16:44 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.40 2004/05/25 18:45:57 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -380,11 +380,11 @@ class CTaskLog extends CDpObject {
 // item_created_by
 
 function getPermsWhereClause($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
-	GLOBAL $AppUI, $perms;
+	GLOBAL $AppUI, $perms, $m;
 
 
   // Check for the "ALL" permission
-	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
+	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_READ || $perms[$m][PERM_ALL]==PERM_EDIT)) || 
      (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
 		$sql = "SELECT company_id FROM companies";
 		$list = db_loadColumn( $sql );
@@ -484,7 +484,7 @@ function hditemCreate() {
     return $create;
   }
 
-	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
+	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_READ || $perms[$m][PERM_ALL]==PERM_EDIT)) || 
      (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
     $create = true;
   } else if (is_array($perms['companies'])) {
