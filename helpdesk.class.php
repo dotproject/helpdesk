@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.29 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.30 2004/04/29 15:56:30 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -375,8 +375,8 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 			return null;
 	}
 
-	if((isset($perms[$mod]) && ($perms[$mod][-1]==1 || $perms[$mod][-1]==-1)) || 
-     (isset($perms["all"]) && ($perms["all"][-1]==1 || $perms["all"][-1]==-1))) {
+	if((isset($perms[$mod]) && ($perms[$mod]['-1']=='1' || $perms[$mod]['-1']=='-1')) || 
+     (isset($perms["all"]) && ($perms["all"]['-1']=='1' || $perms["all"]['-1']==-'1'))) {
 		$sql = "SELECT $id_field FROM $mod";
 		$list = db_loadColumn( $sql );
 	} else {
