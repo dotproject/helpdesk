@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.7 2004/01/23 16:19:00 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.8 2004/01/23 16:19:40 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -48,9 +48,12 @@ SELECT hi.*,
 	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
 	u1.user_email,
 	CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname
+  p.project_id,
+  p.project_name
 FROM helpdesk_items hi
 LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
 LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
 $where
 ORDER BY hi.$orderby
 ";
@@ -129,7 +132,7 @@ function changeList() {
 		<a href="?m=helpdesk&a=list&orderby=item_priority" class="hdr"><?php echo $AppUI->_('Priority');?></a>
 	</th>
 	<th nowrap="nowrap">
-		<?php echo $AppUI->_('Next Date');?>
+		<?php echo $AppUI->_('Project');?>
 	</th>
 	<th>&nbsp;</th>
 </tr>
@@ -159,7 +162,7 @@ foreach ($rows as $row) {
 	$s .= $CR . '<td align="center" nowrap>' . @$row["assigned_fullname"] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap>' . 'TODO' . '</td>';
+	$s .= $CR . '<td align="center" nowrap><a href="./index.php?m=projects&a=view&project_id=<?=$row["project_id"]?>"><?=$row["project_name"]?></a></td>';
 	$s .= $CR . '<td align="center" nowrap><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
 	$s .= $CR . '</tr></form>';
 }
