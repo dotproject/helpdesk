@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.5 2004/04/29 00:17:47 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.6 2004/05/20 15:15:21 agorski Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();
@@ -7,7 +7,7 @@ foreach ($ict as $k => $v) {
 	$sql = "SELECT item_status, count(item_id)
           FROM helpdesk_items
           WHERE item_calltype=$k"
-          ." AND ".getPermsWhereClause("companies", "item_company_id").
+          ." AND ".getPermsWhereClause("item_company_id", "item_created_by", PERM_READ).
           "GROUP BY item_status";
 	$stats[$k] = db_loadHashList( $sql );
 }

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.51 2004/05/25 13:16:44 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.52 2004/05/25 17:02:06 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -176,6 +176,7 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 	//company list
 	$sql = "SELECT company_id, company_name
 		FROM companies
+    WHERE ".getPermsWhereClause("company_id", NULL, PERM_EDIT)."
 		ORDER BY company_name";
 	$company_list = db_loadHashList( $sql );
 	$selectors[] = "
@@ -196,9 +197,9 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	}
 	//project list
 	$sql = "SELECT project_id, project_name
-		FROM projects\n".
-		((isset($company) && $company>0)?"WHERE project_company=$company\n":"")
-		."ORDER BY project_name";
+		      FROM projects
+          WHERE ".getPermsWhereClause("project_company", NULL, PERM_EDIT)
+		   . "ORDER BY project_name";
 	//print "<pre>$sql</pre>";
 	$project_list = db_loadHashList( $sql );
 	$selectors[] = "
@@ -220,7 +221,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	//assigned to user list
 	$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
 		FROM users
-    WHERE ".getPermsWhereClause("companies", "user_company", NULL)."
+    WHERE ".getPermsWhereClause("user_company", NULL, PERM_EDIT)."
 		ORDER BY user_first_name";
 
 	$assigned_to_list = db_loadHashList( $sql );
@@ -244,7 +245,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 
 	$sql = "SELECT distinct(item_requestor) as requestor, item_requestor
 		FROM helpdesk_items
-		WHERE ".getPermsWhereClause("companies", "item_company_id")."
+		WHERE ".getPermsWhereClause("item_company_id", NULL, PERM_EDIT)."
 		ORDER BY item_requestor";
 
 	$requestor_list = db_loadHashList( $sql );
@@ -256,7 +257,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 }
 
 //pull in permitted companies
-$tarr[] = getPermsWhereClause("companies", "item_company_id");
+$tarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_EDIT);
 
 $where = '';
 
@@ -304,7 +305,6 @@ $sql .= " LIMIT $offset,$items_per_page";
 
 // Get the actual, paginated results
 $rows = db_loadList( $sql );
-
 
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );

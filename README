@@ -1,10 +1,48 @@
-$Id: README,v 1.3 2004/05/13 21:25:23 bloaterpaste Exp $
+$Id: README,v 1.4 2004/05/18 22:33:05 bloaterpaste Exp $
 
 ABOUT
 
     This is the dotProject Help Desk Module.  If you would like to contribute
     to this project, please contact one of the maintainers.
 
+PERMISSIONS
+
+    The Help Desk uses built in dotProject permissions to its best abilities. The
+    permission system is layed out as follows.
+
+    1. Permissions to the Help Desk module overwrite company permissions. For
+    instance, if a user has read-write access to a company but has read only
+    access to Help Desk, overall read only access will result. A user must have
+    read-write permissions to Help Desk in order to be able to create and edit
+    items.
+
+    2. Company permissions are used to determine access to Help Desk items. If
+    a user has read only permissions for company X, the user will be able to
+    only read items associated with company X. If the user has read-write
+    access to company X, the user will be able to create items for company X,
+    but not for any other company. Having read only permission to a company
+    will not allow the user to create items for that company.  The user must
+    have read-write permissions to at least one company in order to be able to
+    create Help Desk items.
+
+    3. If a user has created an item for company X, but later his read-write
+    permissions for company X have been removed, the user will still be able to
+    edit that item. If the user's Help Desk read-write permissions have been
+    also removed, the user will no longer be able to edit any items.  These
+    individual permissions are in place for all items a user has created.
+
+    4. On the configuration screen, there are two options of note. The first
+    option has to do with the company which handles Help Desk items.If a user
+    has read-write access to company X, the user will be able to assign items
+    to users from company X. The user will also be able to select from a list
+    of users in company X for the "requestor" of an item. If a company is
+    assigned in the configuration screen, users from that company will be added
+    to those two lists. This is done so that users can assign items to people
+    from the company that hosts the Help Desk. This is useful if Help Desk
+    staff don't have time to go through and assign items to themselves.
+    
+    The second option has to do with items which have no company assigned. By
+    default, those items are not readable by random users.
 
 MAINTAINERS
  
@@ -43,10 +81,3 @@ LICENSE
 
 See UPGRADE for version changes and information
 
-NOTES
-
-The HelpDesk module has company level permissions wrapped around it.  
-So, if your friend is in company X and the ticket is assigned to company 
-X, and you do not have perms to view info for company X you will not see 
-that ticket.  You will need to have company X perms granted to you via
-the User Admin module.

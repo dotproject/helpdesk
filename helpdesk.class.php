@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.38 2004/05/24 19:07:22 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.39 2004/05/25 13:16:44 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -377,49 +377,34 @@ class CTaskLog extends CDpObject {
 
 // Function to build a where clause to be appended to any sql that will narrow
 // down the returned data to only permitted entities
+// item_created_by
 
-function getPermsWhereClause($mod,
-                             $mod_id_field,
-                             $created_by_id_field="item_created_by",
-                             $the_company=NULL){
+function getPermsWhereClause($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
 	GLOBAL $AppUI, $perms;
 
-  // Figure out the module and field
-	switch($mod){
-		case "companies":
-			$id_field = "company_id";
-			break;
-		case "users":
-			$id_field = "user_id";
-			break;
-		case "projects":
-			$id_field = "project_id";
-			break;
-		case "tasks":
-			$id_field = "task_id";
-			break;
-		default:
-			return null;
-	}
 
   // Check for the "ALL" permission
 	if((isset($perms[$mod][PERM_ALL]) && ($perms[$mod][PERM_ALL]==PERM_READ || $perms[$mod][PERM_ALL]==PERM_EDIT)) || 
      (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
-		$sql = "SELECT $id_field FROM $mod";
+		$sql = "SELECT company_id FROM companies";
 		$list = db_loadColumn( $sql );
 	} else {
 		$list = array();
 	}
 
-	if(isset($perms[$mod])){
-		foreach($perms[$mod] as $key => $value){
+	if(isset($perms['companies'])){
+		foreach($perms['companies'] as $key => $value){
 			if($key==PERM_ALL)
 				continue;
 
 			switch($value){
 				case PERM_EDIT:
+          if (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))
+	  		    $list[] = $key;
+					break;
 				case PERM_READ:
-	  		  $list[] = $key;
+          if ($perm_type == PERM_READ)
+	  		    $list[] = $key;
 					break;
 				case PERM_DENY:
 					unset($list[array_search($key, $list)]);
@@ -436,8 +421,7 @@ function getPermsWhereClause($mod,
 
 	$list = array_unique($list);
 
-  /* If we are denied access, we will try to match company id of -1, which
-     in all theory should never be a valid id */
+  // If we're not allowed to see any company, let's make sure our SQL is ok
   if (!count($list)) {
     $list[] = "-1";
   }

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.11 2004/05/20 15:15:20 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.12 2004/05/25 16:38:54 agorski Exp $*/
 
   /*
    * opened = 0
@@ -63,7 +63,7 @@ function vw_idx_handler ($type) {
           WHERE $where";
 
   //pull in permitted companies
-  $sql .= " AND ".getPermsWhereClause("companies", "item_company_id");
+  $sql .= " AND ".getPermsWhereClause("item_company_id", "item_created_by", NULL, PERM_READ);
 
   $sql .= " GROUP BY item_id
             ORDER BY item_id";

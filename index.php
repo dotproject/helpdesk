@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.19 2004/05/20 17:13:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.20 2004/05/25 13:16:44 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -9,18 +9,19 @@ $tab = $AppUI->getState( 'HelpDeskIdxTab' ) !== NULL ? $AppUI->getState( 'HelpDe
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
-if ($canEdit) {
+if (hditemCreate()) {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
-	$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('Home') );
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
 }
+
+$titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('Home') );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
 
 $titleBlock->show();
 
-$company_perm_sql = getPermsWhereClause("companies", "item_company_id");
+$company_perm_sql = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
 
 $sql = "SELECT COUNT(item_id)
         FROM helpdesk_items";
