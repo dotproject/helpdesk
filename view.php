@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.19 2004/04/15 20:21:54 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.20 2004/04/15 20:39:46 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -49,8 +49,9 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
-  $titleBlock->addCrumbDelete("Delete this item", $canDelete);
+
 	if ($canEdit) {
+    $titleBlock->addCrumbDelete("Delete this item", 1);
 		$titleBlock->addCell(
 			'<input type="submit" class="button" value="'.$AppUI->_('New Item').'">', '',
 			'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
