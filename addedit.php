@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.11 2004/04/15 20:21:54 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.12 2004/04/16 20:40:34 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -41,7 +41,9 @@ $ttl = $item_id > 0 ? "Editing Item #$item_id" : "Adding Item";
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );
 $titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
-$titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "View this item" );
+if ($item_id) {
+  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "View this item" );
+}
 $titleBlock->show();
 
 ?>
@@ -76,7 +78,7 @@ function submitIt() {
 } 
 
 function popDialog() {
-	window.open('./index.php?m=public&a=selector&callback=setRequestor&table=users&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable')
+	window.open('./index.php?m=public&a=selector&callback=setRequestor&table=users&dialog=1', 'selector', 'left="50",top="50",height="250",width="400",resizable')
 }
 
 var oldRequestor = '';
@@ -111,36 +113,31 @@ function setRequestor( key, val ) {
 		</tr>
 	<?php } ?>
 		<tr>
-			<td align="right"><font color=red><?=$AppUI->_('* Subject')?>:</font></td>
+			<td align="right"><font color="red"><?=$AppUI->_('* Subject')?>:</font></td>
 			<td valign="top">
 				<input type="text" class="text" id="large" name="item_title" value="<?=@$hditem["item_title"]?>" maxlength="64" />
 			</td>
-			<td align="left">&nbsp; </td>
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><font color=red>* <?=$AppUI->_('Your Name');?>:</font></td>
-			<td valign="top">
+			<td align="right" nowrap><font color="red">* <?=$AppUI->_('Your Name');?>:</font></td>
+			<td valign="top" nowrap>
 				<input type="text" class="text" id="large" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
         onchange="if (this.value!=oldRequestor) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-				<input type="button" class="button" value="..." onclick="popDialog();" />
+			<input type="button" class="button" value="..." onclick="popDialog();" />
 			</td>
-			<td align="left">&nbsp; </td>
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><?=$AppUI->_('Your E-mail');?>:</td>
+			<td align="right" nowrap>&dagger; <?=$AppUI->_('Your E-mail');?>:</td>
 			<td valign="top">
 				<input type="text" class="text" id="large" name="item_requestor_email" value="<?=@$hditem["item_requestor_email"]?>" maxlength="64" />
 			</td>
-			<td align="left">
-			</td>
 		</tr>
-
 		<tr>
 			<td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
 			<td>
@@ -214,13 +211,24 @@ function setRequestor( key, val ) {
 
 
 <tr>
-	<td align="left"><br><font color=red>* <?=$AppUI->_('Summary')?>:</font></td>
+	<td align="left"><br><font color="red">* <?=$AppUI->_('Summary')?>:</font></td>
 	<td>&nbsp; </td>
 </tr>
 <tr>
 	<td colspan="2" align="left">
 		<textarea cols="90" rows="15" class="textarea" name="item_summary"><?=@$hditem["item_summary"]?></textarea>
 	</td>
+</tr>
+<tr>
+  <td colspan="2">
+  <br>
+  <small>
+    <font color="red">* Required field</font><br>
+    &dagger; If you select your name from the popup window, you do not need 
+    to enter an e-mail address.
+  </small>
+  <br><br>
+  </td>
 </tr>
 <tr>
 	<td><input type="button" value="<?=$AppUI->_('Back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
