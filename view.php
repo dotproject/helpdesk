@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.10 2004/01/23 21:13:52 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.11 2004/01/23 22:00:04 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -103,11 +103,11 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Operating System');?>:</td>
-			<td class="hilite" width="100%"><?php echo $hditem["item_os"];?></td>
+			<td class="hilite" width="100%"><?php echo $ics[$hditem["item_os"]];?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Application');?>:</td>
-			<td class="hilite" width="100%"><?php echo $hditem["item_application"];?></td>
+			<td class="hilite" width="100%"><?php echo $ics[$hditem["item_application"]];?></td>
 		</tr>
     <tr>
       <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>

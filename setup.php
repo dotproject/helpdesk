@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.2 2004/01/19 21:36:48 mike Exp $ */
 /*
 dotProject Module
 
@@ -22,7 +22,8 @@ $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
 $config['mod_ui_name'] = 'Help Desk';
 $config['mod_ui_icon'] = 'helpdesk.png';
-$config['mod_description'] = 'Help Desk is a bug, issue tracking centre';
+$config['mod_description'] = 'Help Desk is a bug, feature request,
+                              complaint and suggestion tracking centre';
 
 if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
