@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.5 2004/04/19 21:06:46 gatny Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.6 2004/04/20 17:52:20 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -58,6 +58,11 @@ class CHelpDeskItem extends CDpObject {
 		}
 		if (!$this->item_created) { 
 			$this->item_created = db_unix2dateTime( time() );
+		}
+		
+		//if the status is changed to #2 "Closed" mark as resolved.
+		if ($this->item_status==2) { 
+			$this->item_resolved = db_unix2dateTime( time() );
 		}
 		// TODO More checks
 		return NULL;
