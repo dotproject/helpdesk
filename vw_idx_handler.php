@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.4 2004/04/21 19:21:25 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.5 2004/04/23 17:17:43 agorski Exp $*/
 function vw_idx_handler ($opened) {
   global $m, $ipr, $ist, $AppUI;
 
@@ -35,6 +35,10 @@ function vw_idx_handler ($opened) {
     $sql .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
     $sql .= "AND his.status_code = 2";
   }
+  
+//pull in permitted companies
+  $sql .= " AND ".getPermsWhereClause("companies", "item_company_id");
+
 
   $sql .= " ORDER BY item_id";
 

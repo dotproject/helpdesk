@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.9 2004/04/23 17:17:43 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.10 2004/04/28 20:33:49 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -27,8 +27,11 @@ if ($canEdit) {
 
 $titleBlock->show();
 
+$company_perm_sql = getPermsWhereClause("companies", "item_company_id");
+
 $sql = "SELECT COUNT(item_id)
         FROM helpdesk_items";
+$sql .= " WHERE ".$company_perm_sql;
 
 $numtotal = db_loadResult ($sql);
 
@@ -43,15 +46,19 @@ $numtotal = db_loadResult ($sql);
 
 $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
+        	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
         AND (status_code = 0 OR status_code = 1)";
+$sql .= " AND ".$company_perm_sql;
 
 $numopened = db_loadResult ($sql);
 
 $sql = "SELECT COUNT(status_id)
         FROM helpdesk_item_status
+        	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
         WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
         AND (status_code = 2)";
+$sql .= " AND ".$company_perm_sql;
 
 $numclosed = db_loadResult ($sql);
 

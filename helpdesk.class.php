@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.26 2004/04/27 17:05:35 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.27 2004/04/28 20:33:49 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -348,5 +348,59 @@ class CTaskLog extends CDpObject {
     $this->task_log_hours = (float) $this->task_log_hours;
     return NULL;
   }
+
+}
+
+  //Function to build a where clause to be appended to any sql that will narrow down the returned data to only permitted entities
+  function getPermsWhereClause($mod, $field){
+	//figure out the perms.  Build a list of companies that can be viewed
+	GLOBAL $perms;
+	//print "<pre>".print_r($perms, 1)."</pre>";
+	//get starting list of companies.  If all companies perms are granted, start with all companies, otherwise start with an empty list.
+	switch($mod){
+		case "companies":
+			$id_field = "company_id";
+			break;
+		case "users":
+			$id_field = "user_id";
+			break;
+		case "projects":
+			$id_field = "project_id";
+			break;
+		case "tasks":
+			$id_field = "task_id";
+			break;
+		default:
+			return null;
+	}
+	if((isset($perms[$mod]) && ($perms[$mod][-1]==1 || $perms[$mod][-1]==-1)) || (isset($perms["all"]) && ($perms["all"][-1]==1 || $perms["all"][-1]==-1))){
+		$sql = "SELECT $id_field FROM $mod";
+		$companies = db_loadColumn( $sql );
+	} else {
+		$companies = array();
+	}
+	$companies[]="''";
+	if(isset($perms[$mod])){
+		foreach($perms[$mod] as $key => $value){
+			//-1 is all perms, and not a specific company
+			if($key=='-1')
+				continue;
+			switch($value){
+				case '-1'://edit
+					$companies[]=$key;
+					break;
+				case '0'://deny
+					unset($companies[array_search($key, $companies)]);
+					break;
+				case '1'://read
+					$companies[]=$key;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	$companies = array_unique($companies);
+	return " $field in (".implode(",",$companies).")";
 }
 ?>

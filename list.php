@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.36 2004/04/28 20:33:49 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.37 2004/04/28 23:40:19 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -65,45 +65,14 @@ if ($priority >= 0) {
 	$tarr[] = "hi.item_priority=$priority";
 }
 
+//pull in permitted companies
+$tarr[] = getPermsWhereClause("companies", "item_company_id");
+
 $where = '';
 
 if (count( $tarr )) {
 	$where = 'WHERE ' . implode(' AND ', $tarr);
 }
-
-//figure out the perms.  Build a list of companies that can be viewed
-GLOBAL $perms;
-//print "<pre>".print_r($perms, 1)."</pre>";
-//get starting list of companies.  If all companies perms are granted, start with all companies, otherwise start with an empty list.
-if((isset($perms["companies"]) && ($perms["companies"][-1]==1 || $perms["companies"][-1]==-1)) || (isset($perms["all"]) && ($perms["all"][-1]==1 || $perms["all"][-1]==-1))){
-	$sql = "SELECT company_id FROM companies";
-	$companies = db_loadColumn( $sql );
-} else {
-	$companies = array();
-}
-$companies[]="''";
-if(isset($perms["companies"])){
-	foreach($perms["companies"] as $key => $value){
-		//-1 is all perms, and not a specific company
-		if($key=='-1')
-			continue;
-		switch($value){
-			case '-1'://edit
-				$companies[]=$key;
-				break;
-			case '0'://deny
-				unset($companies[array_search($key, $companies)]);
-				break;
-			case '1'://read
-				$companies[]=$key;
-				break;
-			default:
-				break;
-		}
-	}
-}
-$companies = array_unique($companies);
-$where .= " AND item_company_id in (".implode(",",$companies).")";
 
 $sql = "SELECT hi.*,
        CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
@@ -130,7 +99,7 @@ if ($orderby == "project_name") {
 if ($orderdesc) {
   $sql .= " DESC";
 }
-
+//print "<pre>$sql</pre>";
 $rows = db_loadList( $sql );
 
 // Setup the title block
