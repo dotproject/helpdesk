@@ -1,7 +1,12 @@
-<?php /* COMPANIES $Id: view.php,v 1.29 2004/04/22 17:04:08 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.30 2004/04/22 17:23:32 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
+// retrieve any state parameters
+if (isset( $_GET['tab'] )) {
+	$AppUI->setState( 'HelpLogVwTab', $_GET['tab'] );
+}
+$tab = $AppUI->getState( 'HelpLogVwTab' ) !== NULL ? $AppUI->getState( 'HelpLogVwTab' ) : 0;
 
 // Pull data
 $sql = "SELECT hi.*,
@@ -217,4 +222,19 @@ function delIt() {
 	</td>
 </tr>
 </table>
-<?php } ?>
+<?php 
+
+$tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
+//if ( $obj->task_dynamic == 0 ) {
+	// tabbed information boxes
+$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
+	// fixed bug that dP automatically jumped to access denied if user does not
+	// have read-write permissions on task_id and this tab is opened by default (session_vars)
+	// only if user has r-w perms on this task, new or edit log is beign showed
+//	if (!getDenyEdit( $m, $task_id )) {
+$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
+//	}
+//}
+$tabBox->show();
+} 
+?>
