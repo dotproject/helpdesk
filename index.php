@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.12 2004/05/05 16:11:51 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.13 2004/05/06 13:22:53 agorski Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -44,28 +44,36 @@ $numtotal = db_loadResult ($sql);
  * Testing = 5
  */
 
-$sql = "SELECT COUNT(status_id)
-        FROM helpdesk_item_status
-        	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
-        WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (item_status = 0 OR item_status = 1)
-        AND $company_perm_sql";
-
+$sql = "SELECT COUNT(DISTINCT(item_id))
+        FROM 
+        	helpdesk_items
+        	LEFT JOIN helpdesk_item_status on helpdesk_items.item_id = helpdesk_item_status.status_item_id
+        WHERE 
+        	status_code = 0
+        	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
+        	";
+$sql .= " AND ".$company_perm_sql;
 $numopened = db_loadResult ($sql);
 
-$sql = "SELECT COUNT(status_id)
-        FROM helpdesk_item_status
-        	INNER JOIN helpdesk_items on helpdesk_item_status.status_item_id = helpdesk_items.item_id
-        WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        AND (item_status = 2)
-        AND $company_perm_sql";
-
+$sql = "SELECT COUNT(DISTINCT(item_id))
+        FROM 
+        	helpdesk_items
+        	LEFT JOIN helpdesk_item_status on helpdesk_items.item_id = helpdesk_item_status.status_item_id
+        WHERE 
+        	item_status=2
+        	AND status_code=11
+        	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
+        	";
+$sql .= " AND ".$company_perm_sql;
+//print "<pre>$sql</pre>";
 $numclosed = db_loadResult ($sql);
 
-$sql = "SELECT COUNT(item_status)
-        FROM helpdesk_items
-        WHERE item_assigned_to={$AppUI->user_id}
-        AND (item_status != 2)";
+$sql = "SELECT COUNT(DISTINCT(item_status))
+        FROM 
+        	helpdesk_items
+        WHERE 
+        	item_assigned_to=".$AppUI->user_id."
+        	AND (item_status != 2)";
 
 $nummine = db_loadResult ($sql);
 
