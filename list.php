@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.2 2004/01/23 16:09:00 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -156,11 +156,11 @@ foreach ($rows as $row) {
 		. $CR .'<td width="17"><img src="'.dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ).'" width="15" height="17" border=0 alt="' . $ict[@$row["item_calltype"]] . '" /></td>'
 		. $CR .'<td><a href="?m=helpdesk&a=view&item_id='.$row["item_id"].'">'
 		. $row["item_title"] . '</a></td></tr></table></td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . @$row["assigned_fullname"] . '</td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . $ist[@$row["item_status"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . $ipr[@$row["item_priority"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap">' . 'TODO' . '</td>';
-	$s .= $CR . '<td align="center" nowrap="nowrap"><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
+	$s .= $CR . '<td align="center" nowrap>' . @$row["assigned_fullname"] . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . 'TODO' . '</td>';
+	$s .= $CR . '<td align="center" nowrap><input type="checkbox" name="batch[]" value="' . @$row["item_id"] . '"</td>';
 	$s .= $CR . '</tr></form>';
 }
 echo "$s\n";
