@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.33 2004/05/05 19:50:51 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.34 2004/05/05 20:04:04 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -145,6 +145,7 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "
 		  ALTER TABLE `helpdesk_items`
 		  ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
+		  ADD `item_project_id` int(11) NOT NULL default '0' AFTER `item_parent`, 
 		  ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
 		  ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
 		  ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
