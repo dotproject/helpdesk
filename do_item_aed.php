@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.14 2004/04/26 21:09:51 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.15 2004/04/26 21:25:41 bloaterpaste Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -20,8 +20,6 @@ if($do_task_log=="1"){
 			$AppUI->redirect();
 		}
 	}
-
-
 
 	//then create/update the task log
 	$obj = new CTaskLog();
@@ -81,7 +79,6 @@ if($do_task_log=="1"){
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
 			if($new_item){
-				$hditem->item_id = mysql_insert_id();
 				$hditem->log_status(0,"Created");
 			}
 
