@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.7 2004/01/22 18:43:20 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.8 2004/01/23 19:14:58 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -48,7 +48,6 @@ if (!db_loadHash( $sql, $hditem )) {
 	writeDebug( "$tm", "tm", __FILE__, __LINE__ );
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
-	//$titleBlock->addCell( '<h1>#' . $hditem["item_id"] . '&nbsp;</h1>' );
 	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
 	if ($canEdit) {
@@ -157,7 +156,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	</td>
 </tr>
 <tr>
-	<td valign="top">
+	<td valign="top" colspan="2">
 		<strong><?php echo $AppUI->_('Summary');?></strong>
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr>

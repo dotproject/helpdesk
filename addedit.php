@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.3 2004/01/19 21:35:19 mike Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.4 2004/01/23 19:14:58 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -49,7 +49,7 @@ ORDER BY proj
 $projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
 // setup the title block
-$ttl = $item_id > 0 ? "Edit Item" : "Add Item";
+$ttl = $item_id > 0 ? "Editing Item #$item_id" : "Adding Item";
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );
 $titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
@@ -119,8 +119,8 @@ function setRequestor( key, val ) {
 		<table cellspacing="0" cellpadding="2" border="0">
 	<?php if ($item_id) { ?>
 		<tr>
-			<td align="right" nowrap><?php echo $AppUI->_('Created At');?>:</td>
-			<td class="hilite" width="100%"><?php echo $tc;?></td>
+			<td align="right" nowrap><?php echo $AppUI->_('Date Created');?>:</td>
+			<td width="100%"><strong><?php echo $tc;?></strong></td>
 		</tr>
 	<?php } ?>
 		<tr>
@@ -175,7 +175,7 @@ function setRequestor( key, val ) {
 		</tr>
 
 		<tr>
-			<td align="right"><?php echo $AppUI->_('Asset Reference');?>:</td>
+			<td align="right"><?php echo $AppUI->_('Reference');?>:</td>
 			<td valign="top">
 				<input type="text" class="text" name="item_assetno" value="<?php echo @$hditem["item_assetno"];?>" size="40" maxlength="24" />
 			</td>
