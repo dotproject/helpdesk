@@ -1,7 +1,7 @@
-<?php /* COMPANIES $Id: view.php,v 1.21 2004/04/19 18:24:12 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.21 2004/04/19 21:06:46 gatny Exp $ */
 $AppUI->savePlace();
 
-$item_id = dPgetParam( $_POST, 'item_id', 0 );
+$item_id = dPgetParam( $_GET, 'item_id', 0 );
 
 // Pull data
 $sql = "SELECT hi.*,
