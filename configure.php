@@ -45,7 +45,7 @@ $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 //then be sure to include a 'list' entry with the options.
 //if the key starts with hrXXX then it will just display the contents on the value.  This is used for grouping.
 $config_options = array(
-	"hr1" => " <hr><b>".$AppUI->_('Item List Paging Options').'<b>',
+	"hr1" => '<b>'.$AppUI->_('Paging Options').'<b><hr>',
 	"items_per_page" => array(
 		"description" => $AppUI->_('Number of items displayed per page on the list view'),
 		"value" => 30,
@@ -61,6 +61,7 @@ $config_options = array(
 		"value" => 5,
 		'type' => 'text'
 	),
+	"hr2" => '<br><b>'.$AppUI->_('Permission Options').'<b><hr>',
 	"the_company" => array(
 		"description" => $AppUI->_('The company which handles Help Desk items'),
 		"value" => '',
@@ -78,7 +79,7 @@ $config_options = array(
 		'type' => 'select',
 		'list' => @$user_types
 	),
-	"hr2" => " <hr><b>".$AppUI->_('New Item Default Selections').'<b>',
+	"hr3" => "<br><b>".$AppUI->_('New Item Default Selections').'<b><hr>',
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Default "assigned to" field to be current user'),
 		"value" => 1,
@@ -94,9 +95,9 @@ $config_options = array(
 		"value" => 1,
 		'type' => 'checkbox'
 	),
-	"hr3" => " <hr><b>".$AppUI->_('Available Search Fields for Item List').'<b>',
+	"hr4" => '<br><b>'.$AppUI->_('Search Fields for Item List').'<b><hr>',
 	"search_criteria_search" => array(
-		"description" => $AppUI->_('Title Search'),
+		"description" => $AppUI->_('Title/Summary Search'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),

@@ -1,25 +1,33 @@
 ===== Version 0.2+  =====
 Added
+* Improved permissions system, based mainly on Company permissions.
 * Configuration options, available through the View Modules page of the System
-  Admin module.  You can modify any of the following:
-   * Defaults that "assigned to" field to be that of the current user.  	
-   * Defaults the "notify by email" field to on. 	
-   * Defaults the "company" field to be that of the current user. 	
-   * Show the search option for Title Search. 	
-   * Show the search option for Call Type. 	
-   * Show the search option for Company. 	
-   * Show the search option for Status. 	
-   * Show the search option for Call Source. 	
-   * Show the search option for Project. 	
-   * Show the search option for Assigned To. 	
-   * Show the search option for Priority. 	
-   * Show the search option for Application. 	
-   * Show the search option for Requestor. 	
-   * Show the search option for Severity. 	
-   * Show the search option for Operation System.
+  Admin module. These fine tune the look and behavior of the Help Desk module.
+  The options include:
+  * Item List Paging Options
+    * Number of items displayed per page on the list view
+    * Number of status log items displayed per page in item view
+    * Number of pages to display on each side of current page
+
+  * Permissions
+    * The company which handles Help Desk items
+    * Items with no company should be editable by anyone
+    * Minimum user level to edit other users' logs
+    
+  * New Item Default Selections
+    * Default "assigned to" field to be current user
+    * Default the "notify by email" field to on
+    * Default "company" field to be that of the current user
+
+  * Available Search Fields for Item List
+    * Title Search, Call Type, Company, Status, Call Source, Project,
+      Assigned To, Priority, Application, Requestor, Severity, Operating System
+
 * User list now sorts by last name, like the contact list does.
-* Setting status to "Open" only if the current status is Unassigned on assigned user selection.
-* Added auto-linking of email addresses and http:// in that are contained within the summary field.
+* Setting status to "Open" only if the current status is Unassigned on assigned
+  user selection.
+* Added auto-linking of email addresses and http:// in that are contained 
+  within the summary field.
 * Added stripping of any html tags within the summary field.
 
 Fixes
