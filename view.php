@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.27 2004/04/21 19:46:41 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.28 2004/04/21 21:04:14 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -31,6 +31,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
 	$format = "$df $tf";
+  $tc = $tm = $tr = "";
 
 	if(@$hditem["item_created"]){
 		$created = new CDate( @$hditem["item_created"] );
@@ -114,17 +115,29 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Status')?>:</td>
-			<td class="hilite" width="100%"><?=$ist[$hditem["item_status"]]?></td>
+			<td class="hilite" width="100%"><?php
+        print isset($ist[$hditem["item_status"]]) ?
+              $ist[$hditem["item_status"]] :
+              $ist[0]
+      ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Priority')?>:</td>
-			<td class="hilite" width="100%"><?=$ipr[$hditem["item_priority"]]?></td>
+			<td class="hilite" width="100%"><?php
+        print isset($ipr[$hditem["item_priority"]]) ?
+              $ipr[$hditem["item_priority"]] :
+              $ipr[0];
+      ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
-			<td class="hilite" width="100%"><?=$ics[$hditem["item_severity"]]?></td>
+      <td class="hilite" width="100%"><?php
+        print isset($ics[$hditem["item_severity"]]) ?
+              $ics[$hditem["item_severity"]] :
+              $ics[0];
+      ?></td>
 		</tr>
 
 		<tr>
@@ -136,17 +149,29 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
-			<td class="hilite" width="100%"><?=$ics[$hditem["item_source"]]?></td>
+			<td class="hilite" width="100%"><?php
+        print isset($ics[$hditem["item_source"]]) ?
+              $ics[$hditem["item_source"]] :
+              $ics[0];
+      ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Operating System')?>:</td>
-			<td class="hilite" width="100%"><?=$ics[$hditem["item_os"]]?></td>
+			<td class="hilite" width="100%"><?php
+        print isset($ios[$hditem["item_os"]]) ?
+              $ios[$hditem["item_os"]] :
+              $ios[0];
+      ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
-			<td class="hilite" width="100%"><?=$ics[$hditem["item_application"]]?></td>
+			<td class="hilite" width="100%"><?php
+        print isset($iap[$hditem["item_application"]]) ?
+              $iap[$hditem["item_application"]] :
+              $iap[0];
+        ?></td>
 		</tr>
 
     <tr>

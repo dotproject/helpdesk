@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.12 2004/04/22 14:54:21 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.13 2004/04/22 16:36:05 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -98,7 +98,7 @@ class CHelpDeskItem extends CDpObject {
         break;
     }
 
-    if($sql){
+    if(isset($sql)) {
       db_loadHash( $sql, $result );
       $this->item_requestor_email = $result['email'];
       $this->item_requestor_phone = $result['phone'];

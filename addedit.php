@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.25 2004/04/22 14:18:31 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.26 2004/04/22 14:54:21 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -55,11 +55,10 @@ $titleBlock->show();
 if ($item_id) { 
   $tsc = db_dateTime2unix( $hditem["item_created"] );
 } else {
-  $tsc = $rightNow;
-  $hditem["item_created"] = db_unix2dateTime( $rightNow );
+  $hditem["item_created"] = db_unix2dateTime(time());
 }
 
-$tc = $tsc < 0 ? null : date( "m/d/y g:i a", $tsc );
+$tc = isset($tsc) ? date( "m/d/y g:i a", $tsc ) : null;
 
 ?>
 

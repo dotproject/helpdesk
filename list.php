@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.31 2004/04/21 17:57:37 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.32 2004/04/21 19:46:39 agorski Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -16,8 +16,10 @@ $orderdesc = $AppUI->getState('HelpDeskIdxOrderDesc') ? $AppUI->getState('HelpDe
 
 // check for search text
 if (isset( $_GET['search'] )) {
-  $search = dPgetParam( $_GET, 'search', '' );
+  $AppUI->setState('HelpDeskSearch', $_GET['search']);
 }
+  
+$search = $AppUI->getState('HelpDeskSearch');
 
 // check for calltype filter
 if (isset( $_GET['item_calltype'] )) {
@@ -39,7 +41,7 @@ $priority = $AppUI->getState( 'HelpDeskPriority' ) !== null ? $AppUI->getState( 
 
 $tarr = array();
 
-if ($search) {
+if (isset($search)) {
 	$tarr[] = "(hi.item_title LIKE '%$search%' OR hi.item_summary LIKE '%$search%')";
 }
 
@@ -222,16 +224,18 @@ print "$s\n";
 function sort_header($field, $name) {
   global $orderby, $orderdesc;
 
+  $arrow = "";
+
   $link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
 
   if ($orderby == $field) {
     $link .= $orderdesc ? "0" : "1";
-    $arrow .= $orderdesc ? "&uarr;" : "&darr;";
+    $arrow .= $orderdesc ? " &uarr;" : " &darr;";
   } else {
     $link .= "0";
   }
 
-  $link .= "\">$name</a> $arrow";
+  $link .= "\">$name</a>$arrow";
 
   return $link;
 }
