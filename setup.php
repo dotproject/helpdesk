@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.42 2004/06/01 20:11:13 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.43 2004/06/02 17:00:01 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -18,7 +18,7 @@ $config['permissions_item_label'] = 'company_name';
 $config['permissions_item_field'] = 'company_id';
 
 if (@$a == 'setup') {
-	echo dPshowModuleConfig( $config );
+	print dPshowModuleConfig( $config );
 }
 
 require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');

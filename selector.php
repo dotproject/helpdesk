@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.7 2004/05/26 15:45:07 agorski Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.8 2004/05/27 13:41:03 agorski Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -140,7 +140,7 @@ if (!$ok) {
 	if (count( $list ) > 1) {
 		echo $AppUI->_( 'Select' ).' '.$AppUI->_( $title ).':<br />';
 		foreach ($list as $key => $val) {
-			echo "<a href=\"javascript:setClose('$key','$val');\">$val</a><br>\n";
+			echo "<a href=\"javascript:setClose('$key','".addslashes($val)."');\">$val</a><br>\n";
 		}
 ?>
 	</td>
