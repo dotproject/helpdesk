@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.13 2004/04/19 21:06:45 gatny Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.15 2004/04/20 16:38:49 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
@@ -131,7 +131,7 @@ function updateStatus(obj){
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><font color="red">* <?=$AppUI->_('Your Name');?>:</font></td>
+			<td align="right" nowrap><font color="red">* <?=$AppUI->_('Requestor');?>:</font></td>
 			<td valign="top" nowrap>
 				<input type="text" class="text" id="large" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
