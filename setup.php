@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.8 2004/04/20 17:08:59 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.9 2004/04/20 17:35:34 bloaterpaste Exp $ */
 /*
 dotProject Module
 
@@ -61,6 +61,7 @@ class CSetupHelpDesk {
 			  `item_requestor` varchar(48) NOT NULL default '',
 			  `item_requestor_id` int(11) NOT NULL default '0',
 			  `item_requestor_email` varchar(128) NOT NULL default '',
+			  `item_requestor_phone` varchar(30) NOT NULL default '',
 			  `item_assetno` varchar(24) NOT NULL default '',
 			  `item_created` datetime default NULL,
 			  `item_modified` datetime default NULL,
@@ -74,7 +75,6 @@ class CSetupHelpDesk {
 			  `item_parent` int(10) unsigned NOT NULL default '0',
 			  `item_project_id` int(11) NOT NULL default '0',
 			  `item_company_id` int(11) NOT NULL default '0',
-			  `item_phone_number` varchar(30) NOT NULL default '',
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM
 		";

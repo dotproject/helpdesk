@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.16 2004/04/20 16:40:44 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.17 2004/04/20 16:59:51 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
@@ -42,6 +42,12 @@ $sql = "SELECT project_id, CONCAT(companies.company_name, ': ', project_name) as
 
 $projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
+$sql = "SELECT company_id, company_name
+        FROM companies
+        ORDER BY company_name";
+
+$companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+
 // Setup the title block
 $ttl = $item_id ? "Editing Item #$item_id" : "Adding New Item";
 
@@ -68,7 +74,7 @@ function submitIt() {
   }
 
   if( f.item_requestor.value.length < 3 ) {
-    msg += "\nYour Name";
+    msg += "\nRequestor";
     f.item_requestor.focus();
   }
 
@@ -137,7 +143,7 @@ function updateStatus(obj){
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><font color="red">* <?=$AppUI->_('Requestor');?>:</font></td>
+			<td align="right" nowrap><font color="red">* <?=$AppUI->_('Requestor Name');?>:</font></td>
 			<td valign="top" nowrap>
 				<input type="text" class="text" id="large" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
@@ -150,11 +156,19 @@ function updateStatus(obj){
 		</tr>
 
 		<tr>
-			<td align="right" nowrap>&dagger; <?=$AppUI->_('Your E-mail');?>:</td>
+			<td align="right" nowrap>&dagger; <?=$AppUI->_('Requestor E-mail');?>:</td>
 			<td valign="top"><input type="text" class="text" id="large"
                               name="item_requestor_email"
                               value="<?=@$hditem["item_requestor_email"]?>"
                               maxlength="64" /></td>
+		</tr>
+
+		<tr>
+			<td align="right" nowrap><!--&dagger; --><?=$AppUI->_('Requestor Phone');?>:</td>
+			<td valign="top"><input type="text" class="text" id="large"
+                              name="item_requestor_phone"
+                              value="<?=@$hditem["item_requestor_phone"]?>"
+                              maxlength="30" /></td>
 		</tr>
 
 		<tr>
@@ -218,6 +232,12 @@ function updateStatus(obj){
 			<td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"',
                           @$hditem["item_severity"] )?></td>
 		</tr>
+
+    <tr>
+      <td align="right"><?=$AppUI->_('Company')?>:</td>
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large"',
+                          @$hditem["item_company_id"] )?></td>
+    </tr>
 
     <tr>
       <td align="right"><?=$AppUI->_('Project')?>:</td>
