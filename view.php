@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.3 2004/01/19 21:35:19 mike Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -160,13 +160,14 @@ if (!db_loadHash( $sql, $hditem )) {
 		</tr>
 		</table>
 	</td>
-	<td valign="top">
-		<strong><?php echo $AppUI->_('Action Log');?></strong>
+	<td valign="top"> &nbsp;
+<!--		<strong><?php echo $AppUI->_('Action Log');?></strong>
 		<br />
 		<?php
-			$log = array( 'this is', 'the history', 'log', 'TODO' );
-			echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
+			//$log = array( 'this is', 'the history', 'log', 'TODO' );
+			//echo arraySelect( $log, '', 'size="8" disabled="disabled"', -1 );
 		?>
+-->
 	</td>
 </tr>
 <tr>
