@@ -28,7 +28,9 @@ done
 //All config options, their descriptions and their default values are defined here.  
 //Add new config options here.  type can be "checkbox", "text", or "select".  If it's "select"
 //then be sure to include a 'list' entry with the options.
+//if the key starts with hrXXX then it will just display the contents on the value.  This is used for grouping.
 $config_options = array(
+	"hr1" => "<hr><b>".$AppUI->_('General Options').'<b>',
 	"items_per_page" => array(
 		"description" => $AppUI->_('Number of items displayed per page on the list view.'),
 		"value" => 30,
@@ -59,6 +61,7 @@ $config_options = array(
 		"value" => 1,
 		'type' => 'checkbox'
 	),
+	"hr2" => "<hr><b>".$AppUI->_('Search Options').'<b>',
 	"search_criteria_search" => array(
 		"description" => $AppUI->_('Show the search option for Title Search.'),
 		"value" => 1,
@@ -191,24 +194,34 @@ $titleBlock->show();
 foreach ($config_options as $key=>$value){
 ?>
 	<tr>
+		<?php
+// the key starts with hr, then just display the value
+			if(substr($key,0,2)=='hr'){ ?>
+		<td colspan="2" align="center"><?=$value?></td>
+		<?php
+			} else {
+		?>
 		<td align="left"><?=$value['description']?></td>
 		<td><?php
-		switch($value['type']){
-			case 'checkbox': ?>
-				<input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked=\"checked\"":""?>>
-				<?php
-				break;
-			case 'text': ?>
-				<input type="text" name="<?=$key?>" value="<?=$value['value']?>">
-				<?php
-				break;
-			case 'select': 
-				print arraySelect( $value["list"], $key, 'class=text size=1', $value["value"] );
-				break;
-			default:
-				break;
-		}
+				switch($value['type']){
+					case 'checkbox': ?>
+						<input type="checkbox" name="<?=$key?>" <?=$value['value']?"checked=\"checked\"":""?>>
+						<?php
+						break;
+					case 'text': ?>
+						<input type="text" name="<?=$key?>" value="<?=$value['value']?>">
+						<?php
+						break;
+					case 'select': 
+						print arraySelect( $value["list"], $key, 'class=text size=1', $value["value"] );
+						break;
+					default:
+						break;
+				}
 		?></td>
+		<?php
+			}
+		?>
 	</tr>
 <?php	
 }
