@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.19 2004/04/23 17:49:38 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.21 2004/04/23 18:28:10 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -33,6 +33,7 @@ class CSetupHelpDesk {
 			  `item_severity` int(3) unsigned NOT NULL default '0',
 			  `item_status` int(3) unsigned NOT NULL default '0',
 			  `item_assigned_to` int(11) NOT NULL default '0',
+        `item_notify` int(1) DEFAULT '1' NOT NULL ,
 			  `item_requestor` varchar(48) NOT NULL default '',
 			  `item_requestor_id` int(11) NOT NULL default '0',
 			  `item_requestor_email` varchar(128) NOT NULL default '',
@@ -64,8 +65,6 @@ class CSetupHelpDesk {
 		    `status_comment` VARCHAR(64) DEFAULT '',
 		    PRIMARY KEY (`status_id`)
 		  )";
-
-	        $sql[] = "";
 
 	    foreach ($sql as $s) {
 	      db_exec($s);
@@ -106,6 +105,7 @@ class CSetupHelpDesk {
 	}
 
 	function remove() {
+    $sql = array();
 		$sql[] = "DROP TABLE helpdesk_items";
 		$sql[] = "DROP TABLE helpdesk_item_status";
 		$sql[] = "ALTER TABLE `task_log`
@@ -120,11 +120,14 @@ class CSetupHelpDesk {
         return true;
     }
 
+    unset($sql);
+
 		$sql = "SELECT syskey_id
             FROM syskeys
             WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
 
+    $sql = array();
 		$sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
 		$sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
 
@@ -151,6 +154,7 @@ class CSetupHelpDesk {
           ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
 			    ADD `item_created_by` int(11) NOT NULL default '0' AFTER `item_created`,
 			    ADD `item_modified_by` int(11) NOT NULL default '0' AFTER `item_modified`,
+          ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
           DROP `item_receipt_target`,
           DROP `item_receipt_custom`,
           DROP `item_receipted`,
