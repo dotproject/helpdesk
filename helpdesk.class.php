@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.20 2004/04/26 20:20:56 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.21 2004/04/26 21:09:51 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -58,9 +58,7 @@ class CHelpDeskItem extends CDpObject {
   var $item_assetno = NULL;
 
   var $item_created = NULL;
-  var $item_created_by = NULL;
   var $item_modified = NULL;
-  var $item_modified_by = NULL;
 
   function CHelpDeskItem() {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
@@ -88,7 +86,6 @@ class CHelpDeskItem extends CDpObject {
 
     // Update the last modified time and user
     $this->item_modified = db_unix2dateTime( time() );
-    $this->item_modified_by = $AppUI->user_id;
 
     //if type indicates a contact or a user, then look up that phone and email for those entries
     switch ($this->item_requestor_type) {

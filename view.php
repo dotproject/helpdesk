@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.39 2004/04/26 20:20:56 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.40 2004/04/26 21:09:51 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -11,9 +11,6 @@ $tab = $AppUI->getState( 'HelpLogVwTab' ) !== NULL ? $AppUI->getState( 'HelpLogV
 // Pull data
 $sql = "SELECT hi.*,
         CONCAT(u.user_first_name,' ',u.user_last_name) assigned_to_fullname,
-        CONCAT(u1.user_first_name,' ',u1.user_last_name) created_by_fullname,
-        CONCAT(u2.user_first_name,' ',u2.user_last_name) modified_by_fullname,
-        u2.user_email as modified_by_email,
         u.user_email as assigned_email,
         p.project_id,
         p.project_name,
@@ -21,8 +18,6 @@ $sql = "SELECT hi.*,
         c.company_name
         FROM helpdesk_items hi
         LEFT JOIN users u ON u.user_id = hi.item_assigned_to
-        LEFT JOIN users u1 ON u1.user_id = hi.item_created_by
-        LEFT JOIN users u2 ON u2.user_id = hi.item_modified_by
         LEFT JOIN projects p ON p.project_id = hi.item_project_id
         LEFT JOIN companies c ON c.company_id = hi.item_company_id
         WHERE item_id = '$item_id'";
@@ -55,11 +50,6 @@ if (!db_loadHash( $sql, $hditem )) {
 	if(@$hditem["item_created"]){
 		$created = new CDate( @$hditem["item_created"] );
 		$tc = $created->format( $format );
-	}
-
-	if(@$hditem["item_modified"]){
-		$modified = new CDate( @$hditem["item_modified"] );
-		$tm = $modified->format( $tf );
 	}
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
@@ -216,11 +206,6 @@ function delIt() {
       <?php
     }
     ?>
-    <tr>
-        <td class="hilite" nowrap="nowrap" width="1%"><?=$tm?></td>
-        <td class="hilite" nowrap="nowrap" width="1%"><?=($hditem['modified_by_fullname'] ? ($hditem['modified_by_email']?"<a href=\"mailto: {$hditem['modified_by_email']}\">{$hditem['modified_by_fullname']}</a>":$hditem['modified_by_fullname']) : $AppUI->_('unknown')) ?></td>
-        <td class="hilite" nowrap="nowrap" width="98%"><?=$AppUI->_('Last Modified')?></td>
-    </tr>
 		</table>
 	</td>
 </tr>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.32 2004/04/23 20:28:19 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.33 2004/04/23 22:41:46 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -212,13 +212,7 @@ function selectList( listName, target ) {
   <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
   <input type="hidden" name="item_requestor_type" value="<?=$item_requestor_type?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
-  <input type="hidden" name="item_created_by" value="<?php
-    if ($hditem["item_created_by"]) {
-      print $hditem["item_created_by"];
-    } else {
-      print $AppUI->user_id;
-    }
-  ?>" />
+
   <tr>
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
