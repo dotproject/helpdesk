@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.17 2004/04/23 17:17:43 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.18 2004/04/23 17:29:10 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -20,17 +20,6 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 
 class CSetupHelpDesk {
 	function install() {
-		$sql[] = "
-		  CREATE TABLE `helpdesk_item_status` (
-		    `status_id` INT NOT NULL AUTO_INCREMENT,
-		    `status_item_id` INT NOT NULL,
-		    `status_code` INT(3) NOT NULL,
-		    `status_date` TIMESTAMP NOT NULL,
-		    `status_modified_by` INT NOT NULL,
-		    `status_comment` VARCHAR(64) DEFAULT '',
-		    PRIMARY KEY (`status_id`)
-		  )";
-
 		$sql[] = "
 			CREATE TABLE helpdesk_items (
 			  `item_id` int(11) unsigned NOT NULL auto_increment,
@@ -62,16 +51,29 @@ class CSetupHelpDesk {
 
 		$sql[] = "
 		      ALTER TABLE `task_log`
-		      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+		      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
 		    ";
 
-    foreach ($sql as $s) {
-      db_exec($s);
+		$sql[] = "
+		  CREATE TABLE `helpdesk_item_status` (
+		    `status_id` INT NOT NULL AUTO_INCREMENT,
+		    `status_item_id` INT NOT NULL,
+		    `status_code` INT(3) NOT NULL,
+		    `status_date` TIMESTAMP NOT NULL,
+		    `status_modified_by` INT NOT NULL,
+		    `status_comment` VARCHAR(64) DEFAULT '',
+		    PRIMARY KEY (`status_id`)
+		  )";
 
-      if (db_error()) {
-        return false;
-      }
-    }
+	        $sql[] = "";
+
+	    foreach ($sql as $s) {
+	      db_exec($s);
+
+	      if (db_error()) {
+		return false;
+	      }
+	    }
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
@@ -97,11 +99,12 @@ class CSetupHelpDesk {
 		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskStatus', "0|Unassigned\n1|Open\n2|Closed\n3|On Hold" );
 		$sv->store();
 
-		return null;
+		return true;
 	}
 
 	function remove() {
 		$sql[] = "DROP TABLE helpdesk_items";
+		$sql[] = "DROP TABLE helpdesk_item_status";
 		$sql[] = "ALTER TABLE `task_log`
               DROP COLUMN `task_log_help_desk_id`";
 
@@ -111,6 +114,7 @@ class CSetupHelpDesk {
       if (db_error()) {
         return false;
       }
+        return true;
     }
 
 		$sql = "SELECT syskey_id
