@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.37 2004/04/23 22:43:46 bloaterpaste Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.38 2004/04/26 16:41:23 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -175,6 +175,12 @@ function delIt() {
 			<td class="hilite" width="100%"><?=@$iap[$hditem["item_application"]]?></td>
 		</tr>
 		</table>
+		<strong><?=$AppUI->_('Summary')?></strong>
+		<table cellspacing="0" cellpadding="2" border="0" width="100%">
+		<tr>
+			<td class="hilite"><?=str_replace( chr(10), "<br />", $hditem["item_summary"])?>&nbsp;</td>
+		</tr>
+		</table>
 
 	</td>
 	<td width="50%" valign="top">
@@ -199,13 +205,7 @@ function delIt() {
       <tr>
         <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
         <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
-        <td class="hilite" nowrap="nowrap" width="98%"><?php
-        if ($log['status_comment']) {
-          print trim($isa[$log['status_code']])." ".$log['status_comment'];
-        } else {
-          print trim($isa[$log['status_code']]);
-        }
-        ?></td>
+        <td class="hilite" width="98%"><?=((trim($isa[$log['status_code']])." ".$AppUI->_('changed')." ".$log['status_comment']) )?></td>
       </tr>
       <?php
     }
@@ -220,12 +220,6 @@ function delIt() {
 </tr>
 <tr>
 	<td valign="top" colspan="2">
-		<strong><?=$AppUI->_('Summary')?></strong>
-		<table cellspacing="0" cellpadding="2" border="0" width="100%">
-		<tr>
-			<td class="hilite"><?=str_replace( chr(10), "<br />", $hditem["item_summary"])?>&nbsp;</td>
-		</tr>
-		</table>
 	</td>
 </tr>
 </table>
