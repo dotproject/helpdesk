@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.13 2004/04/22 16:36:05 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.14 2004/04/22 17:04:04 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -148,5 +148,30 @@ class CHelpDeskItem extends CDpObject {
       $mail->Send();
     }
   }
+}
+
+/**
+* CTask Class
+*/
+class CTaskLog extends CDpObject {
+	var $task_log_id = NULL;
+	var $task_log_task = NULL;
+	var $task_log_help_desk_id = NULL;
+	var $task_log_name = NULL;
+	var $task_log_description = NULL;
+	var $task_log_creator = NULL;
+	var $task_log_hours = NULL;
+	var $task_log_date = NULL;
+	var $task_log_costcode = NULL;
+
+	function CTaskLog() {
+		$this->CDpObject( 'task_log', 'task_log_id' );
+	}
+
+// overload check method
+	function check() {
+		$this->task_log_hours = (float) $this->task_log_hours;
+		return NULL;
+	}
 }
 ?>
