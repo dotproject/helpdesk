@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.26 2004/04/21 19:21:25 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.27 2004/04/21 19:46:41 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -105,6 +105,14 @@ function delIt() {
 		</tr>
 
 		<tr>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Assigned To')?>:</td>
+			<td class="hilite" width="100%"><?php
+        print $assigned_email ?
+          "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
+          $assigned_to_name;?></td>
+		</tr>
+
+		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Status')?>:</td>
 			<td class="hilite" width="100%"><?=$ist[$hditem["item_status"]]?></td>
 		</tr>
@@ -115,11 +123,8 @@ function delIt() {
 		</tr>
 
 		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Assigned To')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print $assigned_email ?
-          "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
-          $assigned_to_name;?></td>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
+			<td class="hilite" width="100%"><?=$ics[$hditem["item_severity"]]?></td>
 		</tr>
 
 		<tr>
@@ -142,11 +147,6 @@ function delIt() {
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Application')?>:</td>
 			<td class="hilite" width="100%"><?=$ics[$hditem["item_application"]]?></td>
-		</tr>
-
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Severity')?>:</td>
-			<td class="hilite" width="100%"><?=$ics[$hditem["item_severity"]]?></td>
 		</tr>
 
     <tr>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.21 2004/04/21 17:42:52 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.22 2004/04/21 19:21:24 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -62,7 +62,7 @@ function submitIt() {
   var msg = 'You must enter the following value(s):';
 
   if ( f.item_title.value.length < 3 ) {
-    msg += "\nSubject";
+    msg += "\nTitle";
     f.item_title.focus();
   }
 
@@ -152,7 +152,7 @@ function updateStatus(obj){
 		</tr>
 	  <?php } ?>
 		<tr>
-			<td align="right"><font color="red"><?=$AppUI->_('* Subject')?>:</font></td>
+			<td align="right"><font color="red"><?=$AppUI->_('* Title')?>:</font></td>
 			<td valign="top"><input type="text" class="text" id="large" name="item_title"
                               value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
 		</tr>
@@ -190,20 +190,22 @@ function updateStatus(obj){
 		<tr>
 			<td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
 			<td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium" onchange="updateStatus(this)"',
-                          @$hditem["item_assigned_to"] )?></td>
+                          @$hditem["item_assigned_to"] )?>
+        <input type="checkbox" name="notify" value="1" checked />
+        <?=$AppUI->_( 'Notify by e-mail' );?></td>
 		</tr>
 
-		<tr>
-			<td align="right"><?=$AppUI->_('Status')?>:</td>
-			<td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',
-                          @$hditem["item_status"] )?></td>
-		</tr>
+    <tr>
+      <td align="right"><?=$AppUI->_('Company')?>:</td>
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large"',
+                          @$hditem["item_company_id"] )?></td>
+    </tr>
 
-		<tr>
-			<td align="right"><?=$AppUI->_('Priority')?>:</td>
-			<td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="medium"',
-                          @$hditem["item_priority"] )?></td>
-		</tr>
+    <tr>
+      <td align="right"><?=$AppUI->_('Project')?>:</td>
+      <td><?=arraySelect( $projects, 'item_project_id', 'size="1" class="text" id="large"',
+                          @$hditem["item_project_id"] )?></td>
+    </tr>
 
     <?php /* Do we want to use this?
 		<tr>
@@ -232,6 +234,24 @@ function updateStatus(obj){
 		</tr>
 
 		<tr>
+			<td align="right"><?=$AppUI->_('Priority')?>:</td>
+			<td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="medium"',
+                          @$hditem["item_priority"] )?></td>
+		</tr>
+
+		<tr>
+			<td align="right"><?=$AppUI->_('Severity')?>:</td>
+			<td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"',
+                          @$hditem["item_severity"] )?></td>
+		</tr>
+
+		<tr>
+			<td align="right"><?=$AppUI->_('Status')?>:</td>
+			<td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',
+                          @$hditem["item_status"] )?></td>
+		</tr>
+
+		<tr>
 			<td align="right" nowrap><?=$AppUI->_('Operating System')?>:</td>
 			<td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="medium"',
                           @$hditem["item_os"] )?></td>
@@ -242,32 +262,6 @@ function updateStatus(obj){
 			<td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="medium"',
                           @$hditem["item_applic"] )?></td>
 		</tr>
-
-		<tr>
-			<td align="right"><?=$AppUI->_('Severity')?>:</td>
-			<td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"',
-                          @$hditem["item_severity"] )?></td>
-		</tr>
-
-    <tr>
-      <td align="right"><?=$AppUI->_('Company')?>:</td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="large"',
-                          @$hditem["item_company_id"] )?></td>
-    </tr>
-
-    <tr>
-      <td align="right"><?=$AppUI->_('Project')?>:</td>
-      <td><?=arraySelect( $projects, 'item_project_id', 'size="1" class="text" id="large"',
-                          @$hditem["item_project_id"] )?></td>
-    </tr>
-
-    <tr>
-      <td>&nbsp;</td>
-      <td>
-        <input type="checkbox" name="notify" value="1" checked />
-        <?=$AppUI->_( 'Notify assignee by e-mail' );?>
-      </td>
-    </tr>
 		</table>
 	</td>
 </tr>
