@@ -96,8 +96,12 @@ function toggle_comment(id){
 <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top">
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
 <tr>
-	<td valign="top" width="50%">
+	<td valign="top" width="50%" colspan="2">
 		<strong><?=$AppUI->_('Details')?></strong>
+	</td>
+</tr>
+<tr>
+	<td valign="top">
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Item Number')?>:</td>
@@ -140,6 +144,9 @@ function toggle_comment(id){
       <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
     </tr>
 
+</table></td><td valign="top">
+<table cellspacing="1" cellpadding="2" width="100%">
+
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Type')?>:</td>
 			<td class="hilite" width="100%"><?php
@@ -178,6 +185,10 @@ function toggle_comment(id){
 			<td class="hilite" width="100%"><?=@$iap[$hditem["item_application"]]?></td>
 		</tr>
 		</table>
+	</td>
+</tr>
+<tr>
+	<td valign="top" colspan="2">
 		<strong><?=$AppUI->_('Summary')?></strong>
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr>
@@ -185,10 +196,6 @@ function toggle_comment(id){
 		</tr>
 		</table>
 
-	</td>
-</tr>
-<tr>
-	<td valign="top" colspan="2">
 	</td>
 </tr>
 </table>
