@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.47 2004/05/20 17:26:30 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.48 2004/05/20 17:49:47 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -11,6 +11,10 @@ if (!$canReadModule) {
 }
 
 $AppUI->savePlace();
+
+$df = $AppUI->getPref( 'SHDATEFORMAT' );
+$tf = $AppUI->getPref( 'TIMEFORMAT' );
+$format = $df." ".$tf;
 
 // check sort order
 if (isset( $_GET['orderby'] )) {
@@ -350,6 +354,7 @@ function changeList() {
 <tr>
 	<td align="right" nowrap>&nbsp;</td>
 	<th nowrap="nowrap"><?=sort_header("item_id", $AppUI->_('Number'))?></th>
+	<th nowrap="nowrap"><?=sort_header("item_created", $AppUI->_('Opened On'))?></th>
 	<th nowrap="nowrap"><?=sort_header("item_requestor", $AppUI->_('Requestor'))?></th>
 	<th nowrap="nowrap"><?=sort_header("item_title", $AppUI->_('Title'))?></th>
 	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
@@ -386,6 +391,12 @@ foreach ($rows as $row) {
             . '</strong></a> '
             . dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')
             . '</td>';
+
+	
+
+	$date = new CDate( $row['item_created'] );
+	$s .= $CR . "<td nowrap>".$date->format( $format )."</td>";
+	
 
 	$s .= $CR . "<td nowrap align=\"center\">";
 	if ($row["item_requestor_email"]) {
