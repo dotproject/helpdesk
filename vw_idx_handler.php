@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.12 2004/05/25 16:38:54 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.13 2004/05/25 18:45:57 agorski Exp $*/
 
   /*
    * opened = 0
@@ -27,7 +27,7 @@ function vw_idx_handler ($type) {
   	case 2: // Mine
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-      $where .= "item_assigned_to={$AppUI->user_id}
+      		$where .= "item_assigned_to={$AppUI->user_id}
                  AND item_status !=2
                  AND his.status_code = 0";
   		break;
@@ -62,8 +62,15 @@ function vw_idx_handler ($type) {
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
           WHERE $where";
 
-  //pull in permitted companies
-  $sql .= " AND ".getPermsWhereClause("item_company_id", "item_created_by", NULL, PERM_READ);
+$permarr = array();
+//pull in permitted companies
+$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", NULL, PERM_READ);
+//it's assigned to the current user
+$permarr[] = "item_assigned_to=".$AppUI->user_id;
+//it's requested by a user and that user is you
+$permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' )' ;
+
+$sql .= ' AND ('.implode("\n OR ", $permarr).')';
 
   $sql .= " GROUP BY item_id
             ORDER BY item_id";

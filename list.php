@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.53 2004/05/25 18:45:57 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.54 2004/05/25 21:44:10 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -257,19 +257,18 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 }
 
 $permarr = array();
-
 //pull in permitted companies
 $permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_EDIT);
 //it's assigned to the current user
 $permarr[] = "item_assigned_to=".$AppUI->user_id;
 //it's requested by a user and that user is you
-$permarr[] = "item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' ' ;
+$permarr[] = "( item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' ) ' ;
 
 
-$where = 'WHERE ('.implode(' OR ', $permarr).')';
+$where = 'WHERE ('.implode("\n OR ", $permarr).')';
 
 if (count( $tarr )) {
-	$where .=  'AND ('.implode(' AND ', $tarr).') ';
+	$where .=  'AND ('.implode("\n AND ", $tarr).') ';
 }
 
 $sql = "SELECT hi.*,
@@ -310,7 +309,6 @@ $offset = $page * $items_per_page;
 // Limit the results to enable pagination
 $sql .= " LIMIT $offset,$items_per_page";
 
-print "<pre>$sql</pre>";
 // Get the actual, paginated results
 $rows = db_loadList( $sql );
 

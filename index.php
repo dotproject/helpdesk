@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.20 2004/05/25 13:16:44 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.21 2004/05/25 18:45:57 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -21,7 +21,15 @@ $titleBlock->addCrumb( "?m=helpdesk&a=list", $AppUI->_('List') );
 
 $titleBlock->show();
 
-$company_perm_sql = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
+$permarr = array();
+//pull in permitted companies
+$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
+//it's assigned to the current user
+$permarr[] = "item_assigned_to=".$AppUI->user_id;
+//it's requested by a user and that user is you
+$permarr[] = "item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.' ' ;
+
+$company_perm_sql = ' ('.implode("\n OR ", $permarr).') ';
 
 $sql = "SELECT COUNT(item_id)
         FROM helpdesk_items";
