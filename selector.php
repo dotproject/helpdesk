@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.2 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.3 2004/05/05 16:11:51 bloaterpaste Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -93,7 +93,7 @@ case 'tasks':
 case 'users':
 	$title = 'User';
 	$select = "user_id,CONCAT_WS(' ',user_first_name,user_last_name)";
-	$order = 'user_first_name';
+	$order = 'user_last_name, user_first_name';
 	break;
 case 'contacts':
 	$title = 'Contacts';
