@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.38 2004/04/26 16:41:23 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.39 2004/04/26 20:20:56 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -205,7 +205,13 @@ function delIt() {
       <tr>
         <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
         <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
-        <td class="hilite" width="98%"><?=((trim($isa[$log['status_code']])." ".$AppUI->_('changed')." ".$log['status_comment']) )?></td>
+        <td class="hilite" width="98%"><?php
+        	if($log['status_code']==0 || $log['status_code']==17){
+        		print $isa[$log['status_code']];
+        	} else {
+        		print $isa[$log['status_code']]." ".$log['status_comment'];
+        	}
+        ?></td>
       </tr>
       <?php
     }

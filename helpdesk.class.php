@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.19 2004/04/26 16:41:23 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.20 2004/04/26 20:20:56 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -11,7 +11,27 @@ $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $isv = dPgetSysVal( 'HelpDeskSeverity' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
 $isa = dPgetSysVal( 'HelpDeskAuditTrail' );
-
+$field_event_map = array(
+      //0=>Created
+        1=>"item_title",            //Title
+        2=>"item_requestor",        //Requestor Name
+        3=>"item_requestor_email",  //Requestor E-mail
+        4=>"item_requestor_phone",  //Requestor Phone
+        5=>"item_assigned_to",      //Assigned To
+        6=>"item_notify",           //Notify by e-mail
+        7=>"item_company_id",       //Company
+        8=>"item_project_id",       //Project
+        9=>"item_calltype",         //Call Type
+        10=>"item_source",          //Call Source
+        11=>"item_status",          //Status
+        12=>"item_priority",        //Priority
+        13=>"item_severity",        //Severity
+        14=>"item_os",              //Operating System
+        15=>"item_application",     //Application
+        16=>"item_summary",         //Summary
+      //17=>Deleted
+  );
+  
 // Help Desk class
 class CHelpDeskItem extends CDpObject {
   var $item_id = NULL;
@@ -41,28 +61,6 @@ class CHelpDeskItem extends CDpObject {
   var $item_created_by = NULL;
   var $item_modified = NULL;
   var $item_modified_by = NULL;
-
-  var $field_event_map = array(
-      //0=>Created
-        1=>"item_title",            //Title
-        2=>"item_requestor",        //Requestor Name
-        3=>"item_requestor_email",  //Requestor E-mail
-        4=>"item_requestor_phone",  //Requestor Phone
-        5=>"item_assigned_to",      //Assigned To
-        6=>"item_notify",           //Notify by e-mail
-        7=>"item_company_id",       //Company
-        8=>"item_project_id",       //Project
-        9=>"item_calltype",         //Call Type
-        10=>"item_source",          //Call Source
-        11=>"item_status",          //Status
-        12=>"item_priority",        //Priority
-        13=>"item_severity",        //Severity
-        14=>"item_os",              //Operating System
-        15=>"item_application",     //Application
-        16=>"item_summary",         //Summary
-      //17=>Deleted
-  );
-
 
   function CHelpDeskItem() {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
@@ -172,187 +170,98 @@ class CHelpDeskItem extends CDpObject {
   }
   
   function log_status_changes() {
-    global $ist, $ict, $ics, $ios, $iap, $ipr, $isv, $ist, $isa;
+    global $ist, $ict, $ics, $ios, $iap, $ipr, $isv, $ist, $isa, $field_event_map, $AppUI;
 
-    $hditem = new CHelpDeskItem();
-    $hditem->load( dPgetParam( $_POST, "item_id") );
 
-	//0=>Created
-	$field_event_map = array(
-		1=>"item_title",//Title
-		2=>"item_requestor",//Requestor Name
-		3=>"item_requestor_email",//Requestor E-mail
-		4=>"item_requestor_phone",//Requestor Phone
-		5=>"item_assigned_to",//Assigned To
-		6=>"item_notify",//Notify by e-mail
-		7=>"item_company_id",//Company
-		8=>"item_project_id",//Project
-		9=>"item_calltype",//Call Type
-		10=>"item_source",//Call Source
-		11=>"item_status",//Status
-		12=>"item_priority",//Priority
-		13=>"item_severity",//Severity
-		14=>"item_os",//Operating System
-		15=>"item_application",//Application
-		16=>"item_summary",//Summary
-	);
-	//19=>Deleted
 
-	$c=0;
-	foreach($field_event_map as $key => $value){
-		if(!eval("return \$hditem->$value == \$this->$value;")){
-			switch($value){
-      				// Create the comments here
-				case 'item_assigned_to':
-					$sql = "
-						SELECT 
-							concat(u1.user_first_name,' ',u1.user_last_name) as old_user_name, 
-							concat(u2.user_first_name,' ',u2.user_last_name) as new_user_name 
-						FROM 
-							users as u1
-							JOIN users as u2
-						WHERE 
-							u1.user_id ={$hditem->$value} AND
-							u2.user_id ={$this->$value}
-					";
+	if(dPgetParam( $_POST, "item_id")){
+		$hditem = new CHelpDeskItem();
+		$hditem->load( dPgetParam( $_POST, "item_id") );
+		foreach($field_event_map as $key => $value){
+			if(!eval("return \$hditem->$value == \$this->$value;")){
+				switch($value){
+					// Create the comments here
+					case 'item_assigned_to':
+						$sql = "
+							SELECT 
+								concat(u1.user_first_name,' ',u1.user_last_name) as old_user_name, 
+								concat(u2.user_first_name,' ',u2.user_last_name) as new_user_name 
+							FROM 
+								users as u1
+								JOIN users as u2
+							WHERE 
+								u1.user_id ={$hditem->$value} AND
+								u2.user_id ={$this->$value}
+						";
+						db_loadHash( $sql, $ids );
+						$this->log_status($key, "changed from \"".$ids['old_user_name']."\" to \"".$ids['new_user_name']."\"");
+						break;
+					case 'item_company_id':
+						$sql = "
+							SELECT 
+								c1.company_name as old_company_name, 
+								c2.company_name as new_company_name 
+							FROM 
+								companies as c1
+								JOIN companies as c2
+							WHERE 
+								c1.company_id ={$hditem->$value} AND
+								c2.company_id ={$this->$value}
+						";
 
-					db_loadHash( $sql, $ids );
-					$this->log_status($key, "from \"".$ids['old_user_name']."\" to \"".$ids['new_user_name']."\"");
-					break;
-				case 'item_company_id':
-					$sql = "
-						SELECT 
-							c1.company_name as old_company_name, 
-							c2.company_name as new_company_name 
-						FROM 
-							companies as c1
-							JOIN companies as c2
-						WHERE 
-							c1.company_id ={$hditem->$value} AND
-							c2.company_id ={$this->$value}
-					";
+						db_loadHash( $sql, $ids );
+						$this->log_status($key, "changed from \"".$ids['old_company_name']."\" to \"".$ids['new_company_name']."\"");
+						break;
+					case 'item_project_id':
+						$sql = "
+							SELECT 
+								p1.project_name as old_project_name, 
+								p2.project_name as new_project_name 
+							FROM 
+								projects as p1
+								JOIN projects as p2
+							WHERE 
+								p1.project_id ={$hditem->$value} AND
+								p2.project_id ={$this->$value}
+						";
+//$AppUI->setMsg($sql);
 
-					db_loadHash( $sql, $ids );
-					$this->log_status($key, "from \"".$ids['old_company_name']."\" to \"".$ids['new_company_name']."\"");
+						db_loadHash( $sql, $ids );
+						$this->log_status($key, "changed from \"".$ids['old_project_name']."\" to \"".$ids['new_project_name']."\"");
+						break;
+					case 'item_calltype':
+						$this->log_status($key, "changed from \"".$ict[$hditem->$value]."\" to \"".$ict[$this->$value]."\"");
+						break;
+					case 'item_source':
+						$this->log_status($key, "changed from \"".$ics[$hditem->$value]."\" to \"".$ics[$this->$value]."\"");
+						break;
+					case 'item_status':
+						$this->log_status($key, "changed from \"".$ist[$hditem->$value]."\" to \"".$ist[$this->$value]."\"");
+						break;
+					case 'item_priority':
+						$this->log_status($key, "changed from \"".$ipr[$hditem->$value]."\" to \"".$ipr[$this->$value]."\"");
+						break;
+					case 'item_severity':
+						$this->log_status($key, "changed from \"".$isv[$hditem->$value]."\" to \"".$isv[$this->$value]."\"");
+						break;
+					case 'item_os':
+						$this->log_status($key, "changed from \"".$ios[$hditem->$value]."\" to \"".$ios[$this->$value]."\"");
+						break;
+					case 'item_application':
+						$this->log_status($key, "changed from \"".$iap[$hditem->$value]."\" to \"".$iap[$this->$value]."\"");
+						break;
+					default:
+	//					$this->log_status($key);
+						$this->log_status($key, "changed from \"{$hditem->$value}\" to \"{$this->$value}\"");
 					break;
-				case 'item_project_id':
-					$sql = "
-						SELECT 
-							p1.project_name as old_project_name, 
-							p2.project_name as new_project_name 
-						FROM 
-							projects as p1
-							JOIN projects as p2
-						WHERE 
-							p1.project_id ={$hditem->$value} AND
-							p2.project_id ={$this->$value}
-					";
-
-					db_loadHash( $sql, $ids );
-					$this->log_status($key, "from \"".$ids['old_project_name']."\" to \"".$ids['new_project_name']."\"");
-					break;
-				case 'item_calltype':
-					$this->log_status($key, "from \"".$ict[$hditem->$value]."\" to \"".$ict[$this->$value]."\"");
-					break;
-				case 'item_source':
-					$this->log_status($key, "from \"".$ics[$hditem->$value]."\" to \"".$ics[$this->$value]."\"");
-					break;
-				case 'item_status':
-					$this->log_status($key, "from \"".$ist[$hditem->$value]."\" to \"".$ist[$this->$value]."\"");
-					break;
-				case 'item_priority':
-					$this->log_status($key, "from \"".$ipr[$hditem->$value]."\" to \"".$ipr[$this->$value]."\"");
-					break;
-				case 'item_severity':
-					$this->log_status($key, "from \"".$isv[$hditem->$value]."\" to \"".$isv[$this->$value]."\"");
-					break;
-				case 'item_os':
-					$this->log_status($key, "from \"".$ios[$hditem->$value]."\" to \"".$ios[$this->$value]."\"");
-					break;
-				case 'item_application':
-					$this->log_status($key, "from \"".$iap[$hditem->$value]."\" to \"".$iap[$this->$value]."\"");
-					break;
-				default:
-//					$this->log_status($key);
-					$this->log_status($key, "from \"{$hditem->$value}\" to \"{$this->$value}\"");
-				break;
+				}
 			}
 		}
-		$c++;
 	}
-
-    foreach($this->field_event_map as $key => $value){
-      if ($hditem->$value != $this->$value){
-        switch($key){
-
-          case '2':  // Requestor Name
-          case '3':  // Requestor E-mail
-          case '4':  // Requestor Phone
-            $this->log_status($key, " changed to {$this->$value}");
-            break;
-          case '5':  // Assigned To
-            $sql = "SELECT CONCAT(user_first_name,' ',user_last_name) fullname
-                    FROM users
-                    WHERE user_id='{$this->$value}'";
-
-            $name = db_loadResult($sql);
-            $this->log_status($key, " changed to {$name}");
-            break;
-          case '6':  // Notify by e-mail
-            $this->log_status($key, $this->$value ? " turned on" : " turned off");
-            break;
-          case '7':  // Company
-            $sql = "SELECT company_name
-                    FROM companies
-                    WHERE company_id='{$this->$value}'";
-
-            $company = db_loadResult($sql);
-            $this->log_status($key, " changed to $company");
-            break;
-          case '8':  // Project
-            $sql = "SELECT project_name
-                    FROM projects
-                    WHERE project_id='{$this->$value}'";
-
-            $project = db_loadResult($sql);
-            $this->log_status($key, " changed to $project");
-            break;
-          case '9':  // Call Type
-            $this->log_status($key, " changed to ".$ict[$this->$value]);
-            break;
-          case '10': // Call Source
-            $this->log_status($key, " changed to ".$ics[$this->$value]);
-            break;
-          case '11':
-            $this->log_status($key, " changed to ".$ist[$this->$value]);
-            break;
-          case '12': // Priority
-            $this->log_status($key, " changed to ".$ipr[$this->$value]);
-            break;
-          case '13': // Severity
-            $this->log_status($key, " changed to ".$isv[$this->$value]);
-            break;
-          case '14': // Operating System
-            $this->log_status($key, " changed to ".$ios[$this->$value]);
-            break;
-          case '15': // Application
-            $this->log_status($key, " changed to ".$iap[$this->$value]);
-            break;
-          case '1':  // Title
-          case '16': // Summary
-            $this->log_status($key, " updated");
-            break;
-          default:
-            $this->log_status($key);
-            break;
-        }
-      }
-    }
-  }
+}
   
   function log_status ($audit_code, $comment="") {
-    global $AppUI;
-
+  	global $AppUI;
     $sql = "
       INSERT INTO helpdesk_item_status
       (status_item_id,status_code,status_date,status_modified_by,status_comment)

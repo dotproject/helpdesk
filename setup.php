@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.27 2004/04/26 17:18:22 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.28 2004/04/26 17:32:59 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -59,7 +59,7 @@ class CSetupHelpDesk {
 		    `status_code` TINYINT NOT NULL,
 		    `status_date` TIMESTAMP NOT NULL,
 		    `status_modified_by` INT NOT NULL,
-		    `status_comment` VARCHAR(64) DEFAULT '',
+		    `status_comment` TEXT DEFAULT '',
 		    PRIMARY KEY (`status_id`)
 		  )";
 
@@ -167,7 +167,7 @@ class CSetupHelpDesk {
             `status_code` TINYINT NOT NULL,
             `status_date` TIMESTAMP NOT NULL,
             `status_modified_by` INT NOT NULL,
-            `status_comment` VARCHAR(64) DEFAULT '',
+            `status_comment` TEXT DEFAULT '',
             PRIMARY KEY (`status_id`)
           )
         ";
