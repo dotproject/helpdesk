@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.33 2004/05/06 16:11:12 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.34 2004/05/06 18:09:39 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -164,8 +164,8 @@ class CHelpDeskItem extends CDpObject {
             . "Call Type: {$ict[$this->item_calltype]}\n"
             . "Status: {$ist[$this->item_status]}\n";
             
-      if($log['status_code']==0 || $log['status_code']==17){
-        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} {$isa[$log['status_code']]}");
+      if(!is_numeric($status_log_id)){
+        $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} Created");
       } else {
         $mail->Subject($AppUI->cfg['page_title']." Help Desk Item #{$this->item_id} Updated");
         $body .= "Update: {$isa[$log['status_code']]} {$log['status_comment']}\n";

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.37 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.38 2004/04/29 15:55:42 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -92,17 +92,17 @@ function submitIt() {
   var f   = document.frmHelpDeskItem;
   var msg = 'You must enter the following value(s):';
 
-  if ( f.item_title.value.length < 3 ) {
+  if ( f.item_title.value.length < 1 ) {
     msg += "\nTitle";
     f.item_title.focus();
   }
 
-  if( f.item_requestor.value.length < 3 ) {
+  if( f.item_requestor.value.length < 1 ) {
     msg += "\nRequestor";
     f.item_requestor.focus();
   }
 
-  if( f.item_summary.value.length < 3 ) {
+  if( f.item_summary.value.length < 1 ) {
     msg += "\nSummary";
     f.item_summary.focus();
   }
