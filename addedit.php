@@ -1,13 +1,8 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.48 2004/05/25 13:16:44 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.49 2004/05/25 18:45:57 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
-
-// Make sure we can create items
-if (!hditemCreate()) {
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
 
 // Pull data
 $sql = "SELECT *
@@ -21,6 +16,11 @@ if ($item_id) {
   // Already existing item
   $canEdit = hditemEditable($hditem['item_company_id'], $hditem['item_created_by']);
 } else {
+  // Make sure we can create items
+  if (!hditemCreate()) {
+    $AppUI->redirect( "m=public&a=access_denied" );
+  }
+
   // New record
   $canEdit = 1;
 }

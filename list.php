@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.54 2004/05/25 21:44:10 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.55 2004/05/25 22:15:32 bloaterpaste Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -173,10 +173,11 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 	if ($company >= 0) {
 		$tarr[] = "hi.item_company_id=$company";
 	}
+
 	//company list
 	$sql = "SELECT company_id, company_name
 		FROM companies
-    WHERE ".getPermsWhereClause("company_id", NULL, PERM_EDIT)."
+    WHERE ".getPermsWhereClause("company_id", NULL, PERM_READ)."
 		ORDER BY company_name";
 	$company_list = db_loadHashList( $sql );
 	$selectors[] = "
@@ -198,9 +199,8 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	//project list
 	$sql = "SELECT project_id, project_name
 		      FROM projects
-          WHERE ".getPermsWhereClause("project_company", NULL, PERM_EDIT)
+          WHERE ".getPermsWhereClause("project_company", NULL, PERM_READ)
 		   . "ORDER BY project_name";
-	//print "<pre>$sql</pre>";
 	$project_list = db_loadHashList( $sql );
 	$selectors[] = "
 	    <td align=\"right\">".$AppUI->_('Project').":</td>
@@ -221,7 +221,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	//assigned to user list
 	$sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
 		FROM users
-    WHERE ".getPermsWhereClause("user_company", NULL, PERM_EDIT)."
+    WHERE ".getPermsWhereClause("user_company", NULL, PERM_READ, $HELPDESK_CONFIG['the_company'])."
 		ORDER BY user_first_name";
 
 	$assigned_to_list = db_loadHashList( $sql );
@@ -245,7 +245,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 
 	$sql = "SELECT distinct(item_requestor) as requestor, item_requestor
 		FROM helpdesk_items
-		WHERE ".getPermsWhereClause("item_company_id", NULL, PERM_EDIT)."
+		WHERE ".getPermsWhereClause("item_company_id", NULL, PERM_READ)."
 		ORDER BY item_requestor";
 
 	$requestor_list = db_loadHashList( $sql );
@@ -258,7 +258,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 
 $permarr = array();
 //pull in permitted companies
-$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_EDIT);
+$permarr[] = getPermsWhereClause("item_company_id", "item_created_by", PERM_READ);
 //it's assigned to the current user
 $permarr[] = "item_assigned_to=".$AppUI->user_id;
 //it's requested by a user and that user is you

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.40 2004/05/25 18:45:57 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.41 2004/05/26 00:04:29 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -380,17 +380,36 @@ class CTaskLog extends CDpObject {
 // item_created_by
 
 function getPermsWhereClause($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
-	GLOBAL $AppUI, $perms, $m;
+	GLOBAL $AppUI, $perms;
 
-
-  // Check for the "ALL" permission
-	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_READ || $perms[$m][PERM_ALL]==PERM_EDIT)) || 
-     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
-		$sql = "SELECT company_id FROM companies";
-		$list = db_loadColumn( $sql );
-	} else {
-		$list = array();
+  // Check for the system wide "all" permission
+  if (isset($perms["all"][PERM_ALL])) {
+    if (($perms["all"][PERM_ALL] == PERM_READ) &&
+        ($perm_type == PERM_READ)) {
+      $get_all = true;
+    } else if (($perms["all"][PERM_ALL] == PERM_EDIT)  &&
+               (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))) {
+      $get_all = true;
+    }
+  }
+  
+  // Check for company "all" permissions
+  if (isset($perms['companies'][PERM_ALL])) {
+    if (($perms['companies'][PERM_ALL] == PERM_READ) &&
+        ($perm_type == PERM_READ)) {
+      $get_all = true;
+    } else if (($perms['companies'][PERM_ALL] == PERM_EDIT) &&
+               (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))) {
+      $get_all = true;
+    }
 	}
+
+  if ($get_all) {
+    $sql = "SELECT company_id FROM companies";
+    $list = db_loadColumn( $sql );
+  } else {
+    $list = array();
+  }
 
 	if(isset($perms['companies'])){
 		foreach($perms['companies'] as $key => $value){
@@ -452,9 +471,6 @@ function hditemReadable($item_company_id, $item_created_by) {
 function hditemEditable($item_company_id, $item_created_by) {
   global $HELPDESK_CONFIG, $AppUI;
 
-  if (!hditemCreate()) {
-    return false;
-  }
 
   if ($item_company_id == 0) {
     if ($HELPDESK_CONFIG['no_company_editable']) {
@@ -466,7 +482,9 @@ function hditemEditable($item_company_id, $item_created_by) {
     $canEditCompany = !getDenyEdit("companies", $item_company_id);
   }
 
-  if($canEditCompany || ($item_created_by == $AppUI->user_id)){
+  if (!hditemCreate() && ($item_created_by != $AppUI->user_id)) {
+    return false;
+  } else if($canEditCompany || ($item_created_by == $AppUI->user_id)){
     return true;
   } else {
     return false;
@@ -484,8 +502,8 @@ function hditemCreate() {
     return $create;
   }
 
-	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_READ || $perms[$m][PERM_ALL]==PERM_EDIT)) || 
-     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_READ || $perms["all"][PERM_ALL]==PERM_EDIT))) {
+	if((isset($perms['companies'][PERM_ALL]) && ($perms['companies'][PERM_ALL]==PERM_EDIT)) || 
+     (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_EDIT))) {
     $create = true;
   } else if (is_array($perms['companies'])) {
     foreach ($perms['companies'] as $perm) {
