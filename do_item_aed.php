@@ -1,8 +1,9 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.7 2004/04/20 15:43:46 gatny Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.8 2004/04/21 23:23:47 bloaterpaste Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $notify = dPgetParam( $_POST, 'notify', 1 );
+$old_status = dPgetParam( $_POST, 'old_status', 0 );
 
 $hditem = new CHelpDeskItem();
 
@@ -29,6 +30,8 @@ if ($del) {
     if ($notify) {
       $hditem->notify();
     }
+
+    $hditem->log_status($old_status);
 
     if ($item_id) {
       $AppUI->redirect();

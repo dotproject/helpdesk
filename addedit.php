@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.27 2004/04/22 17:04:03 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.28 2004/04/22 17:23:32 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -8,6 +8,8 @@ $sql = "SELECT *
         WHERE item_id = '$item_id'";
 
 db_loadHash( $sql, $hditem );
+
+$old_status = @$hditem["item_status"];
 
 if(!@$hditem["item_assigned_to"]){
   @$hditem["item_assigned_to"] = $AppUI->user_id;
@@ -211,6 +213,14 @@ function selectList( listName, target ) {
   <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
   <input type="hidden" name="item_requestor_type" value="<?=$item_requestor_type?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
+  <input type="hidden" name="item_created_by" value="<?php
+    if ($hditem["item_created_by"]) {
+      print $hditem["item_created_by"];
+    } else {
+      print $AppUI->user_id;
+    }
+  ?>" />
+  <input type="hidden" name="old_status" value="<?=$old_status?>" />
   <tr>
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">

@@ -1,40 +1,44 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.3 2004/04/21 18:02:07 bloaterpaste Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.4 2004/04/21 19:21:25 agorski Exp $*/
 function vw_idx_handler ($opened) {
-  global $m, $ipr, $AppUI;
+  global $m, $ipr, $ist, $AppUI;
 
   $df = $AppUI->getPref( 'SHDATEFORMAT' );
   $tf = $AppUI->getPref( 'TIMEFORMAT' );
   $format = $df." ".$tf;
 
-  /*  Items with with 'closed' status: item_status = 2
-   *  Items with with 'opened' status: item_status = 1
-   *
-   *  unassigned = 0, open = 1, closed = 2, on hold = 3
+  /*
+   * Unassigned = 0
+   * Open = 1
+   * Closed = 2
+   * On hold = 3
+   * Delete = 4
+   * Testing = 5
    */
 
   $sql = "SELECT hi.*,
-          CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_fullname,
-          u2.user_email as assigned_email,
+          CONCAT(u.user_first_name,' ',u.user_last_name) assigned_fullname,
+          u.user_email as assigned_email,
           p.project_id,
           p.project_name,
-          p.project_color_identifier
+          p.project_color_identifier,
+          his.status_date
           FROM helpdesk_items hi
-          LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
+          LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
+          LEFT JOIN users u ON u.user_id = hi.item_assigned_to
           LEFT JOIN projects p ON p.project_id = hi.item_project_id
           WHERE ";
 
   if ($opened) {
-    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(item_created) = 0) ";
-    $sql .= "AND item_status = 1";
+    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
+    $sql .= "AND (his.status_code = 0 OR his.status_code = 1)";
   } else {
-    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(item_resolved) = 0) ";
-    $sql .= "AND item_status = 2";
+    $sql .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) ";
+    $sql .= "AND his.status_code = 2";
   }
 
   $sql .= " ORDER BY item_id";
 
   $items = db_loadList( $sql );
-
   ?>
   <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
   <tr>
@@ -42,6 +46,7 @@ function vw_idx_handler ($opened) {
     <th><?=$AppUI->_('Requestor')?></th>
     <th><?=$AppUI->_('Title')?></th>
     <th nowrap="nowrap"><?=$AppUI->_('Assigned To')?></th>
+    <th><?=$AppUI->_('Status')?></th>
     <th><?=$AppUI->_('Priority')?></th>
     <th><?=$AppUI->_('Project')?></th>
     <th nowrap="nowrap">
@@ -65,8 +70,8 @@ function vw_idx_handler ($opened) {
         $tc = $created->format( $format );
       }
     } else {
-      if($row["item_resolved"]){
-        $resolved = new CDate( $row["item_resolved"] );
+      if($row["status_date"]){
+        $resolved = new CDate( $row["status_date"] );
         $tc = $resolved->format( $format );
       }
     }
@@ -93,6 +98,7 @@ function vw_idx_handler ($opened) {
       }
       ?>
       </td>
+      <td align="center" nowrap><?=$ist[@$row["item_status"]]?></td>
       <td align="center" nowrap><?=$ipr[@$row["item_priority"]]?></td>
       <td align="center" style="background-color: #<?=$row['project_color_identifier']?>;" nowrap>
       <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>"><?=$row['project_name']?></a>

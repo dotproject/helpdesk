@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.14 2004/04/22 17:04:04 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.15 2004/04/22 17:35:00 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -36,13 +36,9 @@ class CHelpDeskItem extends CDpObject {
   var $item_assetno = NULL;
 
   var $item_created = NULL;
+  var $item_created_by = NULL;
   var $item_modified = NULL;
-  var $item_receipt_target = NULL;
-  var $item_receipt_custom = NULL;
-  var $item_receipted = NULL;
-  var $item_resolve_target = NULL;
-  var $item_resolve_custom = NULL;
-  var $item_resolved = NULL;
+  var $item_modified_by = NULL;
 
   function CHelpDeskItem() {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
@@ -66,13 +62,11 @@ class CHelpDeskItem extends CDpObject {
   }
 
   function store() {
-    //if the status is changed to #2 "Closed" mark as resolved.
-    if ($this->item_status==2) { 
-      $this->item_resolved = db_unix2dateTime( time() );
-    }
+    global $AppUI;
 
-    // Update the last modified time
+    // Update the last modified time and user
     $this->item_modified = db_unix2dateTime( time() );
+    $this->item_modified_by = $AppUI->user_id;
 
     //if type indicates a contact or a user, then look up that phone and email for those entries
     switch ($this->item_requestor_type) {
@@ -146,6 +140,23 @@ class CHelpDeskItem extends CDpObject {
       $mail->Subject($AppUI->cfg['page_title']." Help Desk item #".$this->item_id);
       $mail->Body($body);
       $mail->Send();
+    }
+  }
+
+  function log_status ($old_status) {
+    global $AppUI;
+
+    if ($old_status != $this->item_status) {
+      // Create the comments here
+      $comment = "";
+
+      $sql = "
+        INSERT INTO helpdesk_item_status
+        (status_item_id,status_code,status_date,status_modified_by,status_comment)
+        VALUES('{$this->item_id}','{$this->item_status}',NOW(),'{$AppUI->user_id}','$comment');
+      ";
+
+      db_exec($sql);
     }
   }
 }

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.33 2004/04/22 17:04:08 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.34 2004/04/23 14:25:01 agorski Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -72,7 +72,7 @@ $sql = "SELECT hi.*,
         p.project_color_identifier
         FROM helpdesk_items hi
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
-        LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
+        LEFT JOIN projects p ON p.project_id = hi.item_project_id
         $where
         ORDER BY ";
 

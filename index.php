@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.7 2004/04/21 15:08:54 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.8 2004/04/21 17:56:23 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -24,19 +24,28 @@ $sql = "SELECT COUNT(item_id)
 
 $numtotal = db_loadResult ($sql);
 
-$sql = "SELECT COUNT(item_id)
-        FROM helpdesk_items
-        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_resolved) = 0)
-        AND (item_status = 2)";
+/*
+ * Unassigned = 0
+ * Open = 1
+ * Closed = 2
+ * On hold = 3
+ * Delete = 4
+ * Testing = 5
+ */
 
-$numclosed = db_loadResult ($sql);
-
-$sql = "SELECT COUNT(item_id)
-        FROM helpdesk_items
-        WHERE (TO_DAYS(NOW()) - TO_DAYS(item_created) = 0)
-        AND (item_status = 0 OR item_status = 1)";
+$sql = "SELECT COUNT(status_id)
+        FROM helpdesk_item_status
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
+        AND (status_code = 0 OR status_code = 1)";
 
 $numopened = db_loadResult ($sql);
+
+$sql = "SELECT COUNT(status_id)
+        FROM helpdesk_item_status
+        WHERE (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
+        AND (status_code = 2)";
+
+$numclosed = db_loadResult ($sql);
 
 ?>
 <table cellspacing="0" cellpadding="2" border="0" width="100%">

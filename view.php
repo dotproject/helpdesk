@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.33 2004/04/22 18:30:33 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.34 2004/04/23 15:03:30 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -11,6 +11,8 @@ $tab = $AppUI->getState( 'HelpLogVwTab' ) !== NULL ? $AppUI->getState( 'HelpLogV
 // Pull data
 $sql = "SELECT hi.*,
         CONCAT(u.user_first_name,' ',u.user_last_name) assigned_to_fullname,
+        CONCAT(u1.user_first_name,' ',u1.user_last_name) created_by_fullname,
+        CONCAT(u2.user_first_name,' ',u2.user_last_name) modified_by_fullname,
         u.user_email as assigned_email,
         p.project_id,
         p.project_name,
@@ -18,8 +20,10 @@ $sql = "SELECT hi.*,
         c.company_name
         FROM helpdesk_items hi
         LEFT JOIN users u ON u.user_id = hi.item_assigned_to
-        LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
-        LEFT OUTER JOIN companies c ON c.company_id = hi.item_company_id
+        LEFT JOIN users u1 ON u1.user_id = hi.item_created_by
+        LEFT JOIN users u2 ON u2.user_id = hi.item_modified_by
+        LEFT JOIN projects p ON p.project_id = hi.item_project_id
+        LEFT JOIN companies c ON c.company_id = hi.item_company_id
         WHERE item_id = '$item_id'";
 
 if (!db_loadHash( $sql, $hditem )) {
@@ -28,6 +32,15 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 	$titleBlock->show();
 } else {
+  $sql = "SELECT *,
+          CONCAT(u.user_first_name,' ',u.user_last_name) modified_by
+          FROM helpdesk_item_status h
+          LEFT JOIN users u ON u.user_id = h.status_modified_by
+          WHERE h.status_item_id='{$hditem['item_id']}'
+          ORDER BY h.status_date";
+
+  $status_log = db_loadList($sql);
+
   $name = $hditem['item_requestor'];
   $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
   $assigned_email = $hditem["assigned_email"];
@@ -46,11 +59,6 @@ if (!db_loadHash( $sql, $hditem )) {
 	if(@$hditem["item_modified"]){
 		$modified = new CDate( @$hditem["item_modified"] );
 		$tm = $modified->format( $format );
-	}
-
-	if(@$hditem["item_resolved"]){
-		$resolved = new CDate( @$hditem["item_resolved"] );
-		$tr = $resolved->format( $format );
 	}
 
 	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png',
@@ -169,20 +177,33 @@ function delIt() {
 
 	</td>
 	<td width="50%" valign="top">
-		<strong><?=$AppUI->_('Time Lines')?></strong>
+		<strong><?=$AppUI->_('Status log')?></strong>
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Opened')?>:</td>
-			<td class="hilite" width="100%"><?=$tc?></td>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Created')?>:</td>
+			<td class="hilite" width="100%">On <?=$tc?> by
+      <?php
+        print $hditem['created_by_fullname'] ? $hditem['created_by_fullname'] : "?";
+      ?></td>
 		</tr>
-
+    <?php
+    foreach ($status_log as $log) {
+		  $log_date = new CDate($log['status_date']);
+		  $date = $log_date->format( $format );
+      ?>
+      <tr>
+        <td align="right" nowrap="nowrap"><?=trim($ist[$log['status_code']])?>:</td>
+        <td class="hilite" width="100%">On <?=$date?> by <?=$log['modified_by']?></td>
+      </tr>
+      <?php
+    }
+    ?>
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
-      <td class="hilite" width="100%"><?=$tm?></td>
-    </tr>
-    <tr>
-      <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
-      <td class="hilite" width="100%"><?=$tr?></td>
+      <td class="hilite" width="100%">On <?=$tm?> by
+      <?php
+        print $hditem['modified_by_fullname'] ? $hditem['modified_by_fullname'] : "?";
+      ?></td>
     </tr>
 		</table>
 	</td>
