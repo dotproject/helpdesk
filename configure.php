@@ -66,7 +66,7 @@ $config_options = array(
 		"description" => $AppUI->_('helpdeskItemsNoCompany'),
 		"value" => '0',
 		'type' => 'radio',
-    'buttons' => array (1 => $AppUI->_('Yes'),
+    		'buttons' => array (1 => $AppUI->_('Yes'),
                         0 => $AppUI->_('No'))
 	),
 	'minimum_edit_level' => array(
@@ -74,6 +74,13 @@ $config_options = array(
 		'value' => 0,
 		'type' => 'select',
 		'list' => @$user_types
+	),
+	"use_project_perms" => array(
+		"description" => $AppUI->_('helpdeskUseProjectPerms'),
+		"value" => '0',
+		'type' => 'radio',
+    		'buttons' => array (1 => $AppUI->_('Yes'),
+                        0 => $AppUI->_('No'))
 	),
 	"heading3" => $AppUI->_('New Item Default Selections'),
 	"default_assigned_to_current_user" => array(

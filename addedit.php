@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.60 2005/02/14 05:26:13 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.61 2005/03/21 18:14:45 zibas Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -33,19 +33,19 @@ if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_com
   @$hditem["item_company_id"] = $AppUI->user_company;
 }
 
-$sql = "SELECT user_id, CONCAT(contact_first_name, ' ', contact_last_name)
+//populate user list with all users from permitted companies
+$sql = "SELECT user_id, CONCAT(contact_last_name, ',', contact_first_name)
         FROM users
        LEFT JOIN contacts ON user_contact = contact_id
-        WHERE ". getCompanyPerms("user_company", NULL, PERM_EDIT, $HELPDESK_CONFIG['the_company'])
-     . "ORDER BY contact_first_name";
-
+        WHERE ". getCompanyPerms("user_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
+        ." OR ". getCompanyPerms("contact_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
+     . "ORDER BY contact_last_name, contact_first_name";
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
-
 
 $sql = "SELECT company_id, company_name
         FROM companies
         WHERE "
-     . getCompanyPerms("company_id", NULL, PERM_EDIT)
+     . getCompanyPerms("company_id")
      . "ORDER BY company_name";
 
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );

@@ -23,4 +23,5 @@ $HELPDESK_CONFIG['search_criteria_requestor'] = '1';
 $HELPDESK_CONFIG['search_criteria_severity'] = '1';
 $HELPDESK_CONFIG['search_criteria_os'] = '1';
 $HELPDESK_CONFIG['minimum_edit_level'] = '-1';
+$HELPDESK_CONFIG['use_project_perms'] = '0';
 ?>

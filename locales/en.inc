@@ -100,6 +100,7 @@
 "helpdeskFieldMessage"=>"If you select your name from the popup window, your e-mail address and phone number will be populated from your account details (if available).",
 "helpdeskHDCompany"=>"The company which handles Help Desk items",
 "helpdeskItemsNoCompany"=>"Items with no company should be editable by anyone",
+"helpdeskUseProjectPerms"=>"Project list based on Project, as opposed to Company, permissions.",
 "helpdeskItemsPerPage"=>"Number of items displayed per page on the list view",
 "helpdeskLogsPerPage"=>"Number of status log items displayed per page in item view",
 "helpdeskMinLevel"=>"Minimum user level to edit other users\' logs",

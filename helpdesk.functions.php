@@ -2,27 +2,41 @@
 function getAllowedCompanies(){
   global $AppUI;
   require_once( $AppUI->getModuleClass ('companies' ) );
-  $row = new CCompany();
-  $allowedCompanies = $row->getAllowedRecords( $AppUI->user_id, 'company_id,company_name', 'company_name' );
+  $company = new CCompany();
+
+  $allowedCompanies = $company->getAllowedRecords( $AppUI->user_id, 'company_id,company_name', 'company_name' );
   //$allowedCompanies = arrayMerge( array( '0'=>'' ), $allowedCompanies );
   return $allowedCompanies;
 }
 
 function getAllowedProjects(){
-  global $AppUI;
-  require_once( $AppUI->getModuleClass('projects'));
-  $project =& new CProject;
-  $allowedProjects = $project->getAllowedRecords($AppUI->user_id, 'project_id, project_name');
-  return $allowedProjects;
+  global $AppUI, $HELPDESK_CONFIG;
+  //if helpdeskUseProjectPerms is true, get a list of Projects based on the users standard project permissions
+  if($HELPDESK_CONFIG['helpdeskUseProjectPerms']){
+	  require_once( $AppUI->getModuleClass('projects'));
+	  $project = new CProject;
+	  $allowedProjects = $project->getAllowedRecords($AppUI->user_id, 'project_id, project_name','project_name');
+	//echo "!".implode(" AND ",$rowproject>getAllowedSQL( $AppUI->user_id))."!";
+	  return $allowedProjects;
+  } else {
+  //otherwise, get a list of all projects associated with the user's permitted companies.
+  //the use case here would be that the person assigning or updating the Helpdesk item may not have access to all Projects.  They might just be traffic control.  This will minimise perm maintenance.
+  	$sql = "SELECT project_id, project_name FROM projects WHERE project_company in (". implode(",",array_keys(getAllowedCompanies())).") ORDER BY project_name";
+  	return db_loadList( $sql );
+  }
 }
 
 function getAllowedProjectsForJavascript(){
   global $AppUI;
   $allowedProjects = getAllowedProjects();
-  foreach($allowedProjects as $k=>$v){
-    $whereclause[] = " project_id = $k ";
+  //if there are none listed, make sure that sql returns nothing
+  if(!$allowedProjects){
+  	return "";
   }
-  $whereclause = implode(" || ", $whereclause);
+
+  $whereclause = array_keys($allowedProjects);
+  
+  $whereclause = "project_id in (".implode(", ", $whereclause).")";
 
   $sql = "SELECT project_id, project_name, company_name, company_id
           FROM projects
@@ -57,6 +71,12 @@ function getItemPerms() {
   $permarr = array();
   //pull in permitted companies
   $allowedCompanies = getAllowedCompanies();
+
+  //if there are none listed, make sure that sql returns nothing
+  if(!$allowedCompanies){
+  	return "0=1";
+  }
+  
   foreach($allowedCompanies as $k=>$v){
     $companyIds[] = $k;
   }
@@ -78,81 +98,23 @@ function getItemPerms() {
 
 // Function to build a where clause to be appended to any sql that will narrow
 // down the returned data to only permitted company data
-function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
+function getCompanyPerms($mod_id_field,$perm_type=NULL,$the_company=NULL){
 	GLOBAL $AppUI, $perms, $m;
+	
+  //pull in permitted companies
+  $allowedCompanies = getAllowedCompanies();
 
-  // Check for the system wide "all" permission
-  if (isset($perms["all"][PERM_ALL])) {
-    if (($perms["all"][PERM_ALL] == PERM_READ) &&
-        ($perm_type == PERM_READ)) {
-      $get_all = true;
-    } else if (($perms["all"][PERM_ALL] == PERM_EDIT)  &&
-               (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))) {
-      $get_all = true;
-    }
+  //if there are none listed, make sure that sql returns nothing
+  if(!$allowedCompanies){
+  	return "0=1";
   }
-  
-  // Check for company "all" permissions
-  if (isset($perms[$m][PERM_ALL])) {
-    if (($perms[$m][PERM_ALL] == PERM_READ) &&
-        ($perm_type == PERM_READ)) {
-      $get_all = true;
-    } else if (($perms[$m][PERM_ALL] == PERM_EDIT) &&
-               (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))) {
-      $get_all = true;
-    }
-	}
-
-  if (isset($get_all) && $get_all) {
-    $sql = "SELECT company_id FROM companies";
-    $list = db_loadColumn( $sql );
-  } else {
-    $list = array();
-  }
-
-	if(isset($perms[$m])){
-		foreach($perms[$m] as $key => $value){
-			if($key==PERM_ALL)
-				continue;
-
-			switch($value){
-				case PERM_EDIT:
-          if (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))
-	  		    $list[] = $key;
-					break;
-				case PERM_READ:
-          if ($perm_type == PERM_READ)
-	  		    $list[] = $key;
-					break;
-				case PERM_DENY:
-					unset($list[array_search($key, $list)]);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+ 
+  $allowedCompanies = array_keys($allowedCompanies);
 
   if (is_numeric($the_company)) {
-    $list[] = $the_company;
+    $allowedCompanies[] = $the_company;
   }
-
-	$list = array_unique($list);
-
-  // If we're not allowed to see any company, let's make sure our SQL is ok
-  if (!count($list)) {
-    $list[] = "-1";
-  }
-
-  $sql = " ($mod_id_field in (".implode(",",$list).") ";
-  
-  if ($created_by_id_field != NULL) {
-    $sql .= " OR $created_by_id_field=".$AppUI->user_id;
-  }
-
-  $sql .= ") ";
-
-  return $sql;
+  return "($mod_id_field in (".implode(",", $allowedCompanies)."))";
 }
 
 function hditemReadable($hditem) {
