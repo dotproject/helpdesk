@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.22 2004/04/23 18:31:05 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.23 2004/04/23 19:32:28 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -20,7 +20,7 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 
 class CSetupHelpDesk {
 	function install() {
-		$sql = "
+		$bulk_sql[] = "
 			CREATE TABLE helpdesk_items (
 			  `item_id` int(11) unsigned NOT NULL auto_increment,
 			  `item_title` varchar(64) NOT NULL default '',
@@ -49,19 +49,13 @@ class CSetupHelpDesk {
 			  `item_company_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM";
-		db_exec($sql);
-		if (db_error())
-			return false;
 
-		$sql = "
-		      ALTER TABLE `task_log`
-		      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
-		    ";
-		db_exec($sql);
-		if (db_error())
-			return false;
+		$bulk_sql[] = "
+      ALTER TABLE `task_log`
+      ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
+    ";
 
-		$sql = "
+		$bulk_sql[] = "
 		  CREATE TABLE `helpdesk_item_status` (
 		    `status_id` INT NOT NULL AUTO_INCREMENT,
 		    `status_item_id` INT NOT NULL,
@@ -71,9 +65,14 @@ class CSetupHelpDesk {
 		    `status_comment` VARCHAR(64) DEFAULT '',
 		    PRIMARY KEY (`status_id`)
 		  )";
-		db_exec($sql);
-		if (db_error())
-			return false;
+
+    foreach ($bulk_sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
@@ -106,33 +105,35 @@ class CSetupHelpDesk {
 	}
 
 	function remove() {
-		$sql = "DROP TABLE helpdesk_items";
-		db_exec($sql);
-		if (db_error())
-			return false;
-		$sql = "DROP TABLE helpdesk_item_status";
-		db_exec($sql);
-		if (db_error())
-			return false;
-		$sql = "ALTER TABLE `task_log`
-	              DROP COLUMN `task_log_help_desk_id`";
-		db_exec($sql);
-		if (db_error())
-			return false;
+		$bulk_sql[] = "DROP TABLE helpdesk_items";
+		$bulk_sql[] = "DROP TABLE helpdesk_item_status";
+		$bulk_sql[] = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
+
+    foreach ($bulk_sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
 
 		$sql = "SELECT syskey_id
-		    FROM syskeys
-		    WHERE syskey_name = 'HelpDeskList'";
+            FROM syskeys
+            WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
 
-		$sql = "DELETE FROM syskeys WHERE syskey_id = $id";
-		db_exec($sql);
-		if (db_error())
-			return false;
-		$sql = "DELETE FROM sysvals WHERE sysval_key_id = $id";
-		db_exec($sql);
-		if (db_error())
-			return false;
+    unset($bulk_sql);
+
+		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
+		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
+
+    foreach ($bulk_sql as $s) {
+      db_exec($s);
+
+      if (db_error()) {
+        return false;
+      }
+    }
 
 		return null;
 	}
@@ -142,7 +143,7 @@ class CSetupHelpDesk {
 
     switch ($old_version) {
       case "0.1":
-        $sql = "
+        $bulk_sql[] = "
           ALTER TABLE `helpdesk_items`
           ADD `item_requestor_phone` varchar(30) NOT NULL default '' AFTER `item_requestor_email`,
           ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
@@ -157,19 +158,13 @@ class CSetupHelpDesk {
           DROP `item_resolve_custom`,
           DROP `item_resolved`
         ";
-	db_exec($sql);
-	if (db_error())
-		return false;
 
-        $sql = "
+        $bulk_sql[] = "
           ALTER TABLE `task_log`
           ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
         ";
-	db_exec($sql);
-	if (db_error())
-		return false;
 
-        $sql = "
+        $bulk_sql[] = "
           CREATE TABLE `helpdesk_item_status` (
             `status_id` INT NOT NULL AUTO_INCREMENT,
             `status_item_id` INT NOT NULL,
@@ -180,15 +175,13 @@ class CSetupHelpDesk {
             PRIMARY KEY (`status_id`)
           )
         ";
-	db_exec($sql);
-	if (db_error())
-		return false;
+
         break;
       default:
         return false;
     }
 
-    foreach ($sql as $s) {
+    foreach ($bulk_sql as $s) {
       db_exec($s);
 
       if (db_error()) {

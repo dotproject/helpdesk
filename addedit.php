@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.29 2004/04/23 17:17:43 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.30 2004/04/23 18:11:49 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -33,6 +33,7 @@ foreach($company_project_list as $row){
   $projects[] = "[{$row['company_id']},{$row['project_id']},'"
               . addslashes($row['project_name'])
               . "']";
+  $reverse[$row['project_id']] = $row['company_id'];
 }
 
 $sql = "SELECT company_id, company_name
@@ -271,7 +272,13 @@ function selectList( listName, target ) {
       <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
         <input type="checkbox" name="item_notify" value="1"
-        <?php print $hditem["item_notify"] ? "checked" : ""; ?>
+        <?php 
+          if (!$item_id) {
+            print "checked";
+          } else {
+            print $hditem["item_notify"] ? "checked" : "";
+          }
+        ?>
         />
         <?=$AppUI->_( 'Notify by e-mail' );?></td>
     </tr>
@@ -380,7 +387,25 @@ function selectList( listName, target ) {
 </table>
 
 <p>&nbsp;</p>
+<?php 
+  /* If we have a company stored, pre-select it.
+     If we have a project but not a company (version <0.2) do a reverse
+     lookup.
+     Else, select nothing */
+  if (@$hditem['item_company_id']) {
+    $target = $hditem['item_company_id'];
+  } else if (@$hditem['item_project_id']) {
+    $target = $reverse[$hditem['item_project_id']];
+  } else {
+    $target = 0;
+  }
+
+  /* Select the project from the list */
+  $select = @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;
+?>
+
 <script language="javascript">
-changeList('item_project_id', projects, <?php echo @$hditem['item_company_id'] ? $hditem['item_company_id'] : 0;?>);
-selectList( 'item_project_id', <?php echo @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;?> );
+selectList('item_company_id',<?=$target?>);
+changeList('item_project_id', projects, <?=$target?>);
+selectList('item_project_id',<?=$select?>);
 </script>
