@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.23 2004/01/28 18:38:45 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.24 2004/04/06 13:44:47 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -160,12 +160,16 @@ foreach ($rows as $row) {
 	$s .= $CR . '<tr>';
 	$s .= $CR . '<td align="right" nowrap>';
 	if ($email) {
-		$s .= $CR . "<a href=\"mailto:$email\"><img src=\"images/obj/email.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"$email\"></a>";
+		$s .= $CR . "<a href=\"mailto:$email\">"
+              . dPshowImage("images/obj/email.gif", 16, 16, "$email")
+              . "</a>";
 	}
 	if ($canEdit) {
 		$s .= $CR . '<a href="?m=helpdesk&a=addedit&item_id='
               . $row["item_id"]
-              . '"><img src="./images/icons/pencil.gif" alt="edit" border="0" width="12" height="12"></a>&nbsp;';
+              . '">'
+              . dPshowImage("./images/icons/pencil.gif", 12, 12, "edit")
+              . '</a>&nbsp;';
 	}
 	$s .= $CR . '</td>';
 	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id='
@@ -173,11 +177,9 @@ foreach ($rows as $row) {
             . '">'
 		        . '<strong>'
             . $row["item_id"]
-            . '</strong></a> <img src="'
-            . dPfindImage( 'ct'.$row["item_calltype"].'.png', $m )
-            . '" width="15" height="17" border=0 align=center alt="'
-            . $ict[@$row["item_calltype"]]
-            . '" /></td>';
+            . '</strong></a> '
+            . dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')
+            . '</td>';
 	$s .= $CR . "<td nowrap>$name</td>";
 	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
             . $row["item_id"]

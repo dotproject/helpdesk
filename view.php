@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.13 2004/04/05 20:06:19 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.14 2004/04/05 20:26:31 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -43,10 +43,10 @@ if (!db_loadHash( $sql, $hditem )) {
 	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
 	$ts = db_dateTime2unix( @$hditem["item_created"] );
-	$tc = $ts < 0 ? null : date( "m/d/y g:i a", $ts );
+	$tc = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
 
 	$ts = db_dateTime2unix( $hditem["item_modified"] );
-	$tm = $ts < 0 ? null : date( "m/d/y g:i a", $ts );
+	$tm = $ts < 0 ? null : date( "m/d/Y g:i a", $ts );
 
 	writeDebug( "$tm", "tm", __FILE__, __LINE__ );
 
@@ -96,8 +96,8 @@ if (!db_loadHash( $sql, $hditem )) {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Call Type');?>:</td>
-			<td class="hilite" width="100%"><?php echo '<img src="'.dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ).'" align="center" width="15" height="17" border=0 alt="' . $ict[@$hditem["item_calltype"]] . '" /> ';
-                                            echo $ict[$hditem["item_calltype"]];?></td>
+			<td class="hilite" width="100%"><?php echo dPshowImage (dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ), 15, 17, 'align=center');
+                                            echo " ".$ict[$hditem["item_calltype"]];?></td>
 		</tr>
 
 		<tr>

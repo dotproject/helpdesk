@@ -25,11 +25,9 @@ foreach ($ict as $k => $v) {
 	$s = '';
 	foreach ($ict as $kct => $vct) {
 		$s .= '<tr>';
-		$s .= '<td width="15"><img src="'
-        . dPfindImage( 'ct'.$kct.'.png', $m )
-        . '" width="15" height="17" border=0 alt="'
-        . $ict[$kct]
-        . '" /></td>';
+		$s .= '<td width="15">'
+        . dPshowImage (dPfindImage( 'ct'.$kct.'.png', $m ), 15, 17, $ict[$kct])
+        . '</td>';
 		$s .= "<td nowrap><a href=\"?m=helpdesk&a=list&item_calltype=$kct\">$vct</a></td>";
 
 		foreach ($ist as $kst => $vst) {
