@@ -30,7 +30,7 @@ done
 //then be sure to include a 'list' entry with the options.
 //if the key starts with hrXXX then it will just display the contents on the value.  This is used for grouping.
 $config_options = array(
-	"hr1" => "<hr><b>".$AppUI->_('General Options').'<b>',
+	"hr1" => " <hr><b>".$AppUI->_('Item List Paging Options').'<b>',
 	"items_per_page" => array(
 		"description" => $AppUI->_('Number of items displayed per page on the list view.'),
 		"value" => 30,
@@ -46,22 +46,23 @@ $config_options = array(
 		"value" => 5,
 		'type' => 'text'
 	),
+	"hr2" => " <hr><b>".$AppUI->_('New Item Default Selections').'<b>',
 	"default_assigned_to_current_user" => array(
-		"description" => $AppUI->_('Defaults that "assigned to" field to be that of the current user.'),
+		"description" => $AppUI->_('Default "assigned to" field to be current user.'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"default_notify_by_email" => array(
-		"description" => $AppUI->_('Defaults the "notify by email" field to on.'),
+		"description" => $AppUI->_('Default the "notify by email" field to on.'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
 	"default_company_current_company" => array(
-		"description" => $AppUI->_('Defaults the "company" field to be that of the current user.'),
+		"description" => $AppUI->_('Default "company" field to be that of the current user.'),
 		"value" => 1,
 		'type' => 'checkbox'
 	),
-	"hr2" => "<hr><b>".$AppUI->_('Available Search Options').'<b>',
+	"hr3" => " <hr><b>".$AppUI->_('Available Search Fields for Item List').'<b>',
 	"search_criteria_search" => array(
 		"description" => $AppUI->_('Title Search'),
 		"value" => 1,
