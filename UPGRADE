@@ -1,3 +1,28 @@
+===== Version 0.2+  =====
+Added
+* Configuration options, available through the View Modules page of the System Admin module.  You can modify any of the following:
+   * Defaults that "assigned to" field to be that of the current user.  	
+   * Defaults the "notify by email" field to on. 	
+   * Defaults the "company" field to be that of the current user. 	
+   * Show the search option for Title Search. 	
+   * Show the search option for Call Type. 	
+   * Show the search option for Company. 	
+   * Show the search option for Status. 	
+   * Show the search option for Call Source. 	
+   * Show the search option for Project. 	
+   * Show the search option for Assigned To. 	
+   * Show the search option for Priority. 	
+   * Show the search option for Application. 	
+   * Show the search option for Requestor. 	
+   * Show the search option for Severity. 	
+   * Show the search option for Operation System.
+* User list now sorts by last name, like the contact list does.
+* Setting status to "Open" only if the current status is Unassigned on assigned user selection.
+
+Fixes
+* Fixed a bug in the upgrade process that was causing it to fail.
+* Put for I/O handling in place that may resolve issues.
+
 ===== Version 0.1 to 0.2 =====
 
 Added
@@ -9,6 +34,7 @@ Added
 * Many UI tweaks.  Addition links to view tickets, additional email links.
 * Ability to select either a system user or a system contact at the requestor and have it pre-populate the phone and email fields.
 * Added the ability to log time to Task Logs for each ticket.
+* Added toggle to show/hide summart message changes.
 
 Removed
 * Item status "Delete"

@@ -1,4 +1,4 @@
-$Id: README,v 1.1 2004/04/19 20:13:51 gatny Exp $
+$Id: README,v 1.2 2004/05/06 20:07:06 agorski Exp $
 
 ABOUT
 
@@ -41,4 +41,4 @@ LICENSE
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-
+See UPGRADE for version changes and information
