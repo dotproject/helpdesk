@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.25 2004/06/14 20:58:11 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.26 2004/06/22 12:14:40 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -75,7 +75,7 @@ $numclosed = db_loadResult ($sql);
 	<td width="80%" valign="top">
   <?php
   // Tabbed information boxes
-  $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
+  $tabBox = new CTabBox( "?m=helpdesk", "{$dPconfig['root_dir']}/modules/helpdesk/", $tab );
   $tabBox->add( 'vw_idx_stats', $AppUI->_('Help Desk Items')." ($numtotal)" );
   $tabBox->add( 'vw_idx_my', $AppUI->_('My Open')." ($nummine)" );
   $tabBox->add( 'vw_idx_new', $AppUI->_('Opened Today')." ($numopened)" );
