@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.53 2004/07/14 16:36:41 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.54 2004/12/10 17:14:51 cyberhorse Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -108,11 +108,11 @@ class CHelpDeskItem extends CDpObject {
         break;
       case '1'://it's a system user
         $sql = "SELECT user_id as id,
-                       user_email as email,
-                       user_phone as phone,
-                CONCAT(contact_first_name,' ', contactuser_last_name) as name
+                       contact_email as email,
+                       contact_phone as phone,
+                CONCAT(contact_first_name,' ', contact_last_name) as name
                 FROM users
-               LEFT JOIN contact ON user_contact = contact_id
+               LEFT JOIN contacts ON user_contact = contact_id
                 WHERE user_id='{$this->item_requestor_id}'";
         break;
       case '2':
@@ -159,8 +159,9 @@ class CHelpDeskItem extends CDpObject {
     }
 
     // Pull up the assignee's e-mail
-    $sql = "SELECT user_email
+    $sql = "SELECT contact_email
             FROM users
+			LEFT JOIN contacts ON user_contact = contact_id
             WHERE user_id='{$this->item_assigned_to}'";
 
     $assigned_to_email = db_loadResult($sql);
