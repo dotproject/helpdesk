@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.12 2004/04/21 00:00:11 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.13 2004/04/22 16:36:05 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -55,6 +55,9 @@ class CSetupHelpDesk {
 
 		db_exec( $sql );
 
+		$sql = "ALTER TABLE `task_log` ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`";
+		db_exec( $sql );
+
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
 
@@ -85,6 +88,9 @@ class CSetupHelpDesk {
 	function remove() {
 		$sql = "DROP TABLE helpdesk_items";
 		db_exec( $sql );
+		
+		$sql = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
+		db_exec( $sql );
 
 		$sql = "SELECT syskey_id FROM syskeys WHERE syskey_name = 'HelpDeskList'";
 		$id = db_loadResult( $sql );
@@ -107,7 +113,9 @@ class CSetupHelpDesk {
           ALTER TABLE `helpdesk_items`
           ADD `item_requestor_phone` varchar(30) NOT NULL default ''AFTER `item_requestor_email`,
           ADD `item_company_id` int(11) NOT NULL default '0' AFTER `item_project_id`,
-          ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`;";
+          ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`;
+          ALTER TABLE `task_log` ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`;
+        ";
         break;
       default:
         return false;
