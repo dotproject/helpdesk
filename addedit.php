@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -11,11 +11,8 @@ WHERE item_id = '$item_id'
 ";
 db_loadHash( $sql, $hditem );
 
-print "<pre><font color=blue>"; print_r( $_GET ); print "</font></pre>\n";
-print "<pre><font color=green>"; print_r( $hditem ); print "</font></pre>\n";
-
-//$df = $AppUI->getPref( 'SHDATEFORMAT' );
-//$tf = $AppUI->getPref( 'TIMEFORMAT' );
+#print "<pre><font color=blue>"; print_r( $_GET ); print "</font></pre>\n";
+#print "<pre><font color=green>"; print_r( $hditem ); print "</font></pre>\n";
 
 $tsm = $rightNow = time();
 $hditem["item_modified"] = db_unix2dateTime( $rightNow );
@@ -38,6 +35,19 @@ $tm = $tsm < 0 ? null : date( "m/d/y g:i a", $tsm );
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name) FROM users";
 $users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
+$sql = "
+SELECT project_id, CONCAT(companies.company_name, ': ', project_name) as proj 
+FROM projects
+LEFT JOIN companies ON company_id = projects.project_company
+ORDER BY proj 
+";
+#$sql = "
+#SELECT project_id, CONCAT(companies.company_name, ': ', project_name)
+#FROM projects, companies
+#WHERE projects.project_company = companies.company_id
+#";
+$projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+
 // setup the title block
 $ttl = $item_id > 0 ? "Edit Item" : "Add Item";
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
@@ -49,14 +59,32 @@ $titleBlock->show();
 
 <script language="javascript">
 function submitIt() {
-	var f = document.frmHelpDeskItem;
-	if (f.item_title.value.length < 3) {
-		alert( "Please enter a valid title" );
-		f.item_name.focus();
-	} else {
-		f.submit();
-	}
-}
+  var f   = document.frmHelpDeskItem;
+  var msg = 'You must enter the following value(s):';
+
+  if ( f.item_title.value.length < 3 ) {
+    msg += "\nSubject";
+    f.item_title.focus();
+  }
+
+  if( f.item_requestor.value.length < 3 ) {
+    msg += "\nYour Name";
+    f.item_requestor.focus();
+  }
+
+  if( f.item_summary.value.length < 3 ) {
+    msg += "\nSummary";
+    f.item_summary.focus();
+  }
+
+  if( msg.length < 39 ) {
+    f.submit();
+  }
+
+  else {
+    alert( msg );
+  }
+} 
 
 function popDialog() {
 	var f = document.frmHelpDeskItem;
@@ -96,38 +124,36 @@ function setRequestor( key, val ) {
 		</tr>
 	<?php } ?>
 		<tr>
-			<td align="right"><?php echo $AppUI->_('Title');?>:</td>
+			<td align="right"><font color=red><?php echo $AppUI->_('* Subject');?>:</font></td>
 			<td valign="top">
-				<input type="text" class="text" name="item_title" value="<?php echo @$hditem["item_title"];?>" size="40" maxlength="64" />
+				<input type="text" class="text" id="large" name="item_title" value="<?php echo @$hditem["item_title"];?>" maxlength="64" />
 			</td>
-			<td align="left">*</td>
+			<td align="left">&nbsp; </td>
 		</tr>
 
 		<tr>
-			<td align="right"><?php echo $AppUI->_('Requestor');?>:</td>
+			<td align="right"><font color=red><?php echo $AppUI->_('* Your Name');?>:</font></td>
 			<td valign="top">
-				<input type="text" class="text" name="item_requestor" value="<?php echo @$hditem["item_requestor"];?>" size="40" maxlength="64" onchange="if(this.value!=oldRequestor) {document.frmHelpDeskItem.item_requestor_id.value=0;oldRequestor=this.value}" />
+				<input type="text" class="text" id="large" name="item_requestor" value="<?php echo @$hditem["item_requestor"];?>" maxlength="64" onchange="if(this.value!=oldRequestor) {document.frmHelpDeskItem.item_requestor_id.value=0;oldRequestor=this.value}" />
 				<input type="button" class="button" value="..." onclick="popDialog();" />
 			</td>
-			<td align="left">
-				 *
-			</td>
+			<td align="left">&nbsp; </td>
 		</tr>
 
 		<tr>
-			<td align="right"><?php echo $AppUI->_('Requestor EMail');?>:</td>
+			<td align="right"><?php echo $AppUI->_('Your E-mail');?>:</td>
 			<td valign="top">
-				<input type="text" class="text" name="item_requestor_email" value="<?php echo @$hditem["item_requestor_email"];?>" size="40" maxlength="64" />
+				<input type="text" class="text" id="large" name="item_requestor_email" value="<?php echo @$hditem["item_requestor_email"];?>" maxlength="64" />
 			</td>
 			<td align="left">
 			</td>
 		</tr>
 
 		<tr>
-			<td align="right"><?php echo $AppUI->_('Assigned to');?>:</td>
+			<td align="right"><?php echo $AppUI->_('Assigned To');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $users, 'item_assigned_to', 'size="1" class="text"', @$hditem["item_assigned_to"] );
+			echo arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="medium"', @$hditem["item_assigned_to"] );
 		?>
 			</td>
 		</tr>
@@ -135,7 +161,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Status');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $ist, 'item_status', 'size="1" class="text"', @$hditem["item_status"] );
+			echo arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"', @$hditem["item_status"] );
 		?>
 			</td>
 		</tr>
@@ -143,7 +169,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Priority');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $ipr, 'item_priority', 'size="1" class="text"', @$hditem["item_priority"] );
+			echo arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="medium"', @$hditem["item_priority"] );
 		?>
 			</td>
 		</tr>
@@ -163,7 +189,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Call Type');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $ict, 'item_calltype', 'size="1" class="text"', @$hditem["item_calltype"] );
+			echo arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="medium"', @$hditem["item_calltype"] );
 		?>
 			</td>
 		</tr>
@@ -172,7 +198,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Call Source');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $ics, 'item_source', 'size="1" class="text"', @$hditem["item_source"] );
+			echo arraySelect( $ics, 'item_source', 'size="1" class="text" id="medium"', @$hditem["item_source"] );
 		?>
 			</td>
 		</tr>
@@ -181,7 +207,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Operating System');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $ios, 'item_os', 'size="1" class="text"', @$hditem["item_os"] );
+			echo arraySelect( $ios, 'item_os', 'size="1" class="text" id="medium"', @$hditem["item_os"] );
 		?>
 			</td>
 		</tr>
@@ -190,7 +216,7 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Application');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $iap, 'item_application', 'size="1" class="text"', @$hditem["item_applic"] );
+			echo arraySelect( $iap, 'item_application', 'size="1" class="text" id="medium"', @$hditem["item_applic"] );
 		?>
 			</td>
 		</tr>
@@ -199,11 +225,19 @@ function setRequestor( key, val ) {
 			<td align="right"><?php echo $AppUI->_('Severity');?>:</td>
 			<td>
 		<?php
-			echo arraySelect( $isv, 'item_severity', 'size="1" class="text"', @$hditem["item_severity"] );
+			echo arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"', @$hditem["item_severity"] );
 		?>
 			</td>
 		</tr>
 
+    <tr>
+      <td align="right"><?php echo $AppUI->_('Project');?>:</td>
+      <td>
+    <?php
+      echo arraySelect( $projects, 'item_project_id', 'size="1" class="text" id="large"', @$hditem["item_project_id"] );
+    ?>
+      </td>
+    </tr>
 		</table>
 	</td>
 </tr>
@@ -211,7 +245,7 @@ function setRequestor( key, val ) {
 
 
 <tr>
-	<td align="left"><?php echo $AppUI->_('Summary');?>:</td>
+	<td align="left"><font color=red><?php echo $AppUI->_('* Summary');?>:</font></td>
 	<td>&nbsp; </td>
 </tr>
 <tr>

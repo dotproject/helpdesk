@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.2 2003/04/12 00:16:54 eddieajau Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
 
 require_once( "{$AppUI->cfg['root_dir']}/classes/dp.class.php" );
 
@@ -28,6 +28,7 @@ class CHelpDeskItem extends CDpObject {
 	var $item_priority = NULL;
 	var $item_severity = NULL;
 	var $item_status = NULL;
+  var $item_project_id = NULL;
 
 	var $item_assigned_to = NULL;
 	var $item_requestor = NULL;

@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -13,13 +13,16 @@ foreach( $_GET as $key => $value ) {
 $sql = "
 SELECT hi.*,
 	CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
-	u1.user_email
+	u1.user_email,
+  p.project_id,
+  p.project_name
 FROM helpdesk_items hi
 LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
+LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
 WHERE item_id = '$item_id'
 ";
 
-writeDebug( "$sql", "sql", __FILE__, __LINE__ );
+#writeDebug( "$sql", "sql", __FILE__, __LINE__ );
 
 if (!db_loadHash( $sql, $hditem )) {
 	#writeDebug( "false", "db_loadHash", __FILE__, __LINE__ );
@@ -99,6 +102,10 @@ if (!db_loadHash( $sql, $hditem )) {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Application');?>:</td>
 			<td class="hilite" width="100%"><?php echo $hditem["item_application"];?></td>
 		</tr>
+    <tr>
+      <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
+      <td class="hilite" width="100%"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
+    </tr>
 		</table>
 
 	</td>

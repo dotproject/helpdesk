@@ -1,9 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
-  #include( "../../misc/debug.php" );
-
-#foreach( $_POST as $key => $value ) {
-#	   writeDebug( "$value", "$key", __FILE__, __LINE__ );
-#}
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 1 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -15,16 +10,8 @@ if ( !$hditem->bind( $_POST )) {
 	$AppUI->redirect();
 }
 
-// convert dates to SQL format first
-/*
-$hditem->item_modified = db_unix2DateTime( $hditem->item_modified );
-if( $item_id == 0 ) {
-  $hditem->item_created  = db_unix2DateTime( $hditem->item_created );
-} else {
-  unset( $hditem->item_created );
-}
-*/
-//print "<pre><font color=red>"; print_r( $hditem ); print "</font></pre>\n";
+#print "<pre><font color=red>"; print_r( $hditem ); print "</font></pre>\n";
+#print "<pre><font color=red>"; print_r( $_POST ); print "</font></pre>\n";
 
 $AppUI->setMsg( "HelpDesk item", UI_MSG_OK );
 if ($del) {
@@ -40,6 +27,8 @@ if ($del) {
 		$AppUI->setMsg( $item_id ? 'updated' : 'inserted', UI_MSG_OK, true );
 	}
 }
+
+#die( "Debugging output enabled in do_item_aed.php" );
 
 $AppUI->redirect();
 ?>
