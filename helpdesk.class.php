@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.3 2004/04/15 17:32:01 adam Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.4 2004/04/15 19:11:48 adam Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -73,6 +73,8 @@ class CHelpDeskItem extends CDpObject {
 	}
   
   function notify() {
+    global $AppUI;
+
     // TODO Not localized
 
     $sql = "SELECT user_email
@@ -84,7 +86,13 @@ class CHelpDeskItem extends CDpObject {
     $mail = new Mail;
 
     if ($mail->ValidEmail($assigned_to_email)) {
-      $mail->From('"'.$this->item_requestor.'" <'.$this->item_requestor_email.'>');
+      if ($mail->ValidEmail($this->item_requestor_email)) {
+        $email = $this->item_requestor_email;
+      } else {
+        $email = "dotproject@".$AppUI->cfg['site_domain'];
+      }
+
+      $mail->From("\"".$this->item_requestor."\" <{$email}>");
       $mail->To($assigned_to_email);
       $mail->Subject("Help Desk item #".$this->item_id." has been updated");
       $mail->Body($this->item_title."\n\n".$this->item_summary);

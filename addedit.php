@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.9 2004/04/15 18:50:16 adam Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.10 2004/04/15 19:11:48 adam Exp $ */
 $AppUI->savePlace();
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -59,11 +59,6 @@ function submitIt() {
   if( f.item_requestor.value.length < 3 ) {
     msg += "\nYour Name";
     f.item_requestor.focus();
-  }
-
-  if( f.item_requestor_email.value.length < 3 ) {
-    msg += "\nYour E-mail";
-    f.item_requestor_email.focus();
   }
 
   if( f.item_summary.value.length < 3 ) {
@@ -138,7 +133,7 @@ function setRequestor( key, val ) {
 		</tr>
 
 		<tr>
-			<td align="right" nowrap><font color=red>* <?=$AppUI->_('Your E-mail');?>:</td>
+			<td align="right" nowrap><?=$AppUI->_('Your E-mail');?>:</td>
 			<td valign="top">
 				<input type="text" class="text" id="large" name="item_requestor_email" value="<?=@$hditem["item_requestor_email"]?>" maxlength="64" />
 			</td>
