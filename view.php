@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.28 2004/04/21 21:04:14 agorski Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.29 2004/04/22 17:04:08 agorski Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -84,7 +84,7 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Item Number')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_id"]?></td>
+			<td width="100%"><?=$hditem["item_id"]?></td>
 		</tr>
 
 		<tr>
@@ -111,6 +111,33 @@ function delIt() {
         print $assigned_email ?
           "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
           $assigned_to_name;?></td>
+		</tr>
+
+    <tr>
+      <td align="right" nowrap="nowrap"><?=$AppUI->_('Company')?>:</td>
+			<td class="hilite" width="100%"><?=$hditem["company_name"]?></td>
+    </tr>
+
+    <tr>
+      <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
+      <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
+    </tr>
+
+		<tr>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Type')?>:</td>
+			<td class="hilite" width="100%"><?php
+        print $ict[$hditem["item_calltype"]]." ";
+        print dPshowImage (dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ), 15, 17, 'align=center');
+      ?></td>
+		</tr>
+
+		<tr>
+			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
+			<td class="hilite" width="100%"><?php
+        print isset($ics[$hditem["item_source"]]) ?
+              $ics[$hditem["item_source"]] :
+              $ics[0];
+      ?></td>
 		</tr>
 
 		<tr>
@@ -141,22 +168,6 @@ function delIt() {
 		</tr>
 
 		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Type')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print dPshowImage (dPfindImage( 'ct'.$hditem["item_calltype"].'.png', $m ), 15, 17, 'align=center');
-        print " ".$ict[$hditem["item_calltype"]];?></td>
-		</tr>
-
-		<tr>
-			<td align="right" nowrap="nowrap"><?=$AppUI->_('Call Source')?>:</td>
-			<td class="hilite" width="100%"><?php
-        print isset($ics[$hditem["item_source"]]) ?
-              $ics[$hditem["item_source"]] :
-              $ics[0];
-      ?></td>
-		</tr>
-
-		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Operating System')?>:</td>
 			<td class="hilite" width="100%"><?php
         print isset($ios[$hditem["item_os"]]) ?
@@ -173,16 +184,6 @@ function delIt() {
               $iap[0];
         ?></td>
 		</tr>
-
-    <tr>
-      <td align="right" nowrap="nowrap"><?=$AppUI->_('Company')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["company_name"]?></td>
-    </tr>
-
-    <tr>
-      <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
-      <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
-    </tr>
 		</table>
 
 	</td>
@@ -191,16 +192,16 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Opened')?>:</td>
-			<td class="hilite" width="100%"><?=$tc?></td>
+			<td width="100%"><?=$tc?></td>
 		</tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Last Modified')?>:</td>
-      <td class="hilite" width="100%"><?=$tm?></td>
+      <td width="100%"><?=$tm?></td>
     </tr>
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Closed')?>:</td>
-      <td class="hilite" width="100%"><?=$tr?></td>
+      <td width="100%"><?=$tr?></td>
     </tr>
 		</table>
 	</td>

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.26 2004/04/22 14:54:21 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.27 2004/04/22 17:04:03 agorski Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -302,6 +302,12 @@ function selectList( listName, target ) {
     </tr>
 
     <tr>
+      <td align="right"><?=$AppUI->_('Status')?>:</td>
+      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',
+                          @$hditem["item_status"] )?></td>
+    </tr>
+
+    <tr>
       <td align="right"><?=$AppUI->_('Priority')?>:</td>
       <td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="medium"',
                           @$hditem["item_priority"] )?></td>
@@ -311,12 +317,6 @@ function selectList( listName, target ) {
       <td align="right"><?=$AppUI->_('Severity')?>:</td>
       <td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="medium"',
                           @$hditem["item_severity"] )?></td>
-    </tr>
-
-    <tr>
-      <td align="right"><?=$AppUI->_('Status')?>:</td>
-      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',
-                          @$hditem["item_status"] )?></td>
     </tr>
 
     <tr>
