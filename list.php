@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.2 2004/01/23 16:09:00 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.3 2004/01/23 16:12:23 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -151,7 +151,7 @@ foreach ($rows as $row) {
 	$s .= $CR . '</td>';
 	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id=' . $row["item_id"] . '">'
 		.'<strong># ' . $row["item_id"] .'</strong></a></td>';
-	$s .= $CR . '<td>' . $name . '</td>';
+	$s .= $CR . '<td nowrap>' . $name . '</td>';
 	$s .= $CR . '<td width="99%">' . $CR. '<table cellspacing="0" cellpadding="0" border="0">' . $CR . '<tr>'
 		. $CR .'<td width="17"><img src="'.dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ).'" width="15" height="17" border=0 alt="' . $ict[@$row["item_calltype"]] . '" /></td>'
 		. $CR .'<td><a href="?m=helpdesk&a=view&item_id='.$row["item_id"].'">'
