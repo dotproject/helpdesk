@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.19 2004/04/20 18:36:43 gatny Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.20 2004/04/20 20:36:51 gatny Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -90,8 +90,12 @@ function submitIt() {
   }
 } 
 
-function popDialog() {
-	window.open('./index.php?m=public&a=selector&callback=setRequestor&table=users&dialog=1', 'selector', 'left="50",top="50",height="250",width="400",resizable')
+function popUserDialog() {
+	window.open('./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable,scrollbars=yes')
+}
+
+function popContactDialog() {
+	window.open('./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable,scrollbars=yes')
 }
 
 var oldRequestor = '';
@@ -104,6 +108,24 @@ function setRequestor( key, val ) {
 		f.item_requestor_id.value = key;
 		f.item_requestor.value = val;
 		oldRequestor = val;
+	}
+}
+
+function setUserRequestor( key, val ) {
+	var f = document.frmHelpDeskItem;
+
+	if (val != '') {
+		setRequestor( key, val );
+		f.item_requestor_type.value = 1
+	}
+}
+
+function setContactRequestor( key, val ) {
+	var f = document.frmHelpDeskItem;
+
+	if (val != '') {
+		setRequestor( key, val );
+		f.item_requestor_type.value = 2
 	}
 }
 
@@ -123,6 +145,7 @@ function updateStatus(obj){
 	<input name="del" type="hidden" value="0" />
 	<input type="hidden" name="item_id" value="<?=$item_id?>" />
 	<input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
+	<input type="hidden" name="item_requestor_type" value="<?=$item_requestor_type?>" />
   <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
   <input type="hidden" name="item_modified" value="<?=@$hditem["item_modified"]?>" />
   <tr>
@@ -149,7 +172,8 @@ function updateStatus(obj){
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-			<input type="button" class="button" value="..." onclick="popDialog();" />
+			<input type="button" class="button" value="Users..." onclick="popUserDialog();" />
+			<input type="button" class="button" value="Contacts..." onclick="popContactDialog();" />
 			</td>
 		</tr>
 
