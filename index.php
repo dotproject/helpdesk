@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
 
 // enable debug output
 #include( "../../misc/debug.php" );
@@ -18,42 +18,13 @@ if ($canEdit) {
 		'<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", "index" );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
 }
 $titleBlock->show();
 ?>
 
 <table cellspacing="0" cellpadding="2" border="0" width="100%">
 <tr>
-	<td width="20%" valign="top">
-		<br />
-		<table cellspacing="0" cellpadding="2" border="0" width="100%" class="std">
-		<tr>
-			<th>
-<?php
-	$df = $AppUI->getPref( 'SHDATEFORMAT' );
-	$tf = $AppUI->getPref( 'TIMEFORMAT' );
-    writeDebug( $df, 'SHDATEFORMAT', __FILE__, __LINE__ );
-    writeDebug( $tf, 'TIMEFORMAT', __FILE__, __LINE__ );
-    
-    // Right, so this sure isn't how PEAR::Date is defined <mike@linuxbox.nu>
-	//$now = new CDate( null, "$df $tf" );
-    //writeDebug( $now->toString(), 'NOW', __FILE__, __LINE__ );
-	//echo $now->toString();
-    $now = date( "m.d.y g:i a" );
-    echo $now;
-    
-?>
-			</th>
-		</tr>
-		<tr>
-			<td>
-				Some info
-			</td>
-		</tr>
-		</table>
-	</td>
-
 	<td width="80%" valign="top">
 <?php
 // tabbed information boxes

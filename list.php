@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.19 2004/01/23 16:35:19 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.20 2004/01/23 18:49:12 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -83,7 +83,7 @@ if ($canEdit) {
 		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 	);
 }
-$titleBlock->addCrumb( "?m=helpdesk", "home" );
+$titleBlock->addCrumb( "?m=helpdesk", "Home" );
 $titleBlock->show();
 
 ?>
@@ -124,7 +124,7 @@ function changeList() {
 </tr>
 </form>
 </table>
-
+<br>
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
 	<td align="right" nowrap>&nbsp;</td>

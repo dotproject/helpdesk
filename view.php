@@ -1,4 +1,4 @@
-<?php /* COMPANIES $Id: view.php,v 1.6 2004/01/22 18:35:56 adam Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.7 2004/01/22 18:43:20 adam Exp $ */
   #include( "../../misc/debug.php" );
 
 $AppUI->savePlace();
@@ -30,7 +30,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	#writeDebug( "false", "db_loadHash", __FILE__, __LINE__ );
 	
 	$titleBlock = new CTitleBlock( 'Invalid Helpdesk ID', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_VIEW' );
-	$titleBlock->addCrumb( "?m=helpdesk", "helpdesk index" );
+	$titleBlock->addCrumb( "?m=helpdesk", "Index" );
 	$titleBlock->show();
 } else {
 	#writeDebug( "true", "db_loadHash", __FILE__, __LINE__ );
@@ -47,16 +47,16 @@ if (!db_loadHash( $sql, $hditem )) {
 
 	writeDebug( "$tm", "tm", __FILE__, __LINE__ );
 
-	$titleBlock = new CTitleBlock( 'View Help Desk Item', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
-	$titleBlock->addCell( '<h1>#' . $hditem["item_id"] . '&nbsp;</h1>' );
-	$titleBlock->addCrumb( "?m=helpdesk", "home" );
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", "index" );
+	$titleBlock = new CTitleBlock( "Viewing Help Desk Item #{$hditem["item_id"]}", 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
+	//$titleBlock->addCell( '<h1>#' . $hditem["item_id"] . '&nbsp;</h1>' );
+	$titleBlock->addCrumb( "?m=helpdesk", "Home" );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
 	if ($canEdit) {
 		$titleBlock->addCell(
 			'<input type="submit" class="button" value="'.$AppUI->_('new item').'">', '',
 			'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
 		);
-		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", "edit this item" );
+		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", "Edit this item" );
 	}
 	$titleBlock->show();
 ?>

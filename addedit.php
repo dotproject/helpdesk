@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.3 2004/01/19 21:35:19 mike Exp $ */
   #include( "../../misc/debug.php" );
 
 $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
@@ -51,9 +51,9 @@ $projects = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 // setup the title block
 $ttl = $item_id > 0 ? "Edit Item" : "Add Item";
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
-$titleBlock->addCrumb( "?m=helpdesk", "home" );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", "index" );
-$titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "view this item" );
+$titleBlock->addCrumb( "?m=helpdesk", "Home" );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", "Index" );
+$titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", "View this item" );
 $titleBlock->show();
 ?>
 
