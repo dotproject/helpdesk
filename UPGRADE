@@ -1,9 +1,11 @@
-===== Version 0.2+  =====
+===== Version 0.2 =====
+
 Added
 * Improved permissions system, based mainly on Company permissions.
 * Configuration options, available through the View Modules page of the System
   Admin module. These fine tune the look and behavior of the Help Desk module.
   The options include:
+
   * Item List Paging Options
     * Number of items displayed per page on the list view
     * Number of status log items displayed per page in item view
@@ -24,28 +26,24 @@ Added
       Assigned To, Priority, Application, Requestor, Severity, Operating System
 
 * User list now sorts by last name, like the contact list does.
+* Pagination of item list and of status log items
+* Added "My Open" tab to show a user's open items
+* "Open Today" and "Closed Today" tabs now work
+* Tabs have item counts right on the tab for quick reference
 * Setting status to "Open" only if the current status is Unassigned on assigned
   user selection.
 * Added auto-linking of email addresses and http:// in that are contained 
   within the summary field.
 * Added stripping of any html tags within the summary field.
-
-Fixes
-* Fixed a bug in the upgrade process that was causing it to fail.
-* Put for I/O handling in place that may resolve issues.
-
-===== Version 0.1 to 0.2 =====
-
-Added
-* Requestor phone number, requestor type (user or contact), item company
+* Requestor phone number, requestor type (user or contact), item company have
+  been added for each item
 * Optional item assignee notification by e-mail
 * Status log of item activity, based on the new item audit trail options
-* Can assign to a company and/or a project
-* Enabled "closed today" ticket view.
-* Many UI tweaks.  Addition links to view tickets, additional email links.
-* Ability to select either a system user or a system contact at the requestor and have it pre-populate the phone and email fields.
-* Added the ability to log time to Task Logs for each ticket.
-* Added toggle to show/hide summart message changes.
+* Many UI tweaks and reorganizations.
+* Ability to select either a system user or a system contact at the requestor 
+  and have it pre-populate the phone and email fields.
+* Ability to log time to Task Logs for each item
+* Added toggle to show/hide summary message changes.
 
 Removed
 * Item status "Delete"
