@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.10 2004/05/19 19:02:43 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.11 2004/05/20 15:15:20 agorski Exp $*/
 
   /*
    * opened = 0
@@ -105,12 +105,12 @@ function vw_idx_handler ($type) {
       ?>
       </td>
       <td width="80%"><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_title']?></a></td>
-      <td nowrap="nowrap">
+      <td align="center" nowrap="nowrap">
       <?php
       if ($row['assigned_email']) {
         print "<a href='mailto:{$row['assigned_email']}'>{$row['assigned_fullname']}</a>";
       } else {
-        print $row['assigned_fullname'];
+        print $row['assigned_fullname'] ? $row['assigned_fullname'] : "-";
       }
       ?>
       </td>

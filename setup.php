@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.39 2004/05/19 17:02:18 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.40 2004/05/24 19:07:22 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -246,6 +246,13 @@ class CSetupHelpDesk {
             db_exec($sql);
           }
         }
+
+        // If our status was 5 (Testing), now it is 4 (Testing)
+        $sql = "UPDATE helpdesk_items
+                SET item_status='4'
+                WHERE item_status='5'";
+
+        db_exec($sql);
 
         break;
       default:
