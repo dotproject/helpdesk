@@ -1,8 +1,7 @@
-<?php /* HELPDESK $Id: index.php,v 1.2 2004/01/19 17:56:53 mike Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.4 2004/04/15 17:32:01 adam Exp $ */
 
 // enable debug output
 #include( "../../misc/debug.php" );
-writeDebug( "DEBUGGING", 'ENABLED', __FILE__, __LINE__ );
 
 $AppUI->savePlace();
 
@@ -27,6 +26,7 @@ $titleBlock->show();
 <tr>
 	<td width="80%" valign="top">
 <?php
+
 // tabbed information boxes
 $tabBox = new CTabBox( "?m=helpdesk", "{$AppUI->cfg['root_dir']}/modules/helpdesk/", $tab );
 $tabBox->add( 'vw_idx_stats', 'Call Type Statistics' );

@@ -1,6 +1,6 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.1.1.1 2004/01/14 23:05:22 root Exp $ */
-
-require_once( "{$AppUI->cfg['root_dir']}/classes/dp.class.php" );
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.3 2004/04/15 17:32:01 adam Exp $ */
+require_once( $AppUI->getSystemClass( 'dp' ) );
+require_once( $AppUI->getSystemClass( 'libmail' ) );
 
 // some standard arrays
 $ict = dPgetSysVal( 'HelpDeskCallType' );
@@ -10,7 +10,6 @@ $iap = dPgetSysVal( 'HelpDeskApplic' );
 $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $isv = dPgetSysVal( 'HelpDeskSeverity' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
-
 
 ##
 ## CHelpDeskItem Class
@@ -64,31 +63,33 @@ class CHelpDeskItem extends CDpObject {
 		// TODO MORE
 		return NULL; // object is ok
 	}
-/*
+
 	function store() {
-		$msg = $this->check();
-		if( $msg ) {
-			return get_class( $this )."::store-check failed";
-		}
-		if( $this->item_id ) {
-			$ret = db_updateObject( 'helpdesk_items', $this, 'item_id' );
-		} else {
-			$ret = db_insertObject( 'helpdesk_items', $this, 'item_id' );
-		}
-		if( !$ret ) {
-			return get_class( $this )."::store failed <br />" . db_error();
-		} else {
-			return NULL;
-		}
+    return parent::store();
 	}
+
 	function delete() {
-			$sql = "DELETE FROM helpdesk_items WHERE item_id = $this->item_id";
-			if (!db_exec( $sql )) {
-				return db_error();
-			} else {
-				return NULL;
-			}
+    return parent::delete();
 	}
-*/
+  
+  function notify() {
+    // TODO Not localized
+
+    $sql = "SELECT user_email
+            FROM users
+            WHERE user_id='{$this->item_assigned_to}'";
+
+    $assigned_to_email = db_loadResult($sql);
+
+    $mail = new Mail;
+
+    if ($mail->ValidEmail($assigned_to_email)) {
+      $mail->From('"'.$this->item_requestor.'" <'.$this->item_requestor_email.'>');
+      $mail->To($assigned_to_email);
+      $mail->Subject("Help Desk item #".$this->item_id." has been updated");
+      $mail->Body($this->item_title."\n\n".$this->item_summary);
+      $mail->Send();
+    }
+  }
 }
 ?>

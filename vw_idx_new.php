@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id */
+<?php /* HELPDESK $Id: vw_idx_new.php,v 1.4 2004/04/15 17:32:01 adam Exp $*/
 global $m, $ipr;
 
 /*  select items created today with 'unassigned' or 'open' status

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.25 2004/04/06 14:43:14 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.27 2004/04/15 17:32:01 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -75,7 +75,6 @@ if ($orderby == "project_name") {
   $sql .= "hi.$orderby";
 }
 
-//echo "<pre>$sql</pre>";
 $rows = db_loadList( $sql );
 
 // setup the title block
@@ -103,22 +102,13 @@ function changeList() {
 	<td><?=$AppUI->_('Search')?>:</td>
 	<td><input type="text" name="search" class="text" value="<?=$search;?>"></td>
 	<td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
-	<td>
-<?php
-	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype', 'size="1" class="text" onchange="changeList()"', $calltype );
-?>
+	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype', 'size="1" class="text" onchange="changeList()"', $calltype )?>
 	</td>
 	<td align="right"><?=$AppUI->_('Status')?>:</td>
-	<td>
-<?php
-	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status', 'size="1" class="text" onchange="changeList()"', $status );
-?>
+	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status', 'size="1" class="text" onchange="changeList()"', $status )?>
 	</td>
 	<td align="right"><?=$AppUI->_('Priority')?>:</td>
-	<td>
-<?php
-	echo arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority', 'size="1" class="text" onchange="changeList()"', $priority );
-?>
+	<td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority', 'size="1" class="text" onchange="changeList()"', $priority )?>
 	</td>
 	<td align="right">
 		<input type="submit" value="<?=$AppUI->_('search')?>" class="button" />
@@ -154,6 +144,7 @@ function changeList() {
 </tr>
 <?php
 $s = '';
+
 foreach ($rows as $row) {
 	$name = $row["item_requestor_id"] ? $row["user_fullname"] : $row["item_requestor"];
 	$email = $row["user_email"] ? $row["user_email"] : $row["item_requestor_email"];
@@ -197,6 +188,7 @@ foreach ($rows as $row) {
             . $row['project_id'].'">'.$row['project_name'].'</a></td>';
 	$s .= $CR . '</tr></form>';
 }
-echo "$s\n";
+
+print "$s\n";
 ?>
 </table>

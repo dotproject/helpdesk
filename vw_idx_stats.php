@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id */
+<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.4 2004/04/15 17:32:01 adam Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();
