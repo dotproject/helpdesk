@@ -1,5 +1,8 @@
-<?php /* $Id: vw_log_update.php,v 1.5 2004/05/26 21:54:43 grahamjb Exp $ */
-GLOBAL $AppUI, $hditem, $ist;
+<?php /* $Id: vw_log_update.php,v 1.6 2004/05/26 23:28:38 bloaterpaste Exp $ */
+GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
+
+require_once( "./modules/helpdesk/config.php" );
+
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 // check permissions
 //$canEdit = !getDenyEdit( 'tasks', $item_id );
