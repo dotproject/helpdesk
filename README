@@ -1,4 +1,4 @@
-$Id: README,v 1.7 2004/05/28 13:17:34 agorski Exp $
+$Id: README,v 1.8 2004/06/02 17:00:01 agorski Exp $
 
 IMPORTANT
     
@@ -6,10 +6,12 @@ IMPORTANT
     It will not work with the stable 1.0.2 release. It will also not work
     with any earlier CVS releases.
 
+	See UPGRADE for version changes and information
+
 ABOUT
 
     This is the dotProject Help Desk Module.  If you would like to contribute
-    to this project, please contact one of the maintainers.
+    to this project, please contact dotmods-helpdesk@lists.sourceforge.net.
 
 PERMISSIONS
 
@@ -33,7 +35,7 @@ PERMISSIONS
     4. Joe will be able to create items only if he has write permissions for at
     least one company in the Help Desk module.
 
-    5. Jow will be able to assign items to people in companies he has write
+    5. Joe will be able to assign items to people in companies he has write
     access for in the Help Desk module. He will also be able to assign items to
     people in the company which hosts the Help Desk, if the company was
     selected on the Help Desk module configuration screen.
@@ -41,16 +43,20 @@ PERMISSIONS
     6. Joe will be able to select an item requestor from a list of users from
     companies he has write access to in the Help Desk module.
 
+
 MAINTAINERS
  
-    Mike Gatny  <gatny@users.sourceforge.net> 
-    Adam Gorski <agorski@users.sourceforge.net>
+	The developers can be reached at dotmods-helpdesk@list.sourceforge.net:
+ 
     Dana Cordes <bloaterpaste@users.sourceforge.net>
+    Mike Gatny  <gatny@users.sourceforge.net> 
+    Ziba Scott  <zibas@users.sourceforge.net> 
+    Adam Gorski <agorski@users.sourceforge.net>
 
 
 COPYRIGHT
 
-    (C) 2003-2004 The Linux Box Corp.
+    (C) 2003-2005 The Linux Box Corp.
     206 S. Fifth Avenue Suite 150
     Ann Arbor, MI 48104
     http://www.linuxbox.com
@@ -76,5 +82,9 @@ LICENSE
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-See UPGRADE for version changes and information
+
+BUGS
+
+	Email bugs to: dotmods-helpdesk@list.sourceforge.net
+
 
