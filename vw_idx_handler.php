@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.1 2004/04/21 15:08:55 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.2 2004/04/21 17:54:55 bloaterpaste Exp $*/
 function vw_idx_handler ($opened) {
   global $m, $ipr, $AppUI;
 
@@ -84,7 +84,7 @@ function vw_idx_handler ($opened) {
       }
       ?>
       </td>
-      <td width="80%"><?=$row['item_title']?></td>
+      <td width="80%"><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_title']?></a></td>
       <td nowrap="nowrap">
       <?php
       if ($row['assigned_email']) {
