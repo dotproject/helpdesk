@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.8 2004/05/06 13:22:53 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.9 2004/05/06 17:35:17 bloaterpaste Exp $*/
 
   /*
    * opened = 0
@@ -21,8 +21,8 @@ function vw_idx_handler ($type) {
   		$date_field_title = $AppUI->_('Closed On');
   		$date_field_name = "status_date";
 		$where .= "item_status=2
-        	AND status_code=11
-        	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)";
+        	     AND status_code=11
+        	     AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)";
   		break;
   	case 2: // Mine
   		$date_field_title = $AppUI->_('Opened On');
@@ -49,9 +49,7 @@ function vw_idx_handler ($type) {
    * Testing = 5
    */
 
-  $sql = "SELECT 
-          distinct(hi.item_id),
-          hi.*,
+  $sql = "SELECT hi.*,
           CONCAT(u.user_first_name,' ',u.user_last_name) assigned_fullname,
           u.user_email as assigned_email,
           p.project_id,
@@ -67,7 +65,8 @@ function vw_idx_handler ($type) {
   //pull in permitted companies
   $sql .= " AND ".getPermsWhereClause("companies", "item_company_id");
 
-  $sql .= " ORDER BY item_id";
+  $sql .= " GROUP BY item_id
+            ORDER BY item_id";
 
   $items = db_loadList( $sql );
   ?>
