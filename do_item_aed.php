@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.16 2004/04/27 16:05:44 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.17 2004/05/06 16:11:12 agorski Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
@@ -73,15 +73,15 @@ if($do_task_log=="1"){
 			$AppUI->redirect('', -1);
 		}
 	} else {
-    if($new_item){
-      $status_log_id = $hditem->log_status(0,"Created");
-    } else {
-      $status_log_id = $hditem->log_status_changes();
-    }
+    $status_log_id = $hditem->log_status_changes();
 
 		if (($msg = $hditem->store($status_log_id))) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
+      if($new_item){
+        $status_log_id = $hditem->log_status(0,"Created");
+      }
+
 			$AppUI->setMsg( $new_item ? 'added' : 'updated' , UI_MSG_OK, true );
 			$AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
 		}

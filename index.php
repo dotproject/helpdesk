@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.13 2004/05/06 13:22:53 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.14 2004/05/06 17:28:12 bloaterpaste Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -44,6 +44,15 @@ $numtotal = db_loadResult ($sql);
  * Testing = 5
  */
 
+$sql = "SELECT COUNT(DISTINCT(item_status))
+        FROM 
+        	helpdesk_items
+        WHERE 
+        	item_assigned_to=".$AppUI->user_id."
+        	AND (item_status != 2)";
+
+$nummine = db_loadResult ($sql);
+
 $sql = "SELECT COUNT(DISTINCT(item_id))
         FROM 
         	helpdesk_items
@@ -51,8 +60,8 @@ $sql = "SELECT COUNT(DISTINCT(item_id))
         WHERE 
         	status_code = 0
         	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        	";
-$sql .= " AND ".$company_perm_sql;
+        	AND $company_perm_sql";
+
 $numopened = db_loadResult ($sql);
 
 $sql = "SELECT COUNT(DISTINCT(item_id))
@@ -63,19 +72,8 @@ $sql = "SELECT COUNT(DISTINCT(item_id))
         	item_status=2
         	AND status_code=11
         	AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)
-        	";
-$sql .= " AND ".$company_perm_sql;
-//print "<pre>$sql</pre>";
+          AND $company_perm_sql";
 $numclosed = db_loadResult ($sql);
-
-$sql = "SELECT COUNT(DISTINCT(item_status))
-        FROM 
-        	helpdesk_items
-        WHERE 
-        	item_assigned_to=".$AppUI->user_id."
-        	AND (item_status != 2)";
-
-$nummine = db_loadResult ($sql);
 
 ?>
 <table cellspacing="0" cellpadding="2" border="0" width="100%">

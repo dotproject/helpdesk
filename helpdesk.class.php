@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.32 2004/05/05 16:11:51 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.33 2004/05/06 16:11:12 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -149,11 +149,13 @@ class CHelpDeskItem extends CDpObject {
     $assigned_to_email = db_loadResult($sql);
 
     // Pull up the last status log entry
-    $sql = "SELECT status_code, status_comment
-            FROM helpdesk_item_status
-            WHERE status_id=$status_log_id";
+    if (is_numeric($status_log_id)) {
+      $sql = "SELECT status_code, status_comment
+              FROM helpdesk_item_status
+              WHERE status_id=$status_log_id";
 
-    db_loadHash($sql, $log);
+      db_loadHash($sql, $log);
+    }
 
     $mail = new Mail;
 
