@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.3 2004/01/23 16:12:23 adam Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.4 2004/01/23 16:14:59 adam Exp $ */
 $AppUI->savePlace();
 
 // check sort order
@@ -109,7 +109,7 @@ function changeList() {
 
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
-	<td nowrap="nowrap" width="60" align="right">&nbsp;<?php echo $AppUI->_('sort by');?>:&nbsp;</td>
+	<td nowrap width="60" align="right">&nbsp;<?php echo $AppUI->_('sort by');?>:&nbsp;</td>
 	<th nowrap="nowrap">
 		<a href="?m=helpdesk&a=list&orderby=item_id" class="hdr"><?php echo $AppUI->_('Number');?></a>
 	</th>
