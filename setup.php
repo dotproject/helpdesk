@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.7 2004/04/20 14:59:20 gatny Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.8 2004/04/20 17:08:59 bloaterpaste Exp $ */
 /*
 dotProject Module
 
@@ -30,7 +30,7 @@ if (@$a == 'setup') {
 }
 
 # require_once( $AppUI->getSystemClass( 'syskeys' ) );
-require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php'
+require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
 
 /*
 // MODULE SETUP CLASS
