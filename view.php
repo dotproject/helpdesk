@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.46 2004/04/29 14:12:07 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.47 2004/05/05 18:30:25 bloaterpaste Exp $ */
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -254,8 +254,10 @@ $tabBox->show();
         <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
         <td class="hilite" width="98%"><?php
         	if($log['status_code']==0 || $log['status_code']==17){
+            // Created or Deleted
         		print $isa[$log['status_code']];
         	} else {
+            // Everything else
         		print $isa[$log['status_code']]." ".$log['status_comment'];
         	}
         ?></td>
