@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.49 2004/05/06 19:15:27 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.50 2004/05/17 19:09:42 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -17,6 +17,8 @@ $AppUI->savePlace();
 // Get pagination page
 if (isset($_GET['page'])) {
   $AppUI->setState('HelpDeskLogPage', $_GET['page']);
+} else {
+  $AppUI->setState('HelpDeskLogPage', 0);
 }
 
 $page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage') : 0;
@@ -69,7 +71,7 @@ if (!db_loadHash( $sql, $hditem )) {
   $sql .= " LIMIT $offset,$status_log_items_per_page";
 
   $status_log = db_loadList($sql);
-  
+
   // check permissions for this record
   $canRead = 0;
   $canEdit = 0;
@@ -263,6 +265,7 @@ $tabBox->show();
 		<table cellspacing="1" cellpadding="2" border="0" width="100%" bgcolor="black">
     <?php
     $last_date = "";
+
     foreach ($status_log as $log) {
 		  $log_date = new CDate($log['status_date']);
 		  $date = $log_date->format( $df );

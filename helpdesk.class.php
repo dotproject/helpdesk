@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.35 2004/05/06 18:18:56 agorski Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.36 2004/05/06 20:07:06 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -141,7 +141,7 @@ class CHelpDeskItem extends CDpObject {
   function notify($status_log_id) {
     global $AppUI, $ist, $ict, $isa;
 
-    // Pull up the user's e-mail
+    // Pull up the assignee's e-mail
     $sql = "SELECT user_email
             FROM users
             WHERE user_id='{$this->item_assigned_to}'";
@@ -177,13 +177,13 @@ class CHelpDeskItem extends CDpObject {
              . "\n\n-- \n"
              . "Sincerely,\nThe dotProject Help Desk module";
 
-      if ($mail->ValidEmail($this->item_requestor_email)) {
-        $email = $this->item_requestor_email;
+      if ($mail->ValidEmail($AppUI->user_email)) {
+        $email = $AppUI->user_email;
       } else {
         $email = "dotproject@".$AppUI->cfg['site_domain'];
       }
 
-      $mail->From("\"".$this->item_requestor."\" <{$email}>");
+      $mail->From("\"{$AppUI->user_first_name} {$AppUI->user_last_name}\" <{$email}>");
       $mail->To($assigned_to_email);
       $mail->Body($body);
       $mail->Send();
