@@ -1,4 +1,7 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.41 2004/05/07 00:02:35 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.42 2004/05/12 23:14:19 bloaterpaste Exp $ */
+
+require_once( "./modules/helpdesk/config.php" );
+
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // check permissions for this module
@@ -34,10 +37,15 @@ db_loadHash( $sql, $hditem );
 	$AppUI->redirect( "m=public&a=access_denied" );
   }
 
-if(!@$hditem["item_assigned_to"]){
+if(!@$hditem["item_assigned_to"] && $HELPDESK_CONFIG['default_assigned_to_current_user']){
   @$hditem["item_assigned_to"] = $AppUI->user_id;
   @$hditem["item_status"] = 1;
 }
+
+if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_company']){
+  @$hditem["item_company_id"] = $AppUI->user_company;
+}
+
 $sql = "SELECT user_id, CONCAT(user_first_name, ' ', user_last_name)
         FROM users
         ORDER BY user_first_name";
@@ -293,7 +301,7 @@ function selectList( listName, target ) {
         <input type="checkbox" name="item_notify" value="1" id="in"
         <?php 
           if (!$item_id) {
-            print "checked";
+            print $HELPDESK_CONFIG['default_notify_by_email'] ? "checked" : "";
           } else {
             print $hditem["item_notify"] ? "checked" : "";
           }

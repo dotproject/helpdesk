@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.15 2004/05/06 18:09:39 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.16 2004/05/06 18:40:36 agorski Exp $ */
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -6,8 +6,10 @@ if (!$canReadModule) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
-
 $AppUI->savePlace();
+
+$HELPDESK_CONFIG = array();
+require_once( "./modules/helpdesk/config.php" );
 
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'HelpDeskIdxTab', $_GET['tab'] );
