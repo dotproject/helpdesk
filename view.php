@@ -1,21 +1,17 @@
-<?php /* COMPANIES $Id: view.php,v 1.22 2004/04/20 14:34:42 gatny Exp $ */
+<?php /* COMPANIES $Id: view.php,v 1.24 2004/04/20 23:37:13 bloaterpaste Exp $ */
 $AppUI->savePlace();
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
 // Pull data
 $sql = "SELECT hi.*,
-        CONCAT(u1.user_first_name,' ',u1.user_last_name) user_fullname,
         CONCAT(u2.user_first_name,' ',u2.user_last_name) assigned_to_fullname,
-        u1.user_email,
-        u1.user_phone,
         u2.user_email as assigned_email,
         p.project_id,
         p.project_name,
         p.project_color_identifier,
         c.company_name
         FROM helpdesk_items hi
-        LEFT JOIN users u1 ON u1.user_id = hi.item_requestor_id
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT OUTER JOIN projects p ON p.project_id = hi.item_project_id
         LEFT OUTER JOIN companies c ON c.company_id = hi.item_company_id
@@ -30,17 +26,11 @@ if (!db_loadHash( $sql, $hditem )) {
   /* We need to check if the user who requested the item is still in the
      system. Just because we have a requestor id does not mean we'll be
      able to retrieve a full name */
-  if ($hditem["item_requestor_id"]) {
-	  $name = $hditem["user_fullname"] ? $hditem["user_fullname"] : $hditem["item_requestor"];
-  } else {
-    $name = $hditem['item_requestor'];
-  }
+$name = $hditem['item_requestor'];
 
-	$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
+$assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
 
-	$email = $hditem["user_email"] ? $hditem["user_email"] : $hditem["item_requestor_email"];
-  $phone = $hditem["user_phone"] ? $hditem["user_phone"] : $hditem["item_requestor_phone"];
-
+  
   $assigned_email = $hditem["assigned_email"];
 
 	// format date and time
@@ -107,12 +97,12 @@ function delIt() {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor')?>:</td>
-			<td class="hilite" width="100%"><?php print $email ? "<a href=\"mailto:$email\">$name</a>" : $name;?></td>
+			<td class="hilite" width="100%"><?php print $hditem["item_requestor_email"] ? "<a href=\"mailto:".$hditem["item_requestor_email"]."\">".$hditem['item_requestor']."</a>" : $hditem['item_requestor'];?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor Phone')?>:</td>
-			<td class="hilite" width="100%"><?=$phone?></td>
+			<td class="hilite" width="100%"><?=$hditem["item_requestor_phone"]?></td>
 		</tr>
 
 		<tr>
