@@ -1,4 +1,7 @@
-<?php /* HELPDESK $Id: view.php,v 1.48 2004/05/06 14:16:55 agorski Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.49 2004/05/06 19:15:27 agorski Exp $ */
+
+$HELPDESK_CONFIG = array();
+require_once( "./modules/helpdesk/config.php" );
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -11,7 +14,14 @@ if (!$canReadModule) {
 
 $AppUI->savePlace();
 
-// retrieve any state parameters
+// Get pagination page
+if (isset($_GET['page'])) {
+  $AppUI->setState('HelpDeskLogPage', $_GET['page']);
+}
+
+$page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage') : 0;
+
+// Get tab state
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'HelpLogVwTab', $_GET['tab'] );
 }
@@ -37,6 +47,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 	$titleBlock->show();
 } else {
+  // Load status log
   $sql = "SELECT *,
           TRIM(CONCAT(u.user_first_name,' ',u.user_last_name)) modified_by,
           u.user_email as email
@@ -44,6 +55,18 @@ if (!db_loadHash( $sql, $hditem )) {
           LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
           WHERE h.status_item_id='{$hditem['item_id']}'
           ORDER BY h.status_date";
+
+  // Pagination
+  $status_log_items_per_page = $HELPDESK_CONFIG['status_log_items_per_page'];
+
+  // Figure out number of total log entries
+  $total_logs = db_num_rows(db_exec($sql));
+
+  // Now lets do the offset
+  $offset = $page * $status_log_items_per_page;
+
+  // Limit the results to enable pagination
+  $sql .= " LIMIT $offset,$status_log_items_per_page";
 
   $status_log = db_loadList($sql);
   
@@ -286,6 +309,33 @@ $tabBox->show();
     }
     ?>
 		</table>
+  </td>
+</tr>
+<tr>
+  <td align="center">
+    <?php
+    if ($total_logs > $status_log_items_per_page) {
+      $link = "?m=helpdesk&a=view&item_id=$item_id&page=";
+
+      if ($page > 0) {
+        print "<a href=\"$link".($page - 1)."\">&larr; Previous</a>&nbsp;&nbsp;";
+      }
+
+      $pages = ceil($total_logs / $status_log_items_per_page);
+
+      for ($i = 0; $i < $pages; $i++) {
+        if ($i == $page) {
+          print " <b>".($i + 1)."</b>";
+        } else {
+          print " <a href=\"$link$i\">".($i + 1)."</a>";
+        }
+      }
+
+      if ($page < ($pages - 1)) {
+        print "&nbsp;&nbsp;<a href=\"$link".($page + 1)."\">Next &rarr;</a>";
+      }
+    }
+    ?>
 </td></tr></table>
 </td></tr></table>
 <form name="frmDelete" action="./index.php?m=helpdesk&a=list" method="post">

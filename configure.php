@@ -34,6 +34,11 @@ $config_options = array(
 		"value" => 30,
 		'type' => 'text'
 	),
+	"status_log_items_per_page" => array(
+		"description" => $AppUI->_('Number of status log items displayed per page in item view..'),
+		"value" => 15,
+		'type' => 'text'
+	),
 	"default_assigned_to_current_user" => array(
 		"description" => $AppUI->_('Defaults that "assigned to" field to be that of the current user.'),
 		"value" => 1,
