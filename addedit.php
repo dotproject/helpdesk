@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.51 2004/05/27 13:41:03 agorski Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.52 2004/05/28 13:17:39 agorski Exp $ */
 
 require_once( "./modules/helpdesk/config.php" );
 
@@ -16,7 +16,7 @@ if ($item_id) {
   // Already existing item
   $canEdit = hditemEditable($hditem);
 } else {
-  // Make sure we can create items
+  // Make sure we can create
   if (!hditemCreate()) {
     $AppUI->redirect( "m=public&a=access_denied" );
   }

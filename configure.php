@@ -31,10 +31,13 @@ while ($row = db_fetch_assoc($res)) {
 // Define user type list
 $user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
 
-//All config options, their descriptions and their default values are defined here.  
-//Add new config options here.  type can be "checkbox", "text", or "select".  If it's "select"
-//then be sure to include a 'list' entry with the options.
-//if the key starts with hrXXX then it will just display the contents on the value.  This is used for grouping.
+/* All config options, their descriptions and their default values are defined
+ * here. Add new config options here. Type can be "checkbox", "text", "radio" 
+ * or "select". If the type is "radio," it must include a set of buttons. If 
+ * it's "select" then be sure to include a 'list' entry with the options.  if 
+ * the key starts with hrXXX then it will just display the contents on the
+ * value. This is used for grouping.
+ */
 $config_options = array(
 	"hr1" => '<b>'.$AppUI->_('Paging Options').'<b><hr>',
 	"items_per_page" => array(

@@ -25,7 +25,7 @@ function getItemPerms() {
 // Function to build a where clause to be appended to any sql that will narrow
 // down the returned data to only permitted company data
 function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_company=NULL){
-	GLOBAL $AppUI, $perms;
+	GLOBAL $AppUI, $perms, $m;
 
   // Check for the system wide "all" permission
   if (isset($perms["all"][PERM_ALL])) {
@@ -39,11 +39,11 @@ function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_comp
   }
   
   // Check for company "all" permissions
-  if (isset($perms['companies'][PERM_ALL])) {
-    if (($perms['companies'][PERM_ALL] == PERM_READ) &&
+  if (isset($perms[$m][PERM_ALL])) {
+    if (($perms[$m][PERM_ALL] == PERM_READ) &&
         ($perm_type == PERM_READ)) {
       $get_all = true;
-    } else if (($perms['companies'][PERM_ALL] == PERM_EDIT) &&
+    } else if (($perms[$m][PERM_ALL] == PERM_EDIT) &&
                (($perm_type == PERM_EDIT) || ($perm_type == PERM_READ))) {
       $get_all = true;
     }
@@ -56,8 +56,8 @@ function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_comp
     $list = array();
   }
 
-	if(isset($perms['companies'])){
-		foreach($perms['companies'] as $key => $value){
+	if(isset($perms[$m])){
+		foreach($perms[$m] as $key => $value){
 			if($key==PERM_ALL)
 				continue;
 
@@ -102,53 +102,51 @@ function getCompanyPerms($mod_id_field,$created_by_id_field,$perm_type,$the_comp
 }
 
 function hditemReadable($hditem) {
-  global $AppUI;
-
-  $company_id = $hditem['item_company_id'];
-  $created_by = $hditem['item_created_by'];
-
-  $canReadCompany = !getDenyRead("companies", $company_id);
-
-  if($canReadCompany || ($created_by == $AppUI->user_id)){
-    return true;
-  } else {
-    return false;
-  }
+  return hditemPerm($hditem, PERM_READ);
 }
 
 function hditemEditable($hditem) {
-  global $HELPDESK_CONFIG, $AppUI;
+  return hditemPerm($hditem, PERM_EDIT);
+}
+
+function hditemPerm($hditem, $perm_type) {
+  global $HELPDESK_CONFIG, $AppUI, $m;
 
   $company_id = $hditem['item_company_id'];
   $created_by = $hditem['item_created_by'];
   $assigned_to = $hditem['item_assigned_to'];
   $requested_by = $hditem['item_requestor_id'];
 
-  /* Items can be edited by a user if
-    1. He is the creator
-    2. He is the assignee
-    3. He is the requestor
+  switch($perm_type) {
+    case PERM_READ:
+      $company_perm = !getDenyRead($m, $company_id);
+      break;
+    case PERM_EDIT:
+      // If the item is not assigned to a company, figure out if we can edit it
+      if ($company_id == 0) {
+        if ($HELPDESK_CONFIG['no_company_editable']) {
+          $company_perm = 1;
+        } else {
+          $company_perm = 0;
+        }
+      } else {
+        $company_perm = !getDenyEdit($m, $company_id);
+      }
+      break;
+    default:
+      die ("Wrong permission type was passed");
+  }
+
+  /* User is allowed if
+    1. He has the company permission
+    2. He is the creator
+    3. He is the assignee
+    4. He is the requestor
   */
-  if (($created_by == $AppUI->user_id) ||
-      ($assigned_to == $AppUI->user_id) ||
-      ($requested_by == $AppUI->user_id)) {
-    return true;
-  }
-
-  // If the item is not assigned to a company, figure out who can access it
-  if ($item_company_id == 0) {
-    if ($HELPDESK_CONFIG['no_company_editable']) {
-      $canEditCompany = 1;
-    } else {
-      $canEditCompany = 0;
-    }
-  } else {
-    $canEditCompany = !getDenyEdit("companies", $item_company_id);
-  }
-
-  if (!hditemCreate()) {
-    return false;
-  } else if($canEditCompany){
+  if($company_perm ||
+     ($created_by == $AppUI->user_id) ||
+     ($assigned_to == $AppUI->user_id) ||
+     ($requested_by == $AppUI->user_id)) {
     return true;
   } else {
     return false;
@@ -158,19 +156,15 @@ function hditemEditable($hditem) {
 function hditemCreate() {
   global $perms, $m;
 
+  /* A user can create items only if he has write access to at least one
+     company */
   $create = FALSE;
 
-  $canEditModule = !getDenyEdit( $m );
-
-  if (!$canEditModule) {
-    return $create;
-  }
-
-	if((isset($perms['companies'][PERM_ALL]) && ($perms['companies'][PERM_ALL]==PERM_EDIT)) || 
+	if((isset($perms[$m][PERM_ALL]) && ($perms[$m][PERM_ALL]==PERM_EDIT)) || 
      (isset($perms["all"][PERM_ALL]) && ($perms["all"][PERM_ALL]==PERM_EDIT))) {
     $create = true;
-  } else if (is_array($perms['companies'])) {
-    foreach ($perms['companies'] as $perm) {
+  } else if (is_array($perms[$m])) {
+    foreach ($perms[$m] as $perm) {
       if ($perm == PERM_EDIT) {
         $create = true;
         break;
@@ -186,16 +180,6 @@ function dump ($var) {
   print_r($var);
   print "</pre>";
 }
-
-/*
-I think the built in strip_tags() does all this and more. Please tell me if
-I'm wrong.
-function stripHTML($data){
-	$search_html= '/([<][^>]+[>])/';
-	$data = preg_replace($search_html,'',$data);
-	return $data;
-}
-*/
 
 function linkLinks($data){
 	$data = strip_tags($data);

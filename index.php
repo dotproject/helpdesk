@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.22 2004/05/25 22:15:32 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.23 2004/05/27 13:41:03 agorski Exp $ */
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -10,10 +10,10 @@ $tab = $AppUI->getState( 'HelpDeskIdxTab' ) !== NULL ? $AppUI->getState( 'HelpDe
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
 if (hditemCreate()) {
-	$titleBlock->addCell(
-		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
-		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
-	);
+  $titleBlock->addCell(
+    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
+  );
 }
 
 $titleBlock->addCrumb( "?m=helpdesk", $AppUI->_('Home') );

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.61 2004/05/26 18:22:54 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.62 2004/05/28 13:17:39 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -41,6 +41,7 @@ if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock->show();
 } else {
   // Check permissions on this record
+
   $canRead = hditemReadable($hditem);
   $canEdit = hditemEditable($hditem);
 

@@ -1,4 +1,10 @@
-$Id: README,v 1.6 2004/05/26 18:48:03 agorski Exp $
+$Id: README,v 1.7 2004/05/28 13:17:34 agorski Exp $
+
+IMPORTANT
+    
+    Help Desk requires dotProject CVS release dated June 2nd, 2004 or later.
+    It will not work with the stable 1.0.2 release. It will also not work
+    with any earlier CVS releases.
 
 ABOUT
 
@@ -7,41 +13,33 @@ ABOUT
 
 PERMISSIONS
 
-    The Help Desk uses built in dotProject permissions to its best abilities. The
-    permission system is layed out as follows.
+    The Help Desk uses built in dotProject permissions to its best abilities.
+    The permission system is layed out as follows. Please note that company
+    pormissions aren't that of the Companies module, but those of the Help
+    Desk module. When editing a user's permissions, select the Help Desk
+    module, not the Companies module, to assign permissions.
 
     Let our example user be Joe
 
-    1. Joe will always have permission to edit his own Help Desk items, as long
-    as he has at least read-only permissions to the Help Desk. That means that
-    items he created, he as assigned or he requested will always be editable by
-    him.
+    1. Joe will always have read and write permissions to items he created, was
+    assigned to or was the requestor for.
 
-    2. Permissions to the Help Desk module overwrite company permissions. For
-    instance, if Joe has read-write access to a company but has read only
-    access to Help Desk, overall read only access will result. This means that
-    Joe cannot create any new items and cannot edit any items which are not his
-    own.
+    2. Jow will have read access to items for company X if he has read access
+    to company X for the Help Desk module.
 
-    2. Company permissions are used to determine access to Help Desk items. If
-    Joe has read only permissions for company X and no other, he will be able
-    to read items associated with company X, but that's all. If Joe has
-    read-write access to company X, he will be able to create items for company
-    X.  Having read only permission to a company will not allow Joe to create
-    items for that company.  Joe must have read-write permissions to at least
-    one company in order to be able to create new Help Desk items.
+    3. Joe will have write access to items for company X if he has write access
+    to company X for the Help Desk module.
 
-    3. On the configuration screen, there are two options of note. The first
-    option has to do with the company which handles Help Desk items. If Joe has
-    read-write access to company X, he will be able to assign items to users
-    from company X. If a company is assigned in the configuration screen
-    option, users from that company will be also visible in that list. This is
-    done so that Joe can assign items to people from the company that hosts the
-    Help Desk. The "requestor" list is limited to people from company X only.
+    4. Joe will be able to create items only if he has write permissions for at
+    least one company in the Help Desk module.
 
-    The second option has to do with items which have no company assigned. By
-    default, those items are not editable by anyone except the item creator. If
-    the items should be editable by anyone, turn the option on.
+    5. Jow will be able to assign items to people in companies he has write
+    access for in the Help Desk module. He will also be able to assign items to
+    people in the company which hosts the Help Desk, if the company was
+    selected on the Help Desk module configuration screen.
+
+    6. Joe will be able to select an item requestor from a list of users from
+    companies he has write access to in the Help Desk module.
 
 MAINTAINERS
  

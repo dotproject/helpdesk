@@ -1,5 +1,12 @@
 ===== Version 0.2 =====
 
+IMPORTANT
+    
+    Help Desk requires dotProject CVS release dated June 2nd, 2004 or later.
+    It will not work with the stable 1.0.2 release. It will also not work
+    with any earlier CVS releases.
+
+
 Added
 * Improved permissions system, based mainly on Company permissions.
 * Configuration options, available through the View Modules page of the System

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.59 2004/05/27 14:23:01 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.60 2004/05/28 13:17:39 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -305,12 +305,11 @@ $rows = db_loadList( $sql );
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
-
 if (hditemCreate()) {
-	$titleBlock->addCell(
-		'<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
-		'<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
-	);
+  $titleBlock->addCell(
+    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
+  );
 }
 
 $titleBlock->addCrumb( "?m=helpdesk", "Home" );

@@ -1,9 +1,9 @@
-<?php /* HELPDESK $Id: setup.php,v 1.41 2004/05/25 16:38:54 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.42 2004/06/01 20:11:13 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.2';
+$config['mod_version'] = '0.3';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
@@ -258,6 +258,10 @@ class CSetupHelpDesk {
 
         db_exec($sql);
 
+        break;
+      case 0.2:
+        // Version 0.3 features new permissions
+        $success = 1;
         break;
       default:
         $success = 0;
