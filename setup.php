@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: setup.php,v 1.36 2004/05/13 00:16:37 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.37 2004/05/17 14:03:09 agorski Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
@@ -175,6 +175,12 @@ class CSetupHelpDesk {
           )
         ";
 
+        foreach ($bulk_sql as $s) {
+          db_exec($s);
+          if (db_error())
+            $success = 0;
+        }
+
         $sql = "SELECT syskey_id
           FROM syskeys
           WHERE syskey_name = 'HelpDeskList'";
@@ -183,7 +189,6 @@ class CSetupHelpDesk {
         $sv = new CSysVal( $syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
         $sv->store();
 
-
         $sql = "UPDATE sysvals
           SET sysval_value='0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing'
           WHERE sysval_title='HelpDeskStatus'
@@ -191,16 +196,27 @@ class CSetupHelpDesk {
 
         db_exec($sql);
 
+        $sql = "SELECT item_id,item_requestor_id,item_created
+                FROM helpdesk_items";
+
+        $items = db_loadList($sql);
+
+        foreach ($items as $item) {
+          $timestamp = date('Ymdhis', db_dateTime2unix($item['item_created']));
+
+          $sql = "INSERT INTO helpdesk_item_status
+                    (status_item_id,status_code,status_date,status_modified_by)
+                  VALUES ({$item['item_id']},0,'$timestamp',
+                          {$item['item_requestor_id']})";
+        
+          db_exec($sql);
+        }
+
         break;
       default:
         $success = 0;
 	  }
 
-		foreach ($bulk_sql as $s) {
-			db_exec($s);
-			if (db_error())
-				$success = 0;
-		}
   
 		// NOTE: Need to return true, not null, if all is good
 		return $success;
