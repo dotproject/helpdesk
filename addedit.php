@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.33 2004/04/23 22:41:46 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.34 2004/04/26 23:42:17 bloaterpaste Exp $ */
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 // Pull data
@@ -285,16 +285,6 @@ function selectList( listName, target ) {
       <td><select name="item_project_id" size="1" class="text" id="large"></select></td>
     </tr>
 
-    <?php /* Do we want to use this?
-    <tr>
-      <td align="right"><?=$AppUI->_('Reference')?>:</td>
-      <td valign="top">
-        <input type="text" class="text" name="item_assetno" value="<?=@$hditem["item_assetno"]?>" size="40" maxlength="24" />
-      </td>
-      <td align="left"></td>
-    </tr>
-
-    */ ?>
     </table>
   </td>
   <td valign="top" width="50%">
@@ -338,7 +328,7 @@ function selectList( listName, target ) {
     <tr>
       <td align="right"><?=$AppUI->_('Application')?>:</td>
       <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="medium"',
-                          @$hditem["item_applic"] )?></td>
+                          @$hditem["item_application"] )?></td>
     </tr>
     </table>
   </td>
