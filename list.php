@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.60 2004/05/28 13:17:39 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.61 2004/06/02 17:00:01 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -36,12 +36,16 @@ $selectors = array();
 
 // check for search text
 if($HELPDESK_CONFIG['search_criteria_search']){
-	$search = $_GET['search'];
+	$search = '';
 
-	if(strlen(trim($search))>0){
+	if(isset($_GET['search'])){
+		$search = $_GET['search'];
 
-		$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
-		      OR lower(hi.item_summary) LIKE lower('%$search%'))";
+		if(strlen(trim($search))>0){
+
+			$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
+			      OR lower(hi.item_summary) LIKE lower('%$search%'))";
+		}
 	}
 	$selectors[] = "
 	    <td align=\"right\">".$AppUI->_('Search').":</td>
@@ -433,7 +437,7 @@ foreach ($rows as $row) {
 print "$s\n";
 
 // Pagination
-
+$pages = 0;
 if ($total_results > $items_per_page) {
   $pages_per_side = $HELPDESK_CONFIG['pages_per_side'];
   $pages = ceil($total_results / $items_per_page) - 1; 

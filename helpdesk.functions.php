@@ -112,10 +112,10 @@ function hditemEditable($hditem) {
 function hditemPerm($hditem, $perm_type) {
   global $HELPDESK_CONFIG, $AppUI, $m;
 
-  $company_id = $hditem['item_company_id'];
   $created_by = $hditem['item_created_by'];
-  $assigned_to = $hditem['item_assigned_to'];
-  $requested_by = $hditem['item_requestor_id'];
+  $company_id = isset($hditem['item_company_id'])?$hditem['item_company_id']:'';
+  $assigned_to = isset($hditem['item_assigned_to'])?$hditem['item_assigned_to']:'';
+  $requested_by = isset($hditem['item_requestor_id'])?$hditem['item_requestor_id']:'';
 
   switch($perm_type) {
     case PERM_READ:
