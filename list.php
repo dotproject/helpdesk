@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.57 2004/05/26 19:19:18 agorski Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.58 2004/05/27 13:41:03 agorski Exp $ */
 
 $HELPDESK_CONFIG = array();
 require_once( "./modules/helpdesk/config.php" );
@@ -404,7 +404,7 @@ foreach ($rows as $row) {
 	}
 	$s .= $CR . "</td>";
 
-	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
+	$s .= $CR . '<td width="99%"><a href="?m=helpdesk&a=view&item_id='
             . $row["item_id"]
             . '">'
 		        . $row["item_title"]

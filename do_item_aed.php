@@ -1,5 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.18 2004/05/06 18:09:39 agorski Exp $ */
-
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.19 2004/05/19 17:48:07 agorski Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );

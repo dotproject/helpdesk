@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.43 2004/05/26 18:22:54 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.44 2004/05/27 13:41:03 agorski Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -93,7 +93,7 @@ class CHelpDeskItem extends CDpObject {
     // Update the last modified time and user
     $this->item_modified = db_unix2dateTime( time() );
     
-    $this->item_summary = stripHTML($this->item_summary);
+    $this->item_summary = strip_tags($this->item_summary);
 
     //if type indicates a contact or a user, then look up that phone and email for those entries
     switch ($this->item_requestor_type) {
@@ -546,14 +546,18 @@ function dump ($var) {
   print "</pre>";
 }
 
+/*
+I think the built in strip_tags() does all this and more. Please tell me if
+I'm wrong.
 function stripHTML($data){
 	$search_html= '/([<][^>]+[>])/';
 	$data = preg_replace($search_html,'',$data);
 	return $data;
 }
+*/
 
 function linkLinks($data){
-	$data = stripHTML($data);
+	$data = strip_tags($data);
 	$search_email = '/([\w-]+([.][\w_-]+){0,4}[@][\w_-]+([.][\w-]+){1,3})/';
 	$search_http = '/(http(s)?:\/\/[^\s]+)/i';
 	$data = preg_replace($search_email,"<a href=\"mailto:$1\">$1</a>",$data);
