@@ -1,4 +1,9 @@
-<?php /* HELPDESK $Id: index.php,v 1.26 2004/06/22 12:14:40 agorski Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.27 2004/08/03 02:53:32 cyberhorse Exp $ */
+// check permissions for this module
+$canReadModule = !getDenyRead( $m );
+if (!$canReadModule) {
+	$AppUI->redirect( "m=public&a=access_denied" );
+}
 $AppUI->savePlace();
 
 if (isset( $_GET['tab'] )) {
@@ -9,7 +14,7 @@ $tab = $AppUI->getState( 'HelpDeskIdxTab' ) !== NULL ? $AppUI->getState( 'HelpDe
 // Setup the title block
 $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
-if (hditemCreate()) {
+if ($canEdit) {
   $titleBlock->addCell(
     '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
     '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
@@ -80,6 +85,7 @@ $numclosed = db_loadResult ($sql);
   $tabBox->add( 'vw_idx_my', $AppUI->_('My Open')." ($nummine)" );
   $tabBox->add( 'vw_idx_new', $AppUI->_('Opened Today')." ($numopened)" );
   $tabBox->add( 'vw_idx_closed', $AppUI->_('Closed Today')." ($numclosed)" );
+  $tabBox->add( 'vw_idx_watched', "Watched Tickets" );
   $tabBox->show();
   ?>
 	</td>

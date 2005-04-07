@@ -1,9 +1,9 @@
-<?php /* HELPDESK $Id: setup.php,v 1.44 2004/06/04 12:55:19 agorski Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.45 2004/07/28 12:22:20 cyberhorse Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.3';
+$config['mod_version'] = '0.31';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
@@ -69,6 +69,13 @@ class CSetupHelpDesk {
 		    `status_comment` TEXT DEFAULT '',
 		    PRIMARY KEY (`status_id`)
 		  )";
+
+		$bulk_sql[] = "
+		CREATE TABLE helpdesk_item_watchers (
+		  `item_id` int(11) NOT NULL default '0',
+		  `user_id` int(11) NOT NULL default '0',
+		  `notify` char(1) NOT NULL default ''
+		) TYPE=MyISAM";
 
     foreach ($bulk_sql as $s) {
       db_exec($s);
@@ -262,6 +269,20 @@ class CSetupHelpDesk {
       case 0.2:
         // Version 0.3 features new permissions
         $success = 1;
+        break;
+      case 0.3:
+        // Version 0.31 includes new watchers functionality
+	$sql = "
+		CREATE TABLE helpdesk_item_watchers (
+		  `item_id` int(11) NOT NULL default '0',
+		  `user_id` int(11) NOT NULL default '0',
+		  `notify` char(1) NOT NULL default ''
+		) TYPE=MyISAM";
+	db_exec($sql);
+	if (db_error())
+		$success = 0;
+	else  
+	        $success = 1;
         break;
       default:
         $success = 0;

@@ -1,8 +1,9 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.61 2005/03/21 18:14:45 zibas Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.62 2005/04/06 21:29:06 bloaterpaste Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
-$allowedCompanies = getAllowedCompanies();
+$allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
+
 $projects = getAllowedProjectsForJavascript();
 
 // Pull data
@@ -40,7 +41,7 @@ $sql = "SELECT user_id, CONCAT(contact_last_name, ',', contact_first_name)
         WHERE ". getCompanyPerms("user_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
         ." OR ". getCompanyPerms("contact_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
      . "ORDER BY contact_last_name, contact_first_name";
-$users = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+$users = db_loadHashList( $sql );
 
 $sql = "SELECT company_id, company_name
         FROM companies
@@ -49,6 +50,22 @@ $sql = "SELECT company_id, company_name
      . "ORDER BY company_name";
 
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+
+$sql = "
+	SELECT 
+		helpdesk_item_watchers.user_id, 
+		CONCAT(contact_last_name, ',', contact_first_name) as name,
+		contact_email
+	FROM 
+		helpdesk_item_watchers
+		LEFT JOIN users ON helpdesk_item_watchers.user_id = users.user_id
+		LEFT JOIN contacts ON user_contact = contact_id
+        WHERE 
+        	item_id = ".$item_id."
+        ORDER BY contact_last_name, contact_first_name";
+
+$watchers = db_loadHashList( $sql );
+
 
 // Setup the title block
 $ttl = $item_id ? 'Editing Help Desk Item' : 'Adding Help Desk Item';
@@ -93,6 +110,18 @@ function submitIt() {
     f.item_summary.focus();
   }
 
+  //concat all the multiselect values together for easier retrieval on the back end.
+  var watchers = "";
+  var list = f.watchers_select;
+  for (var i=0, n = list.options.length; i < n; i++) {
+    var user = list.options[i];
+    if(user.selected)
+    	watchers += user.value + ",";
+  }
+  if(watchers.length>0){
+  	f.watchers.value = watchers.substring(0,watchers.length-1);
+  }
+  
   if( msg.length > 0) {
     alert('<?php echo $AppUI->_('helpdeskSubmitError', UI_OUTPUT_JS); ?>:' + msg)
   } else {
@@ -214,7 +243,6 @@ function selectList( listName, target ) {
     }
   }
 }
-
 </script>
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
   <form name="frmHelpDeskItem" action="?m=helpdesk" method="post">
@@ -285,10 +313,10 @@ function selectList( listName, target ) {
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
-      <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+      <td align="right" valign="top"><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
+      <td><?=arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
                           @$hditem["item_assigned_to"] )?>
-        <input type="checkbox" name="item_notify" value="1" id="in"
+        <br/><input type="checkbox" name="item_notify" value="1" id="in"
         <?php 
           if (!$item_id) {
             print $HELPDESK_CONFIG['default_notify_by_email'] ? "checked" : "";
@@ -350,17 +378,30 @@ function selectList( listName, target ) {
   </td>
 </tr>
 
+<tr><td colspan="2">
+<table cellspacing="0" cellpadding="0" border="0">
 <tr>
-  <td align="left"><br><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
-  <td>&nbsp; </td>
+  <td align="left"><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
+  <td><label for="watchers"><?=$AppUI->_('Watchers')?>:</label></td>
 </tr>
 
 <tr>
-  <td colspan="2" align="left">
-    <textarea id="summary" cols="90" rows="15" class="textarea"
+  <td valign="top">
+    <textarea id="summary" cols="75" rows="15" class="textarea"
               name="item_summary"><?=@$hditem["item_summary"]?></textarea>
   </td>
-</tr>
+      <td valign="top">
+      <select name="watchers_select" size="17" class="text" id="watchers_select" multiple="multiple"><?php
+	      foreach($users as $id => $name){
+		echo "<option value=\"{$id}\"";
+		if(array_key_exists($id,$watchers))
+			echo " selected";
+		echo ">{$name}</option>";
+	      }
+      ?></select>
+      <input type="hidden" name="watchers" value="" /></td>
+</tr></table>
+</td></tr>
 
 <tr>
   <td colspan="2">

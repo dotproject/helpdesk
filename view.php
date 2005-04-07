@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.70 2004/12/06 07:59:30 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.71 2004/12/10 17:14:51 cyberhorse Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -52,8 +52,22 @@ if (!db_loadHash( $sql, $hditem )) {
   $assigned_to_name = $hditem["item_assigned_to"] ? $hditem["assigned_to_fullname"] : "";
   $assigned_email = $hditem["assigned_email"];
 
-	$titleBlock = new CTitleBlock( 'Viewing Help Desk Item', 'helpdesk.png',
-                                 $m, 'ID_HELP_HELPDESK_IDX' );
+$sql = "
+	SELECT 
+		helpdesk_item_watchers.user_id, 
+		CONCAT(contact_first_name, ' ', contact_last_name) as name,
+		contact_email
+	FROM 
+		helpdesk_item_watchers
+		LEFT JOIN users ON helpdesk_item_watchers.user_id = users.user_id
+		LEFT JOIN contacts ON user_contact = contact_id
+	WHERE 
+		item_id = ".$item_id."
+	ORDER BY contact_last_name, contact_first_name";
+
+ $watchers = db_loadlist( $sql );
+
+  $titleBlock = new CTitleBlock( 'Viewing Help Desk Item', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
   if (hditemCreate()) {
     $titleBlock->addCell(
       '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
@@ -179,11 +193,22 @@ if (!db_loadHash( $sql, $hditem )) {
   </tr>
   <tr>
     <td valign="top" colspan="2">
-      <strong><?=$AppUI->_('Summary')?></strong>
+      
       <table cellspacing="0" cellpadding="2" border="0" width="100%">
       <tr>
-        <td class="hilite"><?=str_replace( chr(10), "<br />", linkLinks($hditem["item_summary"]))?>&nbsp;</td>
+        <td><strong><?=$AppUI->_('Summary')?></strong></td>
+        <td><strong><?=$AppUI->_('Watchers')?></strong></td>
+      <tr>
+        <td class="hilite" width="50%"><?=str_replace( chr(10), "<br />", linkLinks($hditem["item_summary"]))?>&nbsp;</td>
+        <td class="hilite" width="50%"><?php
+		$delimiter = "";
+		foreach($watchers as $watcher){
+			echo "$delimiter <a href=\"mailto: {$watcher['contact_email']}\">".$watcher['name']."</a>";
+			$delimiter = ",";
+		}
+        ?>&nbsp;</td>
       </tr>
+      
       </table>
 
     </td>

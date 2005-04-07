@@ -87,6 +87,8 @@
 "Unassigned",
 "Update",
 "Updated",
+"Watched"=>"now being watched",
+"IsNowWatched"=>"has been added to your watch list.",
 "View this item",
 "Viewing Help Desk Item",
 "cannot be opened",

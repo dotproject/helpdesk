@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.24 2004/07/12 17:34:43 agorski Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.25 2005/03/21 18:14:57 zibas Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -73,20 +73,79 @@ if($do_task_log=="1"){
 			$AppUI->redirect('m=helpdesk&a=list');
 		}
 	} else {
-    $status_log_id = $hditem->log_status_changes();
+      		$status_log_id = $hditem->log_status_changes();
 
 		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
-      if($new_item){
-        $status_log_id = $hditem->log_status(0,$AppUI->_('Created'));
-      }
-
-      $hditem->notify(STATUS_LOG, $status_log_id);
-
-			$AppUI->setMsg( $new_item ? 'added' : 'updated' , UI_MSG_OK, true );
+		      if($new_item){
+			$status_log_id = $hditem->log_status(0,$AppUI->_('Created'));
+		      }
+	      		doWatchers(dPgetParam( $_POST, 'watchers', 0 ), $hditem);
+			$AppUI->setMsg( $new_item ? ($AppUI->_('Help Desk Item') .' '. $AppUI->_('added')) : ($AppUI->_('Help Desk Item') . ' ' . $AppUI->_('updated')) , UI_MSG_OK, true );
 			$AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
 		}
+	}
+}
+
+function doWatchers($list, $hditem){
+	global $AppUI;
+
+	# Create the watcher list
+	$watcherlist = split(',', $list);
+
+	$sql = "SELECT user_id FROM helpdesk_item_watchers WHERE item_id=" . $hditem->item_id;
+	$current_users = db_loadHashList($sql);
+	$current_users = array_keys($current_users);
+
+	# Delete the existing watchers as the list might have changed
+	$sql = "DELETE FROM helpdesk_item_watchers WHERE item_id=" . $hditem->item_id;
+	db_exec($sql);
+
+	if (!$del){
+		if($list){
+			foreach($watcherlist as $watcher){
+				$sql = "SELECT user_id, contact_email FROM users LEFT JOIN contacts ON user_contact = contact_id WHERE user_id=" . $watcher;
+				$rows = db_loadlist($sql);
+				foreach($rows as $row){
+					# Send the notification that they've been added to a watch list.
+					if(!in_array($row['user_id'],$current_users)){
+						notify($row['contact_email'], $hditem);
+					}
+				}
+
+				$sql = "INSERT INTO helpdesk_item_watchers VALUES(". $hditem->item_id . "," . $watcher . ",'Y')";
+				db_exec($sql);
+			}
+		}
+	}
+	
+}
+
+function notify($address, $hditem){
+	global $AppUI;
+
+	$mail = new Mail;
+	if($mail->ValidEmail($address)){
+		if ($mail->ValidEmail($AppUI->user_email)) {
+			$email = $AppUI->user_email;
+		} else {
+			$email = "dotproject@".$AppUI->cfg['site_domain'];
+		}
+
+		$mail->From("\"{$AppUI->user_first_name} {$AppUI->user_last_name}\" <{$email}>");
+		$mail->To($address);
+		$mail->Subject(
+			$AppUI->_('Help Desk Item')." #".
+			$hditem->item_id." ".
+			$AppUI->_('Updated')." ".
+			$hditem->item_title);
+		$mail->Body(
+			"Ticket #" . 
+			$hditem->item_id . " " .
+			$AppUI->_('IsNowWatched')
+			);
+		$mail->Send();
 	}
 }
 

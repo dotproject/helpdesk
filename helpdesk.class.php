@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.55 2005/02/07 17:17:52 gatny Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.56 2005/03/21 18:14:57 zibas Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -153,18 +153,31 @@ class CHelpDeskItem extends CDpObject {
   function notify($type, $log_id) {
     global $AppUI, $ist, $ict, $isa;
 
-    if (!$this->item_notify ||
-        ($this->item_assigned_to == $AppUI->user_id)) {
-      return;
-    }
+//    if (!$this->item_notify ||
+//        ($this->item_assigned_to == $AppUI->user_id)) {
+//      return;
+//    }
 
-    // Pull up the assignee's e-mail
+    // Pull up the email address of everyone on the watch list 
     $sql = "SELECT contact_email
-            FROM users
-			LEFT JOIN contacts ON user_contact = contact_id
-            WHERE user_id='{$this->item_assigned_to}'";
+            FROM 
+            	helpdesk_item_watchers
+            	LEFT JOIN users ON helpdesk_item_watchers.user_id = users.user_id
+		LEFT JOIN contacts ON user_contact = contact_id
+            WHERE 
+            	helpdesk_item_watchers.item_id='{$this->item_id}'";
+     //if they choose, along with the person who the ticket is assigned to.
+     if($this->item_notify)
+     	$sql.=" or users.user_id='{$this->item_assigned_to}'";
 
-    $assigned_to_email = db_loadResult($sql);
+    $email_list = db_loadHashList($sql);
+    $email_list = array_keys($email_list);
+
+echo $sql."\n";
+print_r($email_list);    
+    //if there's no one in the list, skip the rest.
+    if(count($email_list)<=0)
+      return;
 
     if (is_numeric($log_id)) {
       switch ($type) {
@@ -183,59 +196,60 @@ class CHelpDeskItem extends CDpObject {
       db_loadHash($sql, $log);
     }
 
-    $mail = new Mail;
+    foreach($email_list as $assigned_to_email){
+	    $mail = new Mail;
+	    if ($mail->ValidEmail($assigned_to_email)) {
+	      $subject = $AppUI->cfg['page_title']." ".$AppUI->_('Help Desk Item')." #{$this->item_id}";
 
-    if ($mail->ValidEmail($assigned_to_email)) {
-      $subject = $AppUI->cfg['page_title']." ".$AppUI->_('Help Desk Item')." #{$this->item_id}";
+	      switch ($type) {
+		case STATUS_LOG:
+		  $body = $AppUI->_('Title').": {$this->item_title}\n"
+			. $AppUI->_('Call Type').": {$ict[$this->item_calltype]}\n"
+			. $AppUI->_('Status').": {$ist[$this->item_status]}\n";
 
-      switch ($type) {
-        case STATUS_LOG:
-          $body = $AppUI->_('Title').": {$this->item_title}\n"
-                . $AppUI->_('Call Type').": {$ict[$this->item_calltype]}\n"
-                . $AppUI->_('Status').": {$ist[$this->item_status]}\n";
+		  if($log['status_code'] == 0){
+		    $mail->Subject("$subject ".$AppUI->_('Created'));
+		  } else {
+		    $mail->Subject("$subject ".$AppUI->_('Updated'));
+		    $body .= $AppUI->_('Update').": {$isa[$log['status_code']]} {$log['status_comment']}\n";
+		  }
 
-          if($log['status_code'] == 0){
-            $mail->Subject("$subject ".$AppUI->_('Created'));
-          } else {
-            $mail->Subject("$subject ".$AppUI->_('Updated'));
-            $body .= $AppUI->_('Update').": {$isa[$log['status_code']]} {$log['status_comment']}\n";
-          }
+		  $body .= $AppUI->_('Link')
+			 . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			 . "\n"
+			 . $AppUI->_('Summary')
+			 . ":\n"
+			 . $this->item_summary;
+		  break;
+		case TASK_LOG:
+		  $mail->Subject("$subject ".$AppUI->_('Task Log')." ".$AppUI->_('Update'));
+		  $body = $AppUI->_('Summary')
+			. ": "
+			. $log['task_log_name']
+			. "\n"
+			. $AppUI->_('Link')
+			. ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			. "\n"
+			. $AppUI->_('Comments')
+			. ":\n" 
+			. $log['task_log_description'];
+		  break;
+	      }
 
-          $body .= $AppUI->_('Link')
-                 . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
-                 . "\n"
-                 . $AppUI->_('Summary')
-                 . ":\n"
-                 . $this->item_summary;
-          break;
-        case TASK_LOG:
-          $mail->Subject("$subject ".$AppUI->_('Task Log')." ".$AppUI->_('Update'));
-          $body = $AppUI->_('Summary')
-                . ": "
-                . $log['task_log_name']
-                . "\n"
-                . $AppUI->_('Link')
-                . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
-                . "\n"
-                . $AppUI->_('Comments')
-                . ":\n" 
-                . $log['task_log_description'];
-          break;
+	      $body .= "\n\n-- \n"
+		     . $AppUI->_('helpdeskSignature');
+
+	      if ($mail->ValidEmail($AppUI->user_email)) {
+		$email = $AppUI->user_email;
+	      } else {
+		$email = "dotproject@".$AppUI->cfg['site_domain'];
+	      }
+
+	      $mail->From("\"{$AppUI->user_first_name} {$AppUI->user_last_name}\" <{$email}>");
+	      $mail->To($assigned_to_email);
+	      $mail->Body($body, isset( $GLOBALS['locale_char_set']) ? $GLOBALS['locale_char_set'] : "");
+	      $mail->Send();
       }
-      
-      $body .= "\n\n-- \n"
-             . $AppUI->_('helpdeskSignature');
-
-      if ($mail->ValidEmail($AppUI->user_email)) {
-        $email = $AppUI->user_email;
-      } else {
-        $email = "dotproject@".$AppUI->cfg['site_domain'];
-      }
-
-      $mail->From("\"{$AppUI->user_first_name} {$AppUI->user_last_name}\" <{$email}>");
-      $mail->To($assigned_to_email);
-      $mail->Body($body, isset( $GLOBALS['locale_char_set']) ? $GLOBALS['locale_char_set'] : "");
-      $mail->Send();
     }
   }
   
@@ -392,7 +406,9 @@ class CHelpDeskItem extends CDpObject {
       return false;
     }
     
-    return mysql_insert_id();
+    $log_id = mysql_insert_id();
+    $this->notify(STATUS_LOG, $log_id);
+    return $log_id;
   }
 }
 
