@@ -2,7 +2,7 @@
 # You may have to edit the above line to reflect your system
 # E.g. the typical UNIX/Linux system will require #!/usr/bin/perl
 
-# $Id: gateway.pl,v 1.21 2005/01/24 05:26:59 ajdonnison Exp $ #
+# $Id: gateway.pl,v 1.1 2005/04/07 23:06:15 bloaterpaste Exp $ #
 
 # send email report upon receipt (1 = yes, 0 = no)
 $send_email_report = 1;
@@ -419,13 +419,14 @@ sub insert_message {
     $item_status = $dbh->quote(0);
     #Always source 1, email
     $item_source = $dbh->quote(1);
+    $item_company_id = $dbh->quote(0);
 
     # do insertion
 #    $insert_query = "INSERT INTO tickets (parent, attachment, timestamp, author, subject, body, type, cc, assignment) ";
 #    $insert_query .= "VALUES ($db_parent, $attachment, UNIX_TIMESTAMP(), $author, $subject, $body, $type, $cc, $assignment)";
 
-    $insert_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_title, item_summary, item_status, item_source) ";
-    $insert_query .= "VALUES (UNIX_TIMESTAMP(), $author, $subject, $body, $item_status, $item_source)";
+    $insert_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_title, item_summary, item_status, item_source, item_company_id) ";
+    $insert_query .= "VALUES (UNIX_TIMESTAMP(), $author, $subject, $body, $item_status, $item_source, $item_company_id)";
 
     $sth = $dbh->prepare($insert_query);
     $sth->execute();
