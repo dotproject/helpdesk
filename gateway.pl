@@ -2,7 +2,7 @@
 # You may have to edit the above line to reflect your system
 # E.g. the typical UNIX/Linux system will require #!/usr/bin/perl
 
-# $Id: gateway.pl,v 1.1 2005/04/07 23:06:15 bloaterpaste Exp $ #
+# $Id: gateway.pl,v 1.2 2005/04/08 17:46:45 bloaterpaste Exp $ #
 
 # send email report upon receipt (1 = yes, 0 = no)
 $send_email_report = 1;
@@ -409,6 +409,16 @@ sub insert_message {
 #    $db_parent = $dbh->quote($parent);
     $attachment = $dbh->quote($attachment);
     $author = $dbh->quote($header{'From'});
+    #parse out the components of the email addess.
+    if($author=~/([^<]+)<([^>]+)>/){
+        ($name, $address) = ($1, $2);
+    } elsif($source_address=~/((\w+)@[\w\.]+)/){
+        ($address, $name) = ($1, $2);
+    } else {
+    	$name = $author;
+    	$address = $author;
+    }
+
     $subject = $dbh->quote($header{'Subject'});
     $body = $dbh->quote($body);
 #    $type = $dbh->quote($type);
@@ -425,8 +435,8 @@ sub insert_message {
 #    $insert_query = "INSERT INTO tickets (parent, attachment, timestamp, author, subject, body, type, cc, assignment) ";
 #    $insert_query .= "VALUES ($db_parent, $attachment, UNIX_TIMESTAMP(), $author, $subject, $body, $type, $cc, $assignment)";
 
-    $insert_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_title, item_summary, item_status, item_source, item_company_id) ";
-    $insert_query .= "VALUES (UNIX_TIMESTAMP(), $author, $subject, $body, $item_status, $item_source, $item_company_id)";
+    $insert_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_requestor_email, item_title, item_summary, item_status, item_source, item_company_id) ";
+    $insert_query .= "VALUES (UNIX_TIMESTAMP(), $name, $address, $subject, $body, $item_status, $item_source, $item_company_id)";
 
     $sth = $dbh->prepare($insert_query);
     $sth->execute();
