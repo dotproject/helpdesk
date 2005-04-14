@@ -2,7 +2,7 @@
 # You may have to edit the above line to reflect your system
 # E.g. the typical UNIX/Linux system will require #!/usr/bin/perl
 
-# $Id: gateway.pl,v 1.2 2005/04/08 17:46:45 bloaterpaste Exp $ #
+# $Id: gateway.pl,v 1.3 2005/04/08 20:32:25 bloaterpaste Exp $ #
 
 # send email report upon receipt (1 = yes, 0 = no)
 $send_email_report = 1;
@@ -405,11 +405,9 @@ sub insert_message {
         $assignment = "0";
     }
 
-    # quote all fields
-#    $db_parent = $dbh->quote($parent);
-    $attachment = $dbh->quote($attachment);
-    $author = $dbh->quote($header{'From'});
+
     #parse out the components of the email addess.
+    $author = $header{'From'};
     if($author=~/([^<]+)<([^>]+)>/){
         ($name, $address) = ($1, $2);
     } elsif($source_address=~/((\w+)@[\w\.]+)/){
@@ -419,22 +417,24 @@ sub insert_message {
     	$address = $author;
     }
 
+    # trim whitespace
+    ($name = $name) =~ s/^\s+//;
+    ($name = $name) =~ s/\s+$//;
+    ($address = $address) =~ s/^\s+//;
+    ($address = $address) =~ s/\s+$//;
+
+    # quote all fields
+    $name = $dbh->quote($name);
+    $address = $dbh->quote($address);
     $subject = $dbh->quote($header{'Subject'});
     $body = $dbh->quote($body);
-#    $type = $dbh->quote($type);
-    $status = $dbh->quote(1);
-#    $cc = $dbh->quote($header{'Cc'});
     $assignment = $dbh->quote($assignment);
-    #Always status 0, Unassigned
-    $item_status = $dbh->quote(0);
-    #Always source 1, email
-    $item_source = $dbh->quote(1);
+    $item_status = $dbh->quote(0); #Always status 0, Unassigned
+    $item_source = $dbh->quote(1); #Always source 1, email
     $item_company_id = $dbh->quote(0);
+    $attachment = $dbh->quote($attachment);
 
     # do insertion
-#    $insert_query = "INSERT INTO tickets (parent, attachment, timestamp, author, subject, body, type, cc, assignment) ";
-#    $insert_query .= "VALUES ($db_parent, $attachment, UNIX_TIMESTAMP(), $author, $subject, $body, $type, $cc, $assignment)";
-
     $insert_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_requestor_email, item_title, item_summary, item_status, item_source, item_company_id) ";
     $insert_query .= "VALUES (UNIX_TIMESTAMP(), $name, $address, $subject, $body, $item_status, $item_source, $item_company_id)";
 
