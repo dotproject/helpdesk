@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.9 2004/06/04 12:55:19 agorski Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.10 2005/04/25 19:04:55 zibas Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -98,7 +98,10 @@ case 'users':
 	break;
 case 'contacts':
 	$title = 'Contacts';
-	$list = getAllowedUsers();
+	$templist = getAllowedUsers();
+	foreach($templist as $key=>$value){
+		$list[$key + 1]=$value;
+	}
 	break;
 default:
 	$ok = false;
