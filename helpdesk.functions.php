@@ -1,4 +1,18 @@
 <?php
+
+function getAllowedUsers(){
+  global $HELPDESK_CONFIG;
+	//populate user list with all users from permitted companies
+	$sql = "SELECT user_id, CONCAT(contact_last_name, ',', contact_first_name)
+			FROM users
+		   LEFT JOIN contacts ON user_contact = contact_id
+			WHERE ". getCompanyPerms("user_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
+			." OR ". getCompanyPerms("contact_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
+		 . "ORDER BY contact_last_name, contact_first_name";
+	$users = db_loadHashList( $sql );
+	return $users;
+}
+	
 function getAllowedCompanies(){
   global $AppUI;
   require_once( $AppUI->getModuleClass ('companies' ) );

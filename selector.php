@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.8 2004/05/27 13:41:03 agorski Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.9 2004/06/04 12:55:19 agorski Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -98,8 +98,7 @@ case 'users':
 	break;
 case 'contacts':
 	$title = 'Contacts';
-	$select = "contact_id,CONCAT_WS(' ',contact_first_name,contact_last_name)";
-	$order = 'contact_last_name, contact_first_name';
+	$list = getAllowedUsers();
 	break;
 default:
 	$ok = false;
@@ -114,12 +113,13 @@ if (!$ok) {
 		echo "<br />ok = $ok \n";
 	}
 } else {
-	$sql = "SELECT $select FROM $table";
-	$sql .= $where ? " WHERE $where" : '';
-	$sql .= $order ? " ORDER BY $order" : '';
-	//echo "<pre>$sql</pre>";
+	if(!isset($list)){
+		$sql = "SELECT $select FROM $table";
+		$sql .= $where ? " WHERE $where" : '';
+		$sql .= $order ? " ORDER BY $order" : '';
 
-	$list = arrayMerge( array( 0=>''), db_loadHashList( $sql ) );
+		$list = arrayMerge( array( 0=>''), db_loadHashList( $sql ) );
+	}
 	echo db_error();
 ?>
 <script language="javascript">

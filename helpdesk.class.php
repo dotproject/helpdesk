@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.56 2005/03/21 18:14:57 zibas Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.57 2005/04/07 22:20:29 bloaterpaste Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -147,6 +147,26 @@ class CHelpDeskItem extends CDpObject {
   }
 
   function delete() {
+	  /*
+		// This section will grant every request to delete an HPitem
+		$k = $this->_tbl_key;
+		if ($oid) {
+			$this->$k = intval( $oid );
+		}
+                
+        addHistory($this->_tbl, $this->$k, 'delete');
+		$q  = new DBQuery;
+		$q->setDelete($this->_tbl);
+		$q->addWhere("$this->_tbl_key = '".$this->$k."'");
+		$result = null;
+		if (!$q->exec()) {
+			$result = db_error();
+		}
+		$q->clear();
+		return $result;
+	*/
+	
+	// Calling parent will deny every request to delete an HPitem
     return parent::delete();
   }
   
@@ -173,8 +193,8 @@ class CHelpDeskItem extends CDpObject {
     $email_list = db_loadHashList($sql);
     $email_list = array_keys($email_list);
 
-echo $sql."\n";
-print_r($email_list);    
+//echo $sql."\n";
+//print_r($email_list);    
     //if there's no one in the list, skip the rest.
     if(count($email_list)<=0)
       return;

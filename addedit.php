@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.62 2005/04/06 21:29:06 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.63 2005/04/07 22:20:28 bloaterpaste Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -34,14 +34,7 @@ if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_com
   @$hditem["item_company_id"] = $AppUI->user_company;
 }
 
-//populate user list with all users from permitted companies
-$sql = "SELECT user_id, CONCAT(contact_last_name, ',', contact_first_name)
-        FROM users
-       LEFT JOIN contacts ON user_contact = contact_id
-        WHERE ". getCompanyPerms("user_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
-        ." OR ". getCompanyPerms("contact_company", PERM_EDIT, $HELPDESK_CONFIG['the_company'])
-     . "ORDER BY contact_last_name, contact_first_name";
-$users = db_loadHashList( $sql );
+$users = getAllowedUsers();
 
 $sql = "SELECT company_id, company_name
         FROM companies
