@@ -34,7 +34,9 @@ function getAllowedProjectsForJavascript(){
   	return "";
   }
 
-  $whereclause = array_keys($allowedProjects);
+  foreach($allowedProjects as $p){
+	$whereclause[] = $p['project_id'];
+  }
   
   $whereclause = "project_id in (".implode(", ", $whereclause).")";
 
