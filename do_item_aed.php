@@ -1,8 +1,9 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.25 2005/03/21 18:14:57 zibas Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.26 2005/04/07 22:20:29 bloaterpaste Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
 $new_item = !($item_id>0);
+
 
 if($do_task_log=="1"){
 

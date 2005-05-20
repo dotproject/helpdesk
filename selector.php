@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: selector.php,v 1.10 2005/04/25 19:04:55 zibas Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.11 2005/04/25 19:21:19 zibas Exp $ */
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
@@ -92,17 +92,26 @@ case 'tasks':
 	break;
 case 'users':
 	$title = 'User';
+	/*
 	$select = "user_id,CONCAT_WS(' ',user_first_name,user_last_name)";
 	$order = 'user_last_name, user_first_name';
-  $where = getCompanyPerms("user_company", NULL, PERM_EDIT);
+	$where = getCompanyPerms("user_company", NULL, PERM_EDIT);
+	*/
+	$templist = getAllowedUsers();
+	foreach($templist as $key=>$value){
+		$list[$key]=$value;
+	}
 	break;
 case 'contacts':
+	/*
+	// Contact selection not implemented properly
 	$title = 'Contacts';
 	$templist = getAllowedUsers();
 	foreach($templist as $key=>$value){
-		$list[$key + 1]=$value;
+		$list[$key]=$value;
 	}
 	break;
+	*/
 default:
 	$ok = false;
 	break;

@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.63 2005/04/07 22:20:28 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.64 2005/04/25 19:04:46 zibas Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -273,8 +273,8 @@ function selectList( listName, target ) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <!-- <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" /> -->
-      <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" />
+      <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" />
+  <!-- <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" /> -->
       </td>
     </tr>
 
