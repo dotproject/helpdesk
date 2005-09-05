@@ -1,8 +1,9 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.57 2005/04/07 22:20:29 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.58 2005/04/25 19:04:55 zibas Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
 require_once("./modules/helpdesk/config.php");
+require_once $AppUI->getSystemClass('date');
 
 // Make sure we can read the module
 if (getDenyRead($m)) {
@@ -77,16 +78,20 @@ class CHelpDeskItem extends CDpObject {
   }
 
   function load( $oid ) {
-    $sql = "SELECT * FROM helpdesk_items WHERE item_id = $oid";
-    return db_loadObject( $sql, $this );
+	$q  = new DBQuery;
+	$q->addTable('helpdesk_items');
+	$q->addWhere("item_id = '".$oid."'");
+	return $q->loadObject($this);
   }
 
   function check() {
     if ($this->item_id === NULL) {
-      return $AppUI->_('Help Desk Item ID is NULL');
+//Had to remove this check or else we couldn't add tasklogs
+//      return ("$AppUI->_('Help Desk Item ID is NULL')");
     }
     if (!$this->item_created) { 
-      $this->item_created = db_unix2dateTime( time() );
+      $this->item_created = new CDate();
+  	  $this->item_created = $this->item_created->format( "$df $tf" );
     }
     
     // TODO More checks
@@ -97,7 +102,7 @@ class CHelpDeskItem extends CDpObject {
     global $AppUI;
 
     // Update the last modified time and user
-    $this->item_modified = db_unix2dateTime( time() );
+    $this->item_created = new CDate();
     
     $this->item_summary = strip_tags($this->item_summary);
 
@@ -107,28 +112,38 @@ class CHelpDeskItem extends CDpObject {
       case '0'://it's not a user or a contact
         break;
       case '1'://it's a system user
-        $sql = "SELECT user_id as id,
+		$q = new DBQuery();
+		$q->addTable('users','u');
+		$q->addQuery('u.user_id as id');
+		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
+		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
+/*        $sql = "SELECT user_id as id,
                        contact_email as email,
                        contact_phone as phone,
                 CONCAT(contact_first_name,' ', contact_last_name) as name
                 FROM users
                LEFT JOIN contacts ON user_contact = contact_id
-                WHERE user_id='{$this->item_requestor_id}'";
+                WHERE user_id='{$this->item_requestor_id}'";*/
         break;
       case '2':
-        $sql = "SELECT contact_id as id,
+		$q = new DBQuery();
+		$q->addTable('contacts','c');
+		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
+		$q->addWhere('contact_id='.$this->item_requestor_id);
+/*        $sql = "SELECT contact_id as id,
                        contact_email as email,
                        contact_phone as phone,
                 CONCAT(contact_first_name,' ', contact_last_name) as name
                 FROM contacts
-                WHERE contact_id='{$this->item_requestor_id}'";
+                WHERE contact_id='{$this->item_requestor_id}'";*/
         break;
       default:
         break;
     }
 
-    if(isset($sql)) {
-      db_loadHash( $sql, $result );
+    if(isset($q)) {
+      $result = $q->loadHash();
+      $q->clear();
       $this->item_requestor_email = $result['email'];
       $this->item_requestor_phone = $result['phone'];
       $this->item_requestor = $result['name'];
@@ -147,31 +162,46 @@ class CHelpDeskItem extends CDpObject {
   }
 
   function delete() {
-	  /*
+	  
 		// This section will grant every request to delete an HPitem
 		$k = $this->_tbl_key;
 		if ($oid) {
 			$this->$k = intval( $oid );
 		}
-                
-        addHistory($this->_tbl, $this->$k, 'delete');
+		//load the item first so we can get the item_title for history
+		$this->load($this->item_id);
+		addHistory($this->_tbl, $this->$k, 'delete', $this->item_title, $this->item_project_id);
+		$result = null;
 		$q  = new DBQuery;
 		$q->setDelete($this->_tbl);
 		$q->addWhere("$this->_tbl_key = '".$this->$k."'");
-		$result = null;
 		if (!$q->exec()) {
 			$result = db_error();
 		}
 		$q->clear();
-		return $result;
-	*/
-	
-	// Calling parent will deny every request to delete an HPitem
-    return parent::delete();
+		$q->setDelete('helpdesk_item_status');
+		$q->addWhere("status_item_id = '".$this->item_id."'");
+		if (!$q->exec()) {
+			$result .= db_error();
+		}
+		$q->clear();
+		$q->setDelete('helpdesk_item_watchers');
+		$q->addWhere("item_id = '".$this->item_id."'");
+		if (!$q->exec()) {
+			$result .= db_error();
+		}
+		$q->clear();
+		$q->setDelete('task_log');
+		$q->addWhere("task_log_help_desk_id = '".$this->item_id."'");
+		if (!$q->exec()) {
+			$result .= db_error();
+		}
+		$q->clear();
+		return $result;	
   }
   
   function notify($type, $log_id) {
-    global $AppUI, $ist, $ict, $isa;
+    global $AppUI, $ist, $ict, $isa, $dPconfig;
 
 //    if (!$this->item_notify ||
 //        ($this->item_assigned_to == $AppUI->user_id)) {
@@ -179,7 +209,17 @@ class CHelpDeskItem extends CDpObject {
 //    }
 
     // Pull up the email address of everyone on the watch list 
-    $sql = "SELECT contact_email
+	$q = new DBQuery();
+	$q->addTable('helpdesk_item_watchers','hdw');
+	$q->addQuery('c.contact_email');
+	$q->addJoin('users','u','hdw.user_id = u.user_id');
+	$q->addJoin('contacts','c','u.user_contact = c.contact_id');
+	if($this->item_notify) {
+		$q->addWhere('hdw.item_id='.$log_id. ' OR u.user_id='.$this->item_assigned_to);
+	} else {
+		$q->addWhere('hdw.item_id='.$log_id);
+	}
+/*    $sql = "SELECT contact_email
             FROM 
             	helpdesk_item_watchers
             	LEFT JOIN users ON helpdesk_item_watchers.user_id = users.user_id
@@ -187,14 +227,14 @@ class CHelpDeskItem extends CDpObject {
             WHERE 
             	helpdesk_item_watchers.item_id='{$this->item_id}'";
      //if they choose, along with the person who the ticket is assigned to.
-     if($this->item_notify)
-     	$sql.=" or users.user_id='{$this->item_assigned_to}'";
+    if($this->item_notify)
+     	$sql.=" or users.user_id='{$this->item_assigned_to}'";*/
 
-    $email_list = db_loadHashList($sql);
+    $email_list = $q->loadHashList();
+    $q->clear();
     $email_list = array_keys($email_list);
 
 //echo $sql."\n";
-//print_r($email_list);    
     //if there's no one in the list, skip the rest.
     if(count($email_list)<=0)
       return;
@@ -202,18 +242,26 @@ class CHelpDeskItem extends CDpObject {
     if (is_numeric($log_id)) {
       switch ($type) {
         case STATUS_LOG:
-          $sql = "SELECT status_code, status_comment
+			$q = new DBQuery();
+			$q->addTable('helpdesk_item_status','hds');
+			$q->addQuery('hds.status_code, hds.status_comment');
+			$q->addWhere('hds.status_id='.$log_id);
+/*          $sql = "SELECT status_code, status_comment
                   FROM helpdesk_item_status
-                  WHERE status_id=$log_id";
+                  WHERE status_id=$log_id";*/
           break;
         case TASK_LOG:
-          $sql = "SELECT task_log_name,task_log_description
+			$q = new DBQuery();
+			$q->addTable('task_log','tl');
+			$q->addQuery('tl.task_log_name, tl.task_log_description');
+			$q->addWhere('tl.task_log_id='.$log_id);
+/*          $sql = "SELECT task_log_name,task_log_description
                   FROM task_log
-                  WHERE task_log_id=$log_id";
+                  WHERE task_log_id=$log_id";*/
           break;
       }
         
-      db_loadHash($sql, $log);
+      $log=$q->loadHash();
     }
 
     foreach($email_list as $assigned_to_email){
@@ -235,7 +283,7 @@ class CHelpDeskItem extends CDpObject {
 		  }
 
 		  $body .= $AppUI->_('Link')
-			 . ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			 . ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			 . "\n"
 			 . $AppUI->_('Summary')
 			 . ":\n"
@@ -248,7 +296,7 @@ class CHelpDeskItem extends CDpObject {
 			. $log['task_log_name']
 			. "\n"
 			. $AppUI->_('Link')
-			. ": {$AppUI->cfg['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			. ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			. "\n"
 			. $AppUI->_('Comments')
 			. ":\n" 

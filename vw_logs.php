@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.5 2004/05/28 13:17:39 agorski Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.6 2005/02/15 04:11:54 cyberhorse Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 
@@ -51,6 +51,7 @@ $sql = "SELECT item_company_id,item_created_by
 db_loadHash( $sql, $hditem );
 
 $canEdit = hditemEditable($hditem);
+$df = $AppUI->getPref('SHDATEFORMAT');
 
 foreach ($logs as $row) {
 	$task_log_date = intval( $row['task_log_date'] ) ? new CDate( $row['task_log_date'] ) : null;

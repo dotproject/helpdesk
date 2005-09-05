@@ -23,10 +23,10 @@ function getAllowedCompanies(){
   return $allowedCompanies;
 }
 
-function getAllowedProjects(){
+function getAllowedProjects($list = 0){
   global $AppUI, $HELPDESK_CONFIG;
   //if helpdeskUseProjectPerms is true, get a list of Projects based on the users standard project permissions
-  if($HELPDESK_CONFIG['helpdeskUseProjectPerms']){
+  if($HELPDESK_CONFIG['use_project_perms']){
 	  require_once( $AppUI->getModuleClass('projects'));
 	  $project = new CProject;
 	  $allowedProjects = $project->getAllowedRecords($AppUI->user_id, 'project_id, project_name','project_name');
@@ -36,20 +36,28 @@ function getAllowedProjects(){
   //otherwise, get a list of all projects associated with the user's permitted companies.
   //the use case here would be that the person assigning or updating the Helpdesk item may not have access to all Projects.  They might just be traffic control.  This will minimise perm maintenance.
   	$sql = "SELECT project_id, project_name FROM projects WHERE project_company in (". implode(",",array_keys(getAllowedCompanies())).") ORDER BY project_name";
-  	return db_loadList( $sql );
+  	if ($list) {
+  		return db_loadHashList( $sql );
+  	} else {
+  		return db_loadList( $sql );
+  	}
   }
 }
 
 function getAllowedProjectsForJavascript(){
-  global $AppUI;
+    global $HELPDESK_CONFIG, $AppUI;
   $allowedProjects = getAllowedProjects();
   //if there are none listed, make sure that sql returns nothing
   if(!$allowedProjects){
   	return "";
   }
 
-  foreach($allowedProjects as $p){
-	$whereclause[] = $p['project_id'];
+  if($HELPDESK_CONFIG['use_project_perms']){
+    	$whereclause = array_keys($allowedProjects);
+  } else {
+  	foreach($allowedProjects as $p){
+   		$whereclause[] = $p['project_id'];
+    }
   }
   
   $whereclause = "project_id in (".implode(", ", $whereclause).")";
@@ -82,12 +90,12 @@ function getAllowedProjectsForJavascript(){
  * 4. Items of a company you have permissions for
  */
 function getItemPerms() {
-  global $AppUI;
+  global $HELPDESK_CONFIG, $AppUI;
 
   $permarr = array();
   //pull in permitted companies
   $allowedCompanies = getAllowedCompanies();
-
+  $allowedProjects = getAllowedProjects();
   //if there are none listed, make sure that sql returns nothing
   if(!$allowedCompanies){
   	return "0=1";
@@ -107,7 +115,16 @@ function getItemPerms() {
   //it's requested by a user and that user is you
   $permarr[] = " (item_requestor_type=1 AND item_requestor_id=".$AppUI->user_id.') ' ;
 
-  $sql = '('.implode("\n OR ", $permarr).')';
+  if($HELPDESK_CONFIG['use_project_perms']){
+  		$projectIds = array_keys($allowedProjects);
+  } else {
+  		foreach($allowedProjects as $p){
+   			$projectIds[] = $p['project_id'];
+    	}
+  }
+  $projarr[] = " AND item_project_id in (".implode(", ", $projectIds).")";
+  
+  $sql = '('.implode("\n OR ", $permarr).')'.implode($projarr);
 
   return $sql;
 }

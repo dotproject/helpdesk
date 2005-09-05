@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.64 2005/04/25 19:04:46 zibas Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.65 2005/05/20 16:45:09 zibas Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -79,7 +79,11 @@ if ($item_id) {
   $item_date = new CDate( $hditem["item_created"] );
   $tc = $item_date->format( "$df $tf" );
 } else {
-  $hditem["item_created"] = db_unix2dateTime(time());
+//  $hditem["item_created"] = db_unix2dateTime(time());
+//  $hditem["item_created"] = date('Y-m-d H:i:s'); 
+  $item_date = new CDate();
+  $item_date = $item_date->format( FMT_DATETIME_MYSQL );
+  $hditem["item_created"] = $item_date;
 }
 
 ?>
@@ -128,6 +132,7 @@ function popUserDialog() {
 
 function popContactDialog() {
   window.open('./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable,scrollbars=yes')
+//  window.open('./index.php?m=public&a=selector&callback=setContactRequestor&table=contacts&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable')
 }
 
 var oldRequestor = '';
@@ -273,8 +278,8 @@ function selectList( listName, target ) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" />
-  <!-- <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" /> -->
+      <!-- <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" /> -->
+      <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" />
       </td>
     </tr>
 
