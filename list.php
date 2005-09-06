@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.68 2005/03/21 18:14:58 zibas Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.69 2005/09/05 03:45:19 pedroix Exp $ */
 $allowedCompanies = getAllowedCompanies();
 $allowedProjects = getAllowedProjects();
 
@@ -254,7 +254,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	$selectors[] = "<td align=\"right\"><label for=\"project\">"
                . $AppUI->_('Project')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $arrayProjects ),
+               . arraySelect( arrayMerge( array( '-1'=>'('.$AppUI->_('All').')', '0'=>'('.$AppUI->_('Without Project').')' ), $arrayProjects ),
                               'project',
 							                'size="1" id="project" class="text" onchange="changeList()"',
 							                $project )
