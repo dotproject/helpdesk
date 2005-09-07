@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.58 2005/04/25 19:04:55 zibas Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.59 2005/09/05 03:43:58 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -77,12 +77,13 @@ class CHelpDeskItem extends CDpObject {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
   }
 
-  function load( $oid ) {
-	$q  = new DBQuery;
-	$q->addTable('helpdesk_items');
-	$q->addWhere("item_id = '".$oid."'");
-	return $q->loadObject($this);
-  }
+//Use CDpObjects Load instead
+//  function load( $oid ) {
+//	$q  = new DBQuery;
+//	$q->addTable('helpdesk_items');
+//	$q->addWhere("item_id = ".$oid."");
+//	return $q->loadObject($this);
+//  }
 
   function check() {
     if ($this->item_id === NULL) {
