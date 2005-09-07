@@ -1,11 +1,10 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.26 2005/04/07 22:20:29 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.27 2005/05/20 16:45:09 zibas Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
 $new_item = !($item_id>0);
 
-
-if($do_task_log=="1"){
+if($do_task_log){
 
 	//first update the status on to current helpdesk item.
 	$hditem = new CHelpDeskItem();
@@ -19,13 +18,13 @@ if($do_task_log=="1"){
                                            . $AppUI->_('to')
                                            . " \"".$AppUI->_($ist[$new_status])."\"");
 		$hditem->item_status = $new_status;
-
+		
 		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 			$AppUI->redirect();
 		} else {
-      $hditem->notify(STATUS_LOG, $status_log_id);
-    }
+      		$hditem->notify(STATUS_LOG, $status_log_id);
+    	}
 	}
 
 	//then create/update the task log
@@ -111,7 +110,7 @@ function doWatchers($list, $hditem){
 				foreach($rows as $row){
 					# Send the notification that they've been added to a watch list.
 					if(!in_array($row['user_id'],$current_users)){
-						notify($row['contact_email'], $hditem);
+						notifyWatchers($row['contact_email'], $hditem);
 					}
 				}
 
@@ -123,7 +122,7 @@ function doWatchers($list, $hditem){
 	
 }
 
-function notify($address, $hditem){
+function notifyWatchers($address, $hditem){
 	global $AppUI;
 
 	$mail = new Mail;
