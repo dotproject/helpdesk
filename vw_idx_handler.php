@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.19 2004/06/22 12:14:47 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.20 2004/12/10 17:14:51 cyberhorse Exp $*/
 
   /*
    * opened = 0
@@ -57,7 +57,8 @@ function vw_idx_handler ($type) {
           p.project_id,
           p.project_name,
           p.project_color_identifier,
-          his.status_date
+          his.status_date sd,
+          (SELECT MAX(status_date) FROM helpdesk_item_status WHERE status_item_id = hi.item_id) status_date
           FROM helpdesk_items hi
           LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
           LEFT JOIN users u ON u.user_id = hi.item_assigned_to
@@ -69,6 +70,7 @@ function vw_idx_handler ($type) {
           ORDER BY item_id";
 
   $items = db_loadList( $sql );
+
   ?>
   <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
   <tr>
@@ -78,6 +80,7 @@ function vw_idx_handler ($type) {
     <th nowrap="nowrap"><?=$AppUI->_('Assigned To')?></th>
     <th><?=$AppUI->_('Status')?></th>
     <th><?=$AppUI->_('Priority')?></th>
+    <th><?=$AppUI->_('Updated')?></th>
     <th><?=$AppUI->_('Project')?></th>
     <th nowrap="nowrap"><?=$date_field_title?></th>
   </tr>
@@ -90,6 +93,14 @@ function vw_idx_handler ($type) {
     if ($row[$date_field_name]) {
       $date = new CDate( $row[$date_field_name] );
       $tc = $date->format( $format );
+    } else {
+      $tc = ' ';
+    }
+    if ($row['status_date']) {
+      $datesd = new CDate( $row['status_date'] );
+      $sd = $datesd->format( $format );
+    } else {
+      $sd = ' ';
     }
 
     ?>
@@ -117,6 +128,7 @@ function vw_idx_handler ($type) {
       </td>
       <td align="center" nowrap><?=$AppUI->_($ist[@$row["item_status"]])?></td>
       <td align="center" nowrap><?=$AppUI->_($ipr[@$row["item_priority"]])?></td>
+      <td align="center" nowrap><?=@$sd?></td>
       <td align="center" style="background-color: #<?=$row['project_color_identifier']?>;" nowrap>
       <?php if ($row['project_id']) { ?>
         <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>" style="color: <?= bestColor( $row["project_color_identifier"] ) ?>;"><?=$row['project_name']?></a>
@@ -124,7 +136,7 @@ function vw_idx_handler ($type) {
         -
       <?php } ?>
       </td>
-      <td nowrap="nowrap"><?php print ($tc ? $tc : '-'); ?></td>
+      <td nowrap="nowrap"><?php print ($tc); ?></td>
     </tr>
   <?php } ?>
   </table>
