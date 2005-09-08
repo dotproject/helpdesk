@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.27 2005/05/20 16:45:09 zibas Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.28 2005/09/07 11:48:19 pedroix Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -73,15 +73,19 @@ if($do_task_log){
 			$AppUI->redirect('m=helpdesk&a=list');
 		}
 	} else {
-      		$status_log_id = $hditem->log_status_changes();
-
+      	$status_log_id = $hditem->log_status_changes();
+		if ($new_item) {
+			$item_date = new CDate();
+  			$idate = $item_date->format( FMT_DATETIME_MYSQL );
+			$hditem->item_created = $idate;
+		}
 		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
-		      if($new_item){
-			$status_log_id = $hditem->log_status(0,$AppUI->_('Created'));
-		      }
-	      		doWatchers(dPgetParam( $_POST, 'watchers', 0 ), $hditem);
+		    if($new_item){
+				$status_log_id = $hditem->log_status(0,$AppUI->_('Created'),$new_item);
+		    }
+	      	doWatchers(dPgetParam( $_POST, 'watchers', 0 ), $hditem);
 			$AppUI->setMsg( $new_item ? ($AppUI->_('Help Desk Item') .' '. $AppUI->_('added')) : ($AppUI->_('Help Desk Item') . ' ' . $AppUI->_('updated')) , UI_MSG_OK, true );
 			$AppUI->redirect('m=helpdesk&a=view&item_id='.$hditem->item_id);
 		}
