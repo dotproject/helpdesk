@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.69 2005/09/05 03:45:19 pedroix Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.70 2005/09/06 14:34:50 pedroix Exp $ */
 $allowedCompanies = getAllowedCompanies();
 $allowedProjects = getAllowedProjects();
 
@@ -332,7 +332,8 @@ $sql = "SELECT hi.*,
         co.contact_email as assigned_email,
         p.project_id,
         p.project_name,
-        p.project_color_identifier
+        p.project_color_identifier,
+        (SELECT MAX(status_date) FROM helpdesk_item_status WHERE status_item_id = hi.item_id) status_date
         FROM helpdesk_items hi
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT JOIN contacts co ON u2.user_contact = co.contact_id
@@ -345,6 +346,8 @@ if ($orderby == "project_name") {
   $sql .= "p.project_name";
 } else if ($orderby == "item_assigned_to") {
   $sql .= "assigned_fullname";
+} else if ($orderby == "status_date") {
+  $sql .= "status_date";
 } else {
   $sql .= "hi.$orderby";
 }
@@ -420,6 +423,7 @@ function changeList() {
 	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
 	<th nowrap="nowrap"><?=sort_header("item_status", $AppUI->_('Status'))?></th>
 	<th nowrap="nowrap"><?=sort_header("item_priority", $AppUI->_('Priority'))?></th>
+	<th nowrap="nowrap"><?=sort_header("status_date", $AppUI->_('Updated'))?></th>
 	<th nowrap="nowrap"><?=sort_header("project_name", $AppUI->_('Project'))?></th>
 </tr>
 <?php
@@ -458,7 +462,6 @@ foreach ($rows as $row) {
 
 	$date = new CDate( $row['item_created'] );
 	$s .= $CR . "<td nowrap>".$date->format( $format )."</td>";
-	
 
 	$s .= $CR . "<td nowrap align=\"center\">";
 	if ($row["item_requestor_email"]) {
@@ -486,6 +489,8 @@ foreach ($rows as $row) {
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ist[@$row["item_status"]]) . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ipr[@$row["item_priority"]]) . '</td>';
+	$dateu = new CDate( $row['status_date'] );	
+	$s .= $CR . '<td align="center" nowrap>' . @$dateu->format($format) . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'
 		    . $row['project_color_identifier']
