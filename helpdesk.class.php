@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.59 2005/09/05 03:43:58 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.60 2005/09/07 11:50:34 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -92,7 +92,7 @@ class CHelpDeskItem extends CDpObject {
     }
     if (!$this->item_created) { 
       $this->item_created = new CDate();
-  	  $this->item_created = $this->item_created->format( "$df $tf" );
+  	  $this->item_created = $this->item_created->format( FMT_DATETIME_MYSQL );
     }
     
     // TODO More checks
@@ -103,7 +103,7 @@ class CHelpDeskItem extends CDpObject {
     global $AppUI;
 
     // Update the last modified time and user
-    $this->item_created = new CDate();
+    //$this->item_created = new CDate();
     
     $this->item_summary = strip_tags($this->item_summary);
 
@@ -201,7 +201,7 @@ class CHelpDeskItem extends CDpObject {
 		return $result;	
   }
   
-  function notify($type, $log_id) {
+  function notify($type, $log_id, $newhdi=0) {
     global $AppUI, $ist, $ict, $isa, $dPconfig;
 
 //    if (!$this->item_notify ||
@@ -235,7 +235,10 @@ class CHelpDeskItem extends CDpObject {
     $q->clear();
     $email_list = array_keys($email_list);
 
-//echo $sql."\n";
+	//add the requestor email to the list of mailing people
+    $email_list = array_merge($email_list, $this->item_requestor_email);
+
+  	//echo $sql."\n";
     //if there's no one in the list, skip the rest.
     if(count($email_list)<=0)
       return;
@@ -276,7 +279,7 @@ class CHelpDeskItem extends CDpObject {
 			. $AppUI->_('Call Type').": {$ict[$this->item_calltype]}\n"
 			. $AppUI->_('Status').": {$ist[$this->item_status]}\n";
 
-		  if($log['status_code'] == 0){
+		  if($newhdi){
 		    $mail->Subject("$subject ".$AppUI->_('Created'));
 		  } else {
 		    $mail->Subject("$subject ".$AppUI->_('Updated'));
@@ -460,7 +463,7 @@ class CHelpDeskItem extends CDpObject {
 	  }
   }
   
-  function log_status ($audit_code, $comment="") {
+  function log_status ($audit_code, $comment="", $newhdi=0) {
   	global $AppUI;
 
     $sql = "
@@ -476,7 +479,7 @@ class CHelpDeskItem extends CDpObject {
     }
     
     $log_id = mysql_insert_id();
-    $this->notify(STATUS_LOG, $log_id);
+    $this->notify(STATUS_LOG, $log_id, $newhdi);
     return $log_id;
   }
 }
