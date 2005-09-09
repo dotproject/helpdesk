@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.60 2005/09/07 11:50:34 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.61 2005/09/08 02:11:30 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once("helpdesk.functions.php");
@@ -236,9 +236,9 @@ class CHelpDeskItem extends CDpObject {
     $email_list = array_keys($email_list);
 
 	//add the requestor email to the list of mailing people
-    $email_list = array_merge($email_list, $this->item_requestor_email);
+    $email_list[] = $this->item_requestor_email;
 
-  	//echo $sql."\n";
+    //echo $sql."\n";
     //if there's no one in the list, skip the rest.
     if(count($email_list)<=0)
       return;
