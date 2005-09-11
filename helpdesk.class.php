@@ -1,8 +1,8 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.61 2005/09/08 02:11:30 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.62 2005/09/09 21:40:59 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
-require_once("helpdesk.functions.php");
-require_once("./modules/helpdesk/config.php");
+include_once("helpdesk.functions.php");
+include_once("./modules/helpdesk/config.php");
 require_once $AppUI->getSystemClass('date');
 
 // Make sure we can read the module
