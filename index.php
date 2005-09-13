@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.27 2004/08/03 02:53:32 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.28 2005/04/07 22:20:29 bloaterpaste Exp $ */
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
 if (!$canReadModule) {
@@ -16,13 +16,13 @@ $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDES
 
 if ($canEdit) {
   $titleBlock->addCell(
-    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
     '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
   );
 }
 
-$titleBlock->addCrumb( "?m=helpdesk", 'Home' );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", 'List' );
+$titleBlock->addCrumb( "?m=helpdesk", 'home' );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", 'list' );
 
 $titleBlock->show();
 

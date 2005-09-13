@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.65 2005/05/20 16:45:09 zibas Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.66 2005/09/05 03:43:36 pedroix Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -64,11 +64,11 @@ $watchers = db_loadHashList( $sql );
 $ttl = $item_id ? 'Editing Help Desk Item' : 'Adding Help Desk Item';
 
 $titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
-$titleBlock->addCrumb( "?m=helpdesk", 'Home' );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", 'List');
+$titleBlock->addCrumb( "?m=helpdesk", 'home' );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", 'list');
 
 if ($item_id) {
-  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", 'View this item' );
+  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", 'view this item' );
 }
 
 $titleBlock->show();
