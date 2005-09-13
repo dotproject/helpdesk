@@ -1,8 +1,10 @@
-<?php /* HELPDESK $Id: list.php,v 1.73 2005/09/13 17:15:42 theideaman Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.74 2005/09/13 21:34:44 pedroix Exp $ */
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
 $allowedCompanies = getAllowedCompanies();
 $allowedProjects = getAllowedProjects();
+$ipr = dPgetSysVal( 'HelpDeskPriority' );
+$ist = dPgetSysVal( 'HelpDeskStatus' );
 
 $AppUI->savePlace();
 
