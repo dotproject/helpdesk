@@ -108,8 +108,13 @@
 "helpdeskMinLevel"=>"Minimum user level to edit other users\' logs",
 "helpdeskPagesPerSide"=>"Number of pages to display on each side of current page",
 "helpdeskSignature"=>"Sincerely,
+
 The dotProject Help Desk module",
 "helpdeskSubmitError"=>"You must enter the following value(s)",
 "is not writable",
 "to",
 "update task log",
+"Watchers",
+"Watched Tickets",
+"All (not closed)",
+"Without Project",
