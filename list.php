@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.72 2005/09/11 03:04:27 pedroix Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.73 2005/09/13 17:15:42 theideaman Exp $ */
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
 $allowedCompanies = getAllowedCompanies();
@@ -92,13 +92,15 @@ if($HELPDESK_CONFIG['search_criteria_status']){
 
 	if ($status >= 0) {
 		$tarr[] = "hi.item_status=$status";
+	} elseif ($status == -2) {
+		$tarr[] = "hi.item_status<>2";
 	}
 
 	if (!$_REQUEST['project_id']) {
 		$selectors[] = "<td align=\"right\"><label for=\"status\">"
                . $AppUI->_('Status')
                . ":</label></td><td>"
-               . arraySelect( arrayMerge( array( '-1'=>'All'), $ist ),
+               . arraySelect( arrayMerge( array( '-1'=>'All', '-2'=>'All (not closed)'), $ist ),
                               'item_status',
 						                  'size="1" id="status" class="text" onchange="changeList()"',
 						                  $status, true )
