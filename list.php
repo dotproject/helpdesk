@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.71 2005/09/08 02:03:54 pedroix Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.72 2005/09/11 03:04:27 pedroix Exp $ */
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
 $allowedCompanies = getAllowedCompanies();
@@ -407,13 +407,13 @@ $titleBlock = new CTitleBlock( 'Help Desk', 'helpdesk.png', $m, 'ID_HELP_HELPDES
 
 if (hditemCreate()) {
   $titleBlock->addCell(
-    '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+    '<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
     '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
   );
 }
 
-$titleBlock->addCrumb( "?m=helpdesk", "Home" );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
+$titleBlock->addCrumb( "?m=helpdesk", "home" );
+$titleBlock->addCrumb( "?m=helpdesk&a=list", "list" );
 $titleBlock->show();
 }
 ?>
@@ -447,19 +447,19 @@ function changeList() {
 <?php
   }
 ?>
-<br>
+<br />
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
-	<td align="right" nowrap>&nbsp;</td>
-	<th nowrap="nowrap"><?=sort_header("item_id", $AppUI->_('Number'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_created", $AppUI->_('Opened On'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_requestor", $AppUI->_('Requestor'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_title", $AppUI->_('Title'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_status", $AppUI->_('Status'))?></th>
-	<th nowrap="nowrap"><?=sort_header("item_priority", $AppUI->_('Priority'))?></th>
-	<th nowrap="nowrap"><?=sort_header("status_date", $AppUI->_('Updated'))?></th>
-	<th nowrap="nowrap"><?=sort_header("project_name", $AppUI->_('Project'))?></th>
+	<td align="right" nowrap="nowrap">&nbsp;</td>
+	<th nowrap="nowrap"><?php echo sort_header("item_id", $AppUI->_('Number')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_created", $AppUI->_('Opened On')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_requestor", $AppUI->_('Requestor')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_title", $AppUI->_('Title')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_assigned_to", $AppUI->_('Assigned To')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_status", $AppUI->_('Status')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_priority", $AppUI->_('Priority')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("status_date", $AppUI->_('Updated')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("project_name", $AppUI->_('Project')); ?></th>
 </tr>
 <?php
 $s = '';
