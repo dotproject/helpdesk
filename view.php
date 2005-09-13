@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: view.php,v 1.71 2004/12/10 17:14:51 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: view.php,v 1.72 2005/04/07 22:20:29 bloaterpaste Exp $ */
 
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -35,8 +35,8 @@ $sql = "SELECT hi.*,
 
 if (!db_loadHash( $sql, $hditem )) {
 	$titleBlock = new CTitleBlock( $AppUI->_('Invalid item id'), 'helpdesk.png', $m, 'ID_HELP_HELPDESK_VIEW' );
-	$titleBlock->addCrumb( "?m=helpdesk", 'Home' );
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", 'List' );
+	$titleBlock->addCrumb( "?m=helpdesk", 'home' );
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", 'list' );
 	$titleBlock->show();
 } else {
   // Check permissions on this record
@@ -70,17 +70,17 @@ $sql = "
   $titleBlock = new CTitleBlock( 'Viewing Help Desk Item', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
   if (hditemCreate()) {
     $titleBlock->addCell(
-      '<input type="submit" class="button" value="'.$AppUI->_('New Item').'" />', '',
+      '<input type="submit" class="button" value="'.$AppUI->_('new item').'" />', '',
       '<form action="?m=helpdesk&a=addedit" method="post">', '</form>'
     );
   }
 
-	$titleBlock->addCrumb( "?m=helpdesk", 'Home');
-	$titleBlock->addCrumb( "?m=helpdesk&a=list", 'List');
+	$titleBlock->addCrumb( "?m=helpdesk", 'home');
+	$titleBlock->addCrumb( "?m=helpdesk&a=list", 'list');
 
 	if ($canEdit) {
-    $titleBlock->addCrumbDelete('Delete this item', 1);
-		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", 'Edit this item' );
+    $titleBlock->addCrumbDelete('delete this item', 1);
+		$titleBlock->addCrumb( "?m=helpdesk&a=addedit&item_id=$item_id", 'edit this item' );
 	}
 
 	$titleBlock->show();
