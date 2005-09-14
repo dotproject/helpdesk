@@ -122,7 +122,11 @@ function getItemPerms() {
    			$projectIds[] = $p['project_id'];
     	}
   }
-  $projarr[] = " AND item_project_id in (0,".implode(", ", $projectIds).")";
+  if (count($projectIds)) {
+  	$projarr[] = " AND item_project_id in (0,".implode(", ", $projectIds).")";
+  } else {
+  	$projarr[] = " AND item_project_id in (0)";  	
+  }
   
   $sql = '('.implode("\n OR ", $permarr).')'.implode($projarr);
 
