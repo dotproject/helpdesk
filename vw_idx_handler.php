@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.20 2004/12/10 17:14:51 cyberhorse Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.21 2005/09/08 02:02:33 pedroix Exp $*/
 
   /*
    * opened = 0
@@ -14,7 +14,7 @@ function vw_idx_handler ($type) {
   	case 0:// Opened
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0)
+		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(hi.item_updated) = 0)
 		             AND his.status_code = 0";
   		break;
   	case 1:// Closed
@@ -57,8 +57,7 @@ function vw_idx_handler ($type) {
           p.project_id,
           p.project_name,
           p.project_color_identifier,
-          his.status_date sd,
-          (SELECT MAX(status_date) FROM helpdesk_item_status WHERE status_item_id = hi.item_id) status_date
+          his.status_date sd
           FROM helpdesk_items hi
           LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
           LEFT JOIN users u ON u.user_id = hi.item_assigned_to

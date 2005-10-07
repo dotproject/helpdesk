@@ -1,9 +1,9 @@
-<?php /* HELPDESK $Id: setup.php,v 1.45 2004/07/28 12:22:20 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: setup.php,v 1.46 2005/04/07 22:20:29 bloaterpaste Exp $ */
 
 /* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.31';
+$config['mod_version'] = '0.4';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
@@ -51,6 +51,7 @@ class CSetupHelpDesk {
 			  `item_parent` int(10) unsigned NOT NULL default '0',
 			  `item_project_id` int(11) NOT NULL default '0',
 			  `item_company_id` int(11) NOT NULL default '0',
+			  `item_updated` datetime default NULL,
 			  PRIMARY KEY (item_id)
 			) TYPE=MyISAM";
 
@@ -161,6 +162,7 @@ class CSetupHelpDesk {
           ADD `item_requestor_type` tinyint NOT NULL default '0' AFTER `item_requestor_phone`,
           ADD `item_notify` int(1) DEFAULT '1' NOT NULL AFTER `item_assigned_to`,
           ADD `item_created_by` int(11) NOT NULL default '0',
+		  ADD `item_updated` datetime default NULL,
           DROP `item_receipt_target`,
           DROP `item_receipt_custom`,
           DROP `item_receipted`,
@@ -272,13 +274,32 @@ class CSetupHelpDesk {
         break;
       case 0.3:
         // Version 0.31 includes new watchers functionality
-	$sql = "
+		$sql = "
 		CREATE TABLE helpdesk_item_watchers (
 		  `item_id` int(11) NOT NULL default '0',
 		  `user_id` int(11) NOT NULL default '0',
 		  `notify` char(1) NOT NULL default ''
 		) TYPE=MyISAM";
-	db_exec($sql);
+		db_exec($sql);
+	  case 0.31:
+	    $sql = "
+          ALTER TABLE `helpdesk_items`
+		  ADD `item_updated` datetime default NULL
+        ";
+		db_exec($sql);
+	    $sql = "SELECT `item_id` FROM helpdesk_items";
+		$rows = db_loadList( $sql );
+		$sql = '';
+		foreach ($rows as $row) {
+	    	$sql = "SELECT MAX(status_date) status_date FROM helpdesk_item_status WHERE status_item_id =".$row['item_id'];
+			$sdrow = db_loadList( $sql );
+
+		    $sql = '';
+			$sql = "UPDATE `helpdesk_items`
+    	  	SET `item_updated`='".$sdrow[0]['status_date']."' 
+    	  	WHERE `item_id`=".$row['item_id'];
+			db_exec($sql);			
+		}
 	if (db_error())
 		$success = 0;
 	else  

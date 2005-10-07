@@ -1,14 +1,17 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.28 2005/09/07 11:48:19 pedroix Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.29 2005/09/08 02:16:03 pedroix Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
 $new_item = !($item_id>0);
+$updated_date = new CDate();
+$udate = $updated_date->format( FMT_DATETIME_MYSQL );
 
 if($do_task_log){
 
 	//first update the status on to current helpdesk item.
 	$hditem = new CHelpDeskItem();
 	$hditem->load( $item_id );
+	$hditem->item_updated = $udate;
 
 	$new_status = dPgetParam( $_POST, 'item_status', 0 );
 
@@ -25,8 +28,13 @@ if($do_task_log){
 		} else {
       		$hditem->notify(STATUS_LOG, $status_log_id);
     	}
+	} else {
+	//Store the item_update no matter if the status was changed or not
+		if (($msg = $hditem->store())) {
+			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->redirect();
+		}
 	}
-
 	//then create/update the task log
 	$obj = new CHDTaskLog();
 
@@ -65,6 +73,9 @@ if($do_task_log){
 	$AppUI->setMsg( 'Help Desk Item', UI_MSG_OK );
 
 	if ($del) {
+		$hditem->item_updated = $udate;
+		if (($msg = $hditem->store())) 
+			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		if (($msg = $hditem->delete())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {
@@ -78,7 +89,11 @@ if($do_task_log){
 			$item_date = new CDate();
   			$idate = $item_date->format( FMT_DATETIME_MYSQL );
 			$hditem->item_created = $idate;
+			$hditem->item_updated = $udate;
+		} else {
+			$hditem->item_updated = $udate;
 		}
+		
 		if (($msg = $hditem->store())) {
 			$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		} else {

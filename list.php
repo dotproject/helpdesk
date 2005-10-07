@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.74 2005/09/13 21:34:44 pedroix Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.75 2005/09/13 22:33:51 pedroix Exp $ */
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
 $allowedCompanies = getAllowedCompanies();
@@ -366,8 +366,7 @@ $sql = "SELECT hi.*,
         co.contact_email as assigned_email,
         p.project_id,
         p.project_name,
-        p.project_color_identifier,
-        (SELECT MAX(status_date) FROM helpdesk_item_status WHERE status_item_id = hi.item_id) status_date
+        p.project_color_identifier
         FROM helpdesk_items hi
         LEFT JOIN users u2 ON u2.user_id = hi.item_assigned_to
         LEFT JOIN contacts co ON u2.user_contact = co.contact_id
@@ -380,8 +379,8 @@ if ($orderby == "project_name") {
   $sql .= "p.project_name";
 } else if ($orderby == "item_assigned_to") {
   $sql .= "assigned_fullname";
-} else if ($orderby == "status_date") {
-  $sql .= "status_date";
+} else if ($orderby == "item_updated") {
+  $sql .= "hi.item_updated";
 } else {
   $sql .= "hi.$orderby";
 }
@@ -462,7 +461,7 @@ function changeList() {
 	<th nowrap="nowrap"><?php echo sort_header("item_assigned_to", $AppUI->_('Assigned To')); ?></th>
 	<th nowrap="nowrap"><?php echo sort_header("item_status", $AppUI->_('Status')); ?></th>
 	<th nowrap="nowrap"><?php echo sort_header("item_priority", $AppUI->_('Priority')); ?></th>
-	<th nowrap="nowrap"><?php echo sort_header("status_date", $AppUI->_('Updated')); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_updated", $AppUI->_('Updated')); ?></th>
 	<th nowrap="nowrap"><?php echo sort_header("project_name", $AppUI->_('Project')); ?></th>
 </tr>
 <?php
@@ -528,7 +527,11 @@ foreach ($rows as $row) {
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ist[@$row["item_status"]]) . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ipr[@$row["item_priority"]]) . '</td>';
-	$dateu = new CDate( $row['status_date'] );	
+	//Lets retrieve the updated date
+//	$sql = "SELECT MAX(status_date) status_date FROM helpdesk_item_status WHERE status_item_id =".$row['item_id'];
+//	$sdrow = db_loadList( $sql );
+//	$dateu = new CDate( $sdrow[0]['status_date'] );	
+	$dateu = new CDate( $row['item_updated'] );	
 	$s .= $CR . '<td align="center" nowrap>' . @$dateu->format($format) . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'

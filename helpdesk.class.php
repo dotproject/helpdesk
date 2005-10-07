@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.62 2005/09/09 21:40:59 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.63 2005/09/11 03:03:55 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 include_once("helpdesk.functions.php");
@@ -72,6 +72,7 @@ class CHelpDeskItem extends CDpObject {
   var $item_created_by = NULL;
   var $item_created = NULL;
   var $item_modified = NULL;
+  var $item_updated = NULL;
 
   function CHelpDeskItem() {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
