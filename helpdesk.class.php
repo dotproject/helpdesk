@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.63 2005/09/11 03:03:55 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.64 2005/10/07 16:08:32 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 include_once("helpdesk.functions.php");
@@ -217,9 +217,9 @@ class CHelpDeskItem extends CDpObject {
 	$q->addJoin('users','u','hdw.user_id = u.user_id');
 	$q->addJoin('contacts','c','u.user_contact = c.contact_id');
 	if($this->item_notify) {
-		$q->addWhere('hdw.item_id='.$log_id. ' OR u.user_id='.$this->item_assigned_to);
+		$q->addWhere('hdw.item_id='.$this->item_id. ' OR u.user_id='.$this->item_assigned_to);
 	} else {
-		$q->addWhere('hdw.item_id='.$log_id);
+		$q->addWhere('hdw.item_id='.$this->item_id);
 	}
 /*    $sql = "SELECT contact_email
             FROM 
@@ -268,8 +268,21 @@ class CHelpDeskItem extends CDpObject {
         
       $log=$q->loadHash();
     }
-
-    foreach($email_list as $assigned_to_email){
+//For Dixon
+/*      switch ($type) {
+        case STATUS_LOG:
+        	if ($this->item_status <> 2) {
+        		if (!$newhdi)
+        			return;
+        	}
+        break;
+        case TASK_LOG:
+        		return;
+        break;
+      }*/
+//End Dixon
+      
+      foreach($email_list as $assigned_to_email){
 	    $mail = new Mail;
 	    if ($mail->ValidEmail($assigned_to_email)) {
 	      $subject = $AppUI->cfg['page_title']." ".$AppUI->_('Help Desk Item')." #{$this->item_id}";
@@ -288,7 +301,7 @@ class CHelpDeskItem extends CDpObject {
 		  }
 
 		  $body .= $AppUI->_('Link')
-			 . ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			 . ": {$dPconfig['base_url']}index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			 . "\n"
 			 . $AppUI->_('Summary')
 			 . ":\n"
@@ -301,7 +314,7 @@ class CHelpDeskItem extends CDpObject {
 			. $log['task_log_name']
 			. "\n"
 			. $AppUI->_('Link')
-			. ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			. ": {$dPconfig['base_url']}index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			. "\n"
 			. $AppUI->_('Comments')
 			. ":\n" 

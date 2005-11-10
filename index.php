@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: index.php,v 1.28 2005/04/07 22:20:29 bloaterpaste Exp $ */
+<?php /* HELPDESK $Id: index.php,v 1.29 2005/09/13 17:07:21 theideaman Exp $ */
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
 if (!$canReadModule) {
@@ -23,6 +23,7 @@ if ($canEdit) {
 
 $titleBlock->addCrumb( "?m=helpdesk", 'home' );
 $titleBlock->addCrumb( "?m=helpdesk&a=list", 'list' );
+$titleBlock->addCrumb( "?m=helpdesk&a=reports", 'reports' );
 
 $titleBlock->show();
 

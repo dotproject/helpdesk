@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: do_item_aed.php,v 1.29 2005/09/08 02:16:03 pedroix Exp $ */
+<?php /* HELPDESK $Id: do_item_aed.php,v 1.30 2005/10/07 16:08:15 pedroix Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $item_id = dPgetParam( $_POST, 'item_id', 0 );
 $do_task_log = dPgetParam( $_POST, 'task_log', 0 );
@@ -14,7 +14,10 @@ if($do_task_log){
 	$hditem->item_updated = $udate;
 
 	$new_status = dPgetParam( $_POST, 'item_status', 0 );
+	$new_assignee = dPgetParam( $_POST, 'item_assigned_to', 0 );
+	$users = getAllowedUsers();
 
+	
 	if($new_status!=$hditem->item_status){
 		$status_log_id = $hditem->log_status(11, $AppUI->_('changed from')
                                            . " \"".$AppUI->_($ist[$hditem->item_status])."\" "
@@ -35,6 +38,22 @@ if($do_task_log){
 			$AppUI->redirect();
 		}
 	}
+
+	if($new_assignee!=$hditem->item_assigned_to){
+		$status_log_id = $hditem->log_status(5, $AppUI->_('changed from')
+                                           . " \"".$AppUI->_($users[$hditem->item_assigned_to])."\" "
+                                           . $AppUI->_('to')
+                                           . " \"".$AppUI->_($users[$new_assignee])."\"");
+		$hditem->item_assigned_to = $new_assignee;
+		
+		if (($msg = $hditem->store())) {
+			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->redirect();
+		} else {
+      		$hditem->notify(STATUS_LOG, $status_log_id);
+    	}
+	}
+	
 	//then create/update the task log
 	$obj = new CHDTaskLog();
 
@@ -99,6 +118,17 @@ if($do_task_log){
 		} else {
 		    if($new_item){
 				$status_log_id = $hditem->log_status(0,$AppUI->_('Created'),$new_item);
+//Lets create a log for the item creation:
+				$obj = new CHDTaskLog();
+				$new_item_log = array('task_log_id' => 0,'task_log_help_desk_id' => $hditem->item_id, 'task_log_creator' => $AppUI->user_id, 'task_log_name' => 'Item Created: '.$_POST['item_title'], 'task_log_date' => $hditem->item_created, 'task_log_description' => $_POST['item_title'], 'task_log_hours' => $_POST['task_log_hours'], 'task_log_costcode' => $_POST['task_log_costcode']);
+				if (!$obj->bind( $new_item_log )) {
+					$AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
+					$AppUI->redirect();
+				}
+  				if (($msg = $obj->store())) {
+    				$AppUI->setMsg( $msg, UI_MSG_ERROR );
+    				$AppUI->redirect();
+  				}	
 		    }
 	      	doWatchers(dPgetParam( $_POST, 'watchers', 0 ), $hditem);
 			$AppUI->setMsg( $new_item ? ($AppUI->_('Help Desk Item') .' '. $AppUI->_('added')) : ($AppUI->_('Help Desk Item') . ' ' . $AppUI->_('updated')) , UI_MSG_OK, true );
