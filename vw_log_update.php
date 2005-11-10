@@ -1,4 +1,4 @@
-<?php /* $Id: vw_log_update.php,v 1.9 2004/07/14 16:36:41 agorski Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.10 2005/03/21 18:14:58 zibas Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -7,6 +7,8 @@ $item_id = dPgetParam( $_GET, 'item_id', 0 );
 //if (!$canEdit) {
 //	$AppUI->redirect( "m=public&a=access_denied" );
 //}
+
+$users = getAllowedUsers();
 
 $task_log_id = intval( dPgetParam( $_GET, 'task_log_id', 0 ) );
 $log = new CHDTaskLog();
@@ -27,13 +29,24 @@ if ($task_log_id) {
 	$log->task_log_name = $hditem['item_title'];
 }
 
-// Lets check which cost codes have been used before
-$sql = "select distinct task_log_costcode
-        from task_log
-        where task_log_costcode != ''
-        order by task_log_costcode";
-$task_log_costcodes = array(""); // Let's add a blank default option
-$task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
+// Lets check cost codes
+$q = new DBQuery;
+$q->addTable('billingcode');
+$q->addQuery('billingcode_id, billingcode_name');
+$q->addWhere('billingcode_status=0');
+$q->addWhere("company_id='$hditem[item_company_id]'"." OR company_id='0'");
+$q->addOrder('billingcode_name');
+
+$task_log_costcodes[0]=$AppUI->_('None');
+$ptrc = $q->exec();
+echo db_error();
+$nums = 0;
+if ($ptrc)
+	$nums=db_num_rows($ptrc);
+for ($x=0; $x < $nums; $x++) {
+        $row = db_fetch_assoc( $ptrc );
+        $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
+}
 
 //if ($canEdit) {
 // Task Update Form
@@ -112,6 +125,17 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
     fld_date.value = idate; 
     fld_fdate.value = fdate;
   }
+  
+  function updateStatus(obj){
+    var f = document.editFrm;
+
+  	if(obj.options[obj.selectedIndex].value>0){
+      if(f.item_status.selectedIndex==0){
+    	f.item_status.selectedIndex=1;
+      }
+    }
+  }	
+
 </script>
 <!-- END OF TIMER RELATED SCRIPTS -->
 
@@ -161,9 +185,16 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 	<td>
 		<?php echo $AppUI->_('Cost Code');?>:<br>
 <?php
-		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].text;"', '' );
+		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
 ?>
 		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
+	</td>
+</tr>
+<tr>
+	<td>
+		<?php echo $AppUI->_('Assigned to');?>:<br>
+      <?=arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+                          @$hditem["item_assigned_to"] )?>
 	</td>
 </tr>
 <tr>

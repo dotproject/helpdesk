@@ -1,6 +1,24 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.6 2005/02/15 04:11:54 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: vw_logs.php,v 1.7 2005/09/05 03:46:13 pedroix Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
+
+// Lets check cost codes
+$q = new DBQuery;
+$q->addTable('billingcode');
+$q->addWhere('billingcode_status=0');
+$q->addWhere("company_id='$proj->project_company'"." OR company_id='0'");
+$q->addOrder('billingcode_name');
+
+$task_log_costcodes[0]=$AppUI->_('None');
+$ptrc = $q->exec();
+echo db_error();
+$nums = 0;
+if ($ptrc)
+	$nums=db_num_rows($ptrc);
+for ($x=0; $x < $nums; $x++) {
+        $row = db_fetch_assoc( $ptrc );
+        $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
+}
 
 ?>
 <script language="JavaScript">
@@ -68,7 +86,7 @@ foreach ($logs as $row) {
 	$s .= '<td width="30%">'.@$row["task_log_name"].'</td>';
 	$s .= '<td width="100">'.$row["user_username"].'</td>';
 	$s .= '<td width="100" align="right">'.sprintf( "%.2f", $row["task_log_hours"] ) . '</td>';
-	$s .= '<td width="100">'.$row["task_log_costcode"].'</td>';
+	$s .= '<td width="100">'.$task_log_costcodes[$row["task_log_costcode"]].'</td>';
 	$s .= '<td>';
 
 // dylan_cuthbert: auto-transation system in-progress, leave these lines
