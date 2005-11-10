@@ -28,8 +28,8 @@ while ($row = db_fetch_assoc($res)) {
   $companies[$row['company_id']] = $row['company_name'];
 }
 
-// Define user type list
-$user_types = arrayMerge( $utypes, array( '-1' => $AppUI->_('None') ) );
+//define user type list
+$user_types = arrayMerge( $utypes, array( '9' => $AppUI->_('None') ) );
 
 /* All config options, their descriptions and their default values are defined
 * here. Add new config options here. Type can be "checkbox", "text", "radio" or
@@ -71,7 +71,7 @@ $config_options = array(
 	),
 	'minimum_edit_level' => array(
 		'description' => $AppUI->_('helpdeskMinLevel'),
-		'value' => 0,
+		'value' => 9,
 		'type' => 'select',
 		'list' => @$user_types
 	),
@@ -81,6 +81,12 @@ $config_options = array(
 		'type' => 'radio',
     		'buttons' => array (1 => $AppUI->_('Yes'),
                         0 => $AppUI->_('No'))
+	),
+	'minimum_report_level' => array(
+		'description' => $AppUI->_('helpdeskMinRepLevel'),
+		'value' => 9,
+		'type' => 'select',
+		'list' => @$user_types
 	),
 	"heading3" => $AppUI->_('New Item Default Selections'),
 	"default_assigned_to_current_user" => array(

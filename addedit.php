@@ -1,10 +1,27 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.66 2005/09/05 03:43:36 pedroix Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.67 2005/09/13 17:07:21 theideaman Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
 $allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
 
 $projects = getAllowedProjectsForJavascript();
+
+// Lets check cost codes
+$q = new DBQuery;
+$q->addTable('billingcode');
+$q->addQuery('billingcode_id, billingcode_name');
+$q->addWhere('billingcode_status=0');
+
+$task_log_costcodes[0]=$AppUI->_('None');
+$ptrc = $q->exec();
+echo db_error();
+$nums = 0;
+if ($ptrc)
+	$nums=db_num_rows($ptrc);
+for ($x=0; $x < $nums; $x++) {
+        $row = db_fetch_assoc( $ptrc );
+        $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
+}
 
 // Pull data
 $sql = "SELECT *
@@ -40,7 +57,7 @@ $sql = "SELECT company_id, company_name
         FROM companies
         WHERE "
      . getCompanyPerms("company_id")
-     . "ORDER BY company_name";
+     . " ORDER BY company_name";
 
 $companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
 
@@ -184,9 +201,8 @@ function updateStatus(obj){
 $ua = $_SERVER['HTTP_USER_AGENT'];
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
 
-
 print "\nvar projects = new Array(";
-print isset($projects) ? implode(",\n", $projects ) : "";
+print count($projects)>1 ? implode(",\n", $projects ) : "";
 print ")"; 
 ?>
 
@@ -242,6 +258,70 @@ function selectList( listName, target ) {
   }
 }
 </script>
+
+<!-- TIMER RELATED SCRIPTS -->
+<script language="JavaScript">
+	// please keep these lines on when you copy the source
+	// made by: Nicolas - http://www.javascript-page.com
+	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
+	
+	var timerID       = 0;
+	var tStart        = null;
+    var total_minutes = -1;
+	
+	function UpdateTimer() {
+	   if(timerID) {
+	      clearTimeout(timerID);
+	      clockID  = 0;
+	   }
+	
+     // One minute has passed
+     total_minutes = total_minutes+1;
+	   
+	   document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" <?php echo $AppUI->_('minutes elapsed'); ?> )";
+
+	   // Lets round hours to two decimals
+	   var total_hours   = Math.round( (total_minutes / 60) * 100) / 100;
+	   document.frmHelpDeskItem.task_log_hours.value = total_hours;
+	   
+	   timerID = setTimeout("UpdateTimer()", 60000);
+	}
+	
+	function timerStart() {
+		if(!timerID){ // this means that it needs to be started
+			document.frmHelpDeskItem.timerStartStopButton.value = "<?php echo $AppUI->_('Stop');?>";
+      total_minutes = Math.round(document.frmHelpDeskItem.task_log_hours.value*60) - 1;
+      UpdateTimer();
+		} else { // timer must be stoped
+			document.frmHelpDeskItem.timerStartStopButton.value = "<?php echo $AppUI->_('Start');?>";
+			document.getElementById("timerStatus").innerHTML = "";
+			timerStop();
+		}
+	}
+	
+	function timerStop() {
+	   if(timerID) {
+	      clearTimeout(timerID);
+	      timerID  = 0;
+        total_minutes = total_minutes-1;
+	   }
+	}
+	
+	function timerReset() {
+		document.frmHelpDeskItem.task_log_hours.value = "0.00";
+    total_minutes = -1;
+	}
+	
+  function setCalendar( idate, fdate ) {
+    fld_date = eval( 'document.frmHelpDeskItem.task_' + calendarField );
+    fld_fdate = eval( 'document.frmHelpDeskItem.' + calendarField );
+    fld_date.value = idate; 
+    fld_fdate.value = fdate;
+  }
+  
+</script>
+<!-- END OF TIMER RELATED SCRIPTS -->
+
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
   <form name="frmHelpDeskItem" action="?m=helpdesk" method="post">
   <input type="hidden" name="dosql" value="do_item_aed" />
@@ -380,16 +460,18 @@ function selectList( listName, target ) {
 <table cellspacing="0" cellpadding="0" border="0">
 <tr>
   <td align="left"><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
+  <td>&nbsp;&nbsp;</td>
   <td><label for="watchers"><?=$AppUI->_('Watchers')?>:</label></td>
 </tr>
 
 <tr>
   <td valign="top">
-    <textarea id="summary" cols="75" rows="15" class="textarea"
+    <textarea id="summary" cols="75" rows="12" class="textarea"
               name="item_summary"><?=@$hditem["item_summary"]?></textarea>
   </td>
-      <td valign="top">
-      <select name="watchers_select" size="17" class="text" id="watchers_select" multiple="multiple"><?php
+  <td>&nbsp;&nbsp;</td>
+      <td>
+      <select name="watchers_select" size="14" class="text" id="watchers_select" multiple="multiple"><?php
 	      foreach($users as $id => $name){
 		echo "<option value=\"{$id}\"";
 		if(array_key_exists($id,$watchers))
@@ -400,6 +482,24 @@ function selectList( listName, target ) {
       <input type="hidden" name="watchers" value="" /></td>
 </tr></table>
 </td></tr>
+<tr>
+	<td>
+		<?php echo $AppUI->_('Hours Worked');?><br>
+		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
+		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
+		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
+		<span id='timerStatus'></span>
+	</td>
+</tr>
+<tr>
+	<td>
+		<?php echo $AppUI->_('Cost Code');?>:<br>
+<?php
+		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
+?>
+		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
+	</td>
+</tr>
 
 <tr>
   <td colspan="2">
