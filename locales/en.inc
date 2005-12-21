@@ -106,6 +106,7 @@
 "helpdeskItemsPerPage"=>"Number of items displayed per page on the list view",
 "helpdeskLogsPerPage"=>"Number of status log items displayed per page in item view",
 "helpdeskMinLevel"=>"Minimum user level to edit other users\' logs",
+"helpdeskMinRepLevel"=>"Minimum user level to view reports",
 "helpdeskPagesPerSide"=>"Number of pages to display on each side of current page",
 "helpdeskSignature"=>"Sincerely,
 
