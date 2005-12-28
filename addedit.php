@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.67 2005/09/13 17:07:21 theideaman Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.68 2005/11/10 22:11:02 pedroix Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -110,17 +110,17 @@ function submitIt() {
   var msg = '';
 
   if ( f.item_title.value.length < 1 ) {
-    msg += "\n<?=$AppUI->_('Title')?>";
+    msg += "\n<?php echo $AppUI->_('Title'); ?>";
     f.item_title.focus();
   }
 
   if( f.item_requestor.value.length < 1 ) {
-    msg += "\n<?=$AppUI->_('Requestor')?>";
+    msg += "\n<?php echo $AppUI->_('Requestor'); ?>";
     f.item_requestor.focus();
   }
 
   if( f.item_summary.value.length < 1 ) {
-    msg += "\n<?=$AppUI->_('Summary')?>";
+    msg += "\n<?php echo $AppUI->_('Summary'); ?>";
     f.item_summary.focus();
   }
 
@@ -137,7 +137,7 @@ function submitIt() {
   }
   
   if( msg.length > 0) {
-    alert('<?php echo $AppUI->_('helpdeskSubmitError', UI_OUTPUT_JS); ?>:' + msg)
+    alert('<?php echo $AppUI->_('helpdeskSubmitError', UI_OUTPUT_JS); ?>:' + msg);
   } else {
     f.submit();
   }
@@ -326,75 +326,75 @@ function selectList( listName, target ) {
   <form name="frmHelpDeskItem" action="?m=helpdesk" method="post">
   <input type="hidden" name="dosql" value="do_item_aed" />
   <input name="del" type="hidden" value="0" />
-  <input type="hidden" name="item_id" value="<?=$item_id?>" />
-  <input type="hidden" name="item_requestor_type" value="<?=@$hditem["item_requestor_type"]?>" />
-  <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
-  <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
-  <?php if(!$item_id){ ?>
-  <input type="hidden" name="item_created_by" value="<?=$AppUI->user_id?>" />
-  <?php } ?>
+  <input type="hidden" name="item_id" value="<?php echo $item_id; ?>" />
+  <input type="hidden" name="item_requestor_type" value="<?php echo @$hditem["item_requestor_type"]; ?>" />
+  <input type="hidden" name="item_requestor_id" value="<?php echo @$hditem["item_requestor_id"]; ?>" />
+  <input type="hidden" name="item_created" value="<?php echo @$hditem["item_created"]; ?>" />
+  <?php if (!$item_id): ?>
+  <input type="hidden" name="item_created_by" value="<?php echo $AppUI->user_id; ?>" />
+  <?php endif; ?>
 
   <tr>
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
-    <?php if ($item_id) { ?>
+    <?php if ($item_id): ?>
     <tr>
-      <td align="right" nowrap><?=$AppUI->_('Date Created')?>:</td>
-      <td width="100%"><strong><?=$tc?></strong></td>
+      <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Date Created'); ?>:</td>
+      <td width="100%"><strong><?php echo $tc; ?></strong></td>
     </tr>
-    <?php } ?>
+    <?php endif; ?>
     <tr>
-      <td align="right"><font color="red"><label for="it">* <?=$AppUI->_('Title')?>:</label></font></td>
+      <td align="right"><font color="red"><label for="it">* <?php echo $AppUI->_('Title'); ?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
-                              value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
+                              value="<?php echo @$hditem["item_title"]; ?>" maxlength="64" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><font color="red"><label for="ir">* <?=$AppUI->_('Requestor');?>:</label></font></td>
-      <td valign="top" nowrap>
+      <td align="right" nowrap="nowrap"><font color="red"><label for="ir">* <?php echo $AppUI->_('Requestor'); ?>:</label></font></td>
+      <td valign="top" nowrap="nowrap">
         <input type="text" class="text" id="ir" name="item_requestor"
-        value="<?=@$hditem["item_requestor"]?>" maxlength="64"
+        value="<?php echo @$hditem["item_requestor"]; ?>" maxlength="64"
         onChange="if (this.value!=oldRequestor) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
                     oldRequestor = this.value;
                   }" />
-      <!-- <input type="button" class="button" value="<?=$AppUI->_('Users')?>" onclick="popUserDialog();" /> -->
-      <input type="button" class="button" value="<?=$AppUI->_('Contacts')?>" onclick="popContactDialog();" />
+      <!-- <input type="button" class="button" value="<?php echo $AppUI->_('Users'); ?>" onclick="popUserDialog();" /> -->
+      <input type="button" class="button" value="<?php echo $AppUI->_('Contacts'); ?>" onclick="popContactDialog();" />
       </td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ire">&dagger; <?=$AppUI->_('Requestor E-mail');?>:</label></td>
+      <td align="right" nowrap="nowrap"><label for="ire">&dagger; <?php echo $AppUI->_('Requestor E-mail'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="ire"
                               name="item_requestor_email"
-                              value="<?=@$hditem["item_requestor_email"]?>"
+                              value="<?php echo @$hditem["item_requestor_email"]; ?>"
                               maxlength="64" /></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="irp">&dagger; <?=$AppUI->_('Requestor Phone');?>:</label></td>
+      <td align="right" nowrap="nowrap"><label for="irp">&dagger; <?php echo $AppUI->_('Requestor Phone'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="irp"
                               name="item_requestor_phone"
-                              value="<?=@$hditem["item_requestor_phone"]?>"
+                              value="<?php echo @$hditem["item_requestor_phone"]; ?>"
                               maxlength="30" /></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
-      <td><?=arraySelect( $allowedCompanies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
-                          @$hditem["item_company_id"] )?></td>
+      <td align="right"><label for="c"><?php echo $AppUI->_('Company'); ?>:</label></td>
+      <td><?php echo arraySelect( $allowedCompanies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+                          @$hditem["item_company_id"] ); ?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="p"><?=$AppUI->_('Project')?>:</label></td>
+      <td align="right"><label for="p"><?php echo $AppUI->_('Project'); ?>:</label></td>
       <td><select name="item_project_id" size="1" class="text" id="p"></select></td>
     </tr>
 
     <tr>
-      <td align="right" valign="top"><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
-      <td><?=arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
-                          @$hditem["item_assigned_to"] )?>
-        <br/><input type="checkbox" name="item_notify" value="1" id="in"
+      <td align="right" valign="top"><label for="iat"><?php echo $AppUI->_('Assigned To'); ?>:</label></td>
+      <td><?php echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+                          @$hditem["item_assigned_to"] ); ?>
+        <br /><input type="checkbox" name="item_notify" value="1" id="in"
         <?php 
           if (!$item_id) {
             print $HELPDESK_CONFIG['default_notify_by_email'] ? "checked" : "";
@@ -403,7 +403,7 @@ function selectList( listName, target ) {
           }
         ?>
         />
-        <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label></td>
+        <label for="in"><?php echo $AppUI->_( 'Notify by e-mail' ); ?></label></td>
     </tr>
 
 
@@ -412,45 +412,45 @@ function selectList( listName, target ) {
   <td valign="top" width="50%">
     <table cellspacing="0" cellpadding="2" border="0">
     <tr>
-      <td align="right" nowrap><label for="ict"><?=$AppUI->_('Call Type')?>:</label></td>
-      <td><?=arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="ict"',
-                          @$hditem["item_calltype"], true )?></td>
+      <td align="right" nowrap="nowrap"><label for="ict"><?php echo $AppUI->_('Call Type'); ?>:</label></td>
+      <td><?php echo arraySelect( $ict, 'item_calltype', 'size="1" class="text" id="ict"',
+                          @$hditem["item_calltype"], true ); ?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ics"><?=$AppUI->_('Call Source')?>:</label></td>
-      <td><?=arraySelect( $ics, 'item_source', 'size="1" class="text" id="ics"',
-                          @$hditem["item_source"], true)?></td>
+      <td align="right" nowrap="nowrap"><label for="ics"><?php echo $AppUI->_('Call Source'); ?>:</label></td>
+      <td><?php echo arraySelect( $ics, 'item_source', 'size="1" class="text" id="ics"',
+                          @$hditem["item_source"], true); ?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="ist"><?=$AppUI->_('Status')?>:</label></td>
-      <td><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="ist"',
-                          @$hditem["item_status"], true )?></td>
+      <td align="right"><label for="ist"><?php echo $AppUI->_('Status'); ?>:</label></td>
+      <td><?php echo arraySelect( $ist, 'item_status', 'size="1" class="text" id="ist"',
+                          @$hditem["item_status"], true ); ?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="ipr"><?=$AppUI->_('Priority')?>:</label></td>
-      <td><?=arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="ipr"',
-                          @$hditem["item_priority"], true )?></td>
+      <td align="right"><label for="ipr"><?php echo $AppUI->_('Priority'); ?>:</label></td>
+      <td><?php echo arraySelect( $ipr, 'item_priority', 'size="1" class="text" id="ipr"',
+                          @$hditem["item_priority"], true ); ?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="isv"><?=$AppUI->_('Severity')?>:</label></td>
-      <td><?=arraySelect( $isv, 'item_severity', 'size="1" class="text" id="isv"',
-                          @$hditem["item_severity"], true )?></td>
+      <td align="right"><label for="isv"><?php echo $AppUI->_('Severity'); ?>:</label></td>
+      <td><?php echo arraySelect( $isv, 'item_severity', 'size="1" class="text" id="isv"',
+                          @$hditem["item_severity"], true ); ?></td>
     </tr>
 
     <tr>
-      <td align="right" nowrap><label for="ios"><?=$AppUI->_('Operating System')?>:</label></td>
-      <td><?=arraySelect( $ios, 'item_os', 'size="1" class="text" id="ios"',
-                          @$hditem["item_os"], true)?></td>
+      <td align="right" nowrap="nowrap"><label for="ios"><?php echo $AppUI->_('Operating System'); ?>:</label></td>
+      <td><?php echo arraySelect( $ios, 'item_os', 'size="1" class="text" id="ios"',
+                          @$hditem["item_os"], true); ?></td>
     </tr>
 
     <tr>
-      <td align="right"><label for="iap"><?=$AppUI->_('Application')?>:</label></td>
-      <td><?=arraySelect( $iap, 'item_application', 'size="1" class="text" id="iap"',
-                          @$hditem["item_application"], true)?></td>
+      <td align="right"><label for="iap"><?php echo $AppUI->_('Application'); ?>:</label></td>
+      <td><?php echo arraySelect( $iap, 'item_application', 'size="1" class="text" id="iap"',
+                          @$hditem["item_application"], true); ?></td>
     </tr>
     </table>
   </td>
@@ -459,15 +459,15 @@ function selectList( listName, target ) {
 <tr><td colspan="2">
 <table cellspacing="0" cellpadding="0" border="0">
 <tr>
-  <td align="left"><font color="red"><label for="summary">* <?=$AppUI->_('Summary')?>:</label></font></td>
+  <td align="left"><font color="red"><label for="summary">* <?php echo $AppUI->_('Summary'); ?>:</label></font></td>
   <td>&nbsp;&nbsp;</td>
-  <td><label for="watchers"><?=$AppUI->_('Watchers')?>:</label></td>
+  <td><label for="watchers"><?php echo $AppUI->_('Watchers'); ?>:</label></td>
 </tr>
 
 <tr>
   <td valign="top">
     <textarea id="summary" cols="75" rows="12" class="textarea"
-              name="item_summary"><?=@$hditem["item_summary"]?></textarea>
+              name="item_summary"><?php echo @$hditem["item_summary"]; ?></textarea>
   </td>
   <td>&nbsp;&nbsp;</td>
       <td>
@@ -485,15 +485,15 @@ function selectList( listName, target ) {
 <tr>
 	<td>
 		<?php echo $AppUI->_('Hours Worked');?><br>
-		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
-		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
+		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours; ?>" maxlength="8" size="6" /> 
+		<input type='button' class="button" value='<?php echo $AppUI->_('Start'); ?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
 		<span id='timerStatus'></span>
 	</td>
 </tr>
 <tr>
 	<td>
-		<?php echo $AppUI->_('Cost Code');?>:<br>
+		<?php echo $AppUI->_('Cost Code');?>:<br />
 <?php
 		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
 ?>
@@ -503,18 +503,18 @@ function selectList( listName, target ) {
 
 <tr>
   <td colspan="2">
-  <br>
+  <br />
   <small>
-    <font color="red">* <?=$AppUI->_('Required field')?></font><br>
-    &dagger; <?=$AppUI->_('helpdeskFieldMessage')?>
+    <font color="red">* <?php echo $AppUI->_('Required field'); ?></font><br />
+    &dagger; <?php echo $AppUI->_('helpdeskFieldMessage'); ?>
   </small>
-  <br><br>
+  <br /><br />
   </td>
 </tr>
 
 <tr>
-  <td><input type="button" value="<?=$AppUI->_('back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
-  <td align="right"><input type="button" value="<?=$AppUI->_('submit')?>" class="button" onClick="submitIt()" /></td>
+  <td><input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button" onClick="javascript:history.back(-1);" /></td>
+  <td align="right"><input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button" onClick="submitIt()" /></td>
 </tr>
 
 </form>
@@ -539,7 +539,7 @@ function selectList( listName, target ) {
 ?>
 
 <script language="javascript">
-selectList('item_company_id',<?=$target?>);
-changeList('item_project_id', projects, <?=$target?>);
-selectList('item_project_id',<?=$select?>);
+selectList('item_company_id',<?php echo $target?>);
+changeList('item_project_id', projects, <?php echo $target?>);
+selectList('item_project_id',<?php echo $select?>);
 </script>
