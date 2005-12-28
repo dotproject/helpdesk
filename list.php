@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.76 2005/10/07 16:08:51 pedroix Exp $ */
+<?php /* HELPDESK $Id: list.php,v 1.77 2005/11/10 22:00:54 pedroix Exp $ */
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
 $allowedCompanies = getAllowedCompanies();
@@ -363,8 +363,6 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 
 $where = getItemPerms();
 
-
-
 if (count( $tarr )) {
 	$where .=  'AND ('.implode("\n AND ", $tarr).') ';
 }
@@ -385,9 +383,9 @@ $sql = "SELECT hi.*,
 // Do custom order by if needed, default at the end
 if ($orderby == "project_name") {
   $sql .= "p.project_name";
-} else if ($orderby == "item_assigned_to") {
+} elseif ($orderby == "item_assigned_to") {
   $sql .= "assigned_fullname";
-} else if ($orderby == "item_updated") {
+} elseif ($orderby == "item_updated") {
   $sql .= "hi.item_updated";
 } else {
   $sql .= "hi.$orderby";
