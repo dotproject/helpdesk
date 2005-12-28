@@ -1,4 +1,4 @@
-<?php /* $Id: vw_log_update.php,v 1.10 2005/03/21 18:14:58 zibas Exp $ */
+<?php /* $Id: vw_log_update.php,v 1.11 2005/11/10 21:57:59 pedroix Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
 
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
@@ -90,11 +90,11 @@ for ($x=0; $x < $nums; $x++) {
 	
 	function timerStart() {
 		if(!timerID){ // this means that it needs to be started
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop');?>";
+			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop'); ?>";
       total_minutes = Math.round(document.editFrm.task_log_hours.value*60) - 1;
       UpdateTimer();
 		} else { // timer must be stoped
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start');?>";
+			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start'); ?>";
 			document.getElementById("timerStatus").innerHTML = "";
 			timerStop();
 		}
@@ -141,65 +141,65 @@ for ($x=0; $x < $nums; $x++) {
 
 
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
-<form name="editFrm" action="?m=helpdesk&a=view&item_id=<?php echo $item_id;?>" method="post">
-	<input type="hidden" name="uniqueid" value="<?php echo uniqid("");?>" />
+<form name="editFrm" action="?m=helpdesk&a=view&item_id=<?php echo $item_id; ?>" method="post">
+	<input type="hidden" name="uniqueid" value="<?php echo uniqid(""); ?>" />
 	<input type="hidden" name="dosql" value="do_item_aed" />
-	<input type="hidden" name="item_id" value="<?php echo $item_id;?>" />
+	<input type="hidden" name="item_id" value="<?php echo $item_id; ?>" />
 	<input type="hidden" name="task_log" value="1" />
-	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id;?>" />
-	<input type="hidden" name="task_log_help_desk_id" value="<?php echo $item_id;?>" />
-	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id;?>" />
-	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name;?>" />
+	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id; ?>" />
+	<input type="hidden" name="task_log_help_desk_id" value="<?php echo $item_id; ?>" />
+	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id; ?>" />
+	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name; ?>" />
 <tr>
 	<td nowrap="nowrap">
-		<?php echo $AppUI->_('Date');?><br>
+		<?php echo $AppUI->_('Date'); ?><br />
 	<!-- patch by rowan  bug #890841 against v1.0.2-1   email: bitter at sourceforge dot net -->
-		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL );?>">
+		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL ); ?>">
 	<!-- end patch #890841 -->
-		<input type="text" name="log_date" value="<?php echo $log_date->format( $df );?>" class="text" disabled="disabled">
+		<input type="text" name="log_date" value="<?php echo $log_date->format( $df ); ?>" class="text" disabled="disabled">
 		<a href="#" onClick="popCalendar('log_date')">
-			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
+			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
 	</td>
-	<td><?php echo $AppUI->_('Summary');?>:<br>
-		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name;?>" maxlength="255" size="30" />
+	<td><?php echo $AppUI->_('Summary'); ?>:<br />
+		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name; ?>" maxlength="255" size="30" />
 	</td>
 </tr>
 <tr>
-      <td><?=$AppUI->_('Status')?>:<br><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"], true )?></td>
+      <td><?=$AppUI->_('Status')?>:<br /><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"], true )?></td>
 	<td rowspan="3">
-	<?php echo $AppUI->_('Description');?>:<br>
-		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description;?></textarea>
+	<?php echo $AppUI->_('Description'); ?>:<br />
+		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description; ?></textarea>
 	</td>
 </tr>
 <tr>
 	<td>
-		<?php echo $AppUI->_('Hours Worked');?><br>
-		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
-		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
+		<?php echo $AppUI->_('Hours Worked'); ?><br />
+		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours; ?>" maxlength="8" size="6" /> 
+		<input type='button' class="button" value='<?php echo $AppUI->_('Start'); ?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
 		<span id='timerStatus'></span>
 	</td>
 </tr>
 <tr>
 	<td>
-		<?php echo $AppUI->_('Cost Code');?>:<br>
+		<?php echo $AppUI->_('Cost Code'); ?>:<br />
 <?php
 		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
 ?>
-		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode; ?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>
 	<td>
-		<?php echo $AppUI->_('Assigned to');?>:<br>
-      <?=arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
-                          @$hditem["item_assigned_to"] )?>
+		<?php echo $AppUI->_('Assigned to'); ?>:<br />
+      <?php echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+                          @$hditem["item_assigned_to"] ); ?>
 	</td>
 </tr>
 <tr>
 	<td colspan="2" valign="bottom" align="right">
-		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log');?>" onclick="" />
+		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log'); ?>" onclick="" />
 	</td>
 </tr>
 
