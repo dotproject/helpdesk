@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.21 2005/09/08 02:02:33 pedroix Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.22 2005/10/07 16:09:30 pedroix Exp $*/
 
   /*
    * opened = 0
@@ -73,15 +73,15 @@ function vw_idx_handler ($type) {
   ?>
   <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
   <tr>
-    <th><?=$AppUI->_('Number')?></th>
-    <th><?=$AppUI->_('Requestor')?></th>
-    <th><?=$AppUI->_('Title')?></th>
-    <th nowrap="nowrap"><?=$AppUI->_('Assigned To')?></th>
-    <th><?=$AppUI->_('Status')?></th>
-    <th><?=$AppUI->_('Priority')?></th>
-    <th><?=$AppUI->_('Updated')?></th>
-    <th><?=$AppUI->_('Project')?></th>
-    <th nowrap="nowrap"><?=$date_field_title?></th>
+    <th><?php echo $AppUI->_('Number'); ?></th>
+    <th><?php echo $AppUI->_('Requestor'); ?></th>
+    <th><?php echo $AppUI->_('Title'); ?></th>
+    <th nowrap="nowrap"><?php echo $AppUI->_('Assigned To'); ?></th>
+    <th><?php echo $AppUI->_('Status'); ?></th>
+    <th><?php echo $AppUI->_('Priority'); ?></th>
+    <th><?php echo $AppUI->_('Updated'); ?></th>
+    <th><?php echo $AppUI->_('Project'); ?></th>
+    <th nowrap="nowrap"><?php echo $date_field_title?></th>
   </tr>
   <?php
   foreach ($items as $row) {
@@ -104,8 +104,8 @@ function vw_idx_handler ($type) {
 
     ?>
     <tr>
-      <td nowrap="nowrap"><b><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_id']?></a></b>
-          <?=dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')?></td>
+      <td nowrap="nowrap"><b><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo $row['item_id']?></a></b>
+          <?php echo dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, ''); ?></td>
       <td nowrap=\"nowrap\">
       <?php
       if ($row["item_requestor_email"]) {
@@ -115,7 +115,7 @@ function vw_idx_handler ($type) {
       }
       ?>
       </td>
-      <td width="80%"><a href="?m=helpdesk&a=view&item_id=<?=$row['item_id']?>"><?=$row['item_title']?></a></td>
+      <td width="80%"><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo $row['item_title']?></a></td>
       <td align="center" nowrap="nowrap">
       <?php
       if ($row['assigned_email']) {
@@ -125,12 +125,12 @@ function vw_idx_handler ($type) {
       }
       ?>
       </td>
-      <td align="center" nowrap><?=$AppUI->_($ist[@$row["item_status"]])?></td>
-      <td align="center" nowrap><?=$AppUI->_($ipr[@$row["item_priority"]])?></td>
-      <td align="center" nowrap><?=@$sd?></td>
-      <td align="center" style="background-color: #<?=$row['project_color_identifier']?>;" nowrap>
+      <td align="center" nowrap><?php echo $AppUI->_($ist[@$row["item_status"]]); ?></td>
+      <td align="center" nowrap><?php echo $AppUI->_($ipr[@$row["item_priority"]]); ?></td>
+      <td align="center" nowrap><?php echo @$sd?></td>
+      <td align="center" style="background-color: #<?php echo $row['project_color_identifier']?>;" nowrap>
       <?php if ($row['project_id']) { ?>
-        <a href="./index.php?m=projects&a=view&project_id=<?=$row['project_id']?>" style="color: <?= bestColor( $row["project_color_identifier"] ) ?>;"><?=$row['project_name']?></a>
+        <a href="./index.php?m=projects&a=view&project_id=<?php echo $row['project_id']?>" style="color: <?php echo  bestColor( $row["project_color_identifier"] ) ?>;"><?php echo $row['project_name']?></a>
       <?php } else { ?>
         -
       <?php } ?>
