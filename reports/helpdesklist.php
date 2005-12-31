@@ -1,9 +1,9 @@
-<?php /* PROJECTS $Id: helpdesklist.php,v 1.7 2005/05/08 18:29:00 jmedeiros Exp $ */
+<?php /* PROJECTS $Id: helpdesklist.php,v 1.1 2005/11/10 22:13:22 pedroix Exp $ */
 /**
 * Generates a report of the helpdesk logs for given dates including task logs
 * Based on the original report tasklist.php by jcgonz
 */
-error_reporting( E_ALL );
+//error_reporting( E_ALL );
 $do_report = dPgetParam( $_POST, "do_report", 0 );
 $log_all = dPgetParam( $_POST, 'log_all', 0 );
 $log_pdf = dPgetParam( $_POST, 'log_pdf', 0 );
@@ -79,7 +79,7 @@ function setCalendar( idate, fdate ) {
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 
-<form name="editFrm" action="index.php?m=projects&a=reports" method="post">
+<form name="editFrm" action="index.php?m=helpdesk&a=reports" method="post">
 <input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
 <input type="hidden" name="report_type" value="<?php echo $report_type;?>" />
 
@@ -147,11 +147,15 @@ if ($do_report) {
 	.	",        users                ru"                                               . "\n"
 	.	",        contacts             rc"                                               . "\n"
 	.	",        users                au"                                               . "\n"
-	.	",        contacts             ac"                                               . "\n"
-	.	"WHERE   (hi.item_project_id = $project_id"                                      . "\n"
+	.	",        contacts             ac"                                               . "\n";
+if ($project_id) {
+	$sql.="WHERE    (hi.item_project_id = $project_id"                                     . "\n"
 	.	"OR       hi.item_project_id = hi.item_project_id)"                              . "\n"
-	.	"AND      ru.user_id         = hi.item_requestor_id"                             . "\n"
-	.	"AND      rc.contact_id      = ru.user_contact"                                  . "\n"
+	.     "AND      ru.user_id         = hi.item_requestor_id"                             . "\n";
+} else {
+	$sql.="WHERE    ru.user_id         = hi.item_requestor_id"                             . "\n";
+}
+	$sql.="AND      rc.contact_id      = ru.user_contact"                                  . "\n"
 	.	"AND      au.user_id         = hi.item_assigned_to"                              . "\n"
 	.	"AND      ac.contact_id      = au.user_contact";
 	if (!$log_all) {
