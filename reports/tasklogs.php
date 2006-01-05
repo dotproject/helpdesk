@@ -1,11 +1,11 @@
-<?php /* PROJECTS $Id: tasklogs.php,v 1.12 2004/11/12 14:43:04 cyberhorse Exp $ */
+<?php /* PROJECTS $Id: tasklogs.php,v 1.1 2005/12/31 13:15:12 pedroix Exp $ */
 /**
 * Generates a report of the task logs for given dates
 */
 //error_reporting( E_ALL );
 $perms =& $AppUI->acl();
-if (! $perms->checkModule('tasks', 'view'))
-	redirect('m=public&a=access_denied');
+if (! $perms->checkModule('task_log', 'view'))
+	$AppUI->redirect('m=public&a=access_denied');
 $do_report = dPgetParam( $_GET, "do_report", 0 );
 $log_all = dPgetParam( $_GET, 'log_all', 0 );
 $log_pdf = dPgetParam( $_GET, 'log_pdf', 0 );
