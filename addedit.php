@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.68 2005/11/10 22:11:02 pedroix Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.69 2005/12/28 18:50:04 theideaman Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
@@ -202,7 +202,7 @@ $ua = $_SERVER['HTTP_USER_AGENT'];
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
 
 print "\nvar projects = new Array(";
-print count($projects)>1 ? implode(",\n", $projects ) : "";
+print count($projects)>0 ? implode(",\n", $projects ) : "";
 print ")"; 
 ?>
 
