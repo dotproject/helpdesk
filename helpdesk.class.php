@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.64 2005/10/07 16:08:32 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.65 2005/11/10 22:06:24 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 include_once("helpdesk.functions.php");
@@ -216,11 +216,7 @@ class CHelpDeskItem extends CDpObject {
 	$q->addQuery('c.contact_email');
 	$q->addJoin('users','u','hdw.user_id = u.user_id');
 	$q->addJoin('contacts','c','u.user_contact = c.contact_id');
-	if($this->item_notify) {
-		$q->addWhere('hdw.item_id='.$this->item_id. ' OR u.user_id='.$this->item_assigned_to);
-	} else {
-		$q->addWhere('hdw.item_id='.$this->item_id);
-	}
+	$q->addWhere('hdw.item_id='.$this->item_id. ' AND u.user_id<>'.$this->item_assigned_to);
 /*    $sql = "SELECT contact_email
             FROM 
             	helpdesk_item_watchers
@@ -239,6 +235,21 @@ class CHelpDeskItem extends CDpObject {
 	//add the requestor email to the list of mailing people
     $email_list[] = $this->item_requestor_email;
 
+    //add the assigned user email to the list of mailing people
+    $assigned_user_email = array();
+    $q = new DBQuery();
+    $q->addTable('users','u');
+    $q->addQuery('c.contact_email');
+    $q->addJoin('contacts','c','u.user_contact = c.contact_id');
+    $q->addWhere('u.user_id='.$this->item_assigned_to);
+    $assigned_user_email = $q->loadHashList();
+    $assigned_user_email = array_keys($assigned_user_email);
+    foreach ($assigned_user_email as $user_email) {
+            if (trim($user_email)) {
+                  $email_list[] = $user_email;
+            }
+    }
+    $q->clear();
     //echo $sql."\n";
     //if there's no one in the list, skip the rest.
     if(count($email_list)<=0)
