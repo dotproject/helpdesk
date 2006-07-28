@@ -1,54 +1,55 @@
-<?php /* HELPDESK $Id: addedit.php,v 1.69 2005/12/28 18:50:04 theideaman Exp $ */
+<?php /* HELPDESK $Id: addedit.php,v 1.70 2006/01/09 14:48:31 pedroix Exp $ */
 
 $item_id = dPgetParam($_GET, 'item_id', 0);
 
-$allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
+$allowedCompanies = arrayMerge(array(0 => ''), getAllowedCompanies());
 
 $projects = getAllowedProjectsForJavascript();
 
 // Lets check cost codes
-$q = new DBQuery;
+$q = new DBQuery();
 $q->addTable('billingcode');
 $q->addQuery('billingcode_id, billingcode_name');
-$q->addWhere('billingcode_status=0');
+$q->addWhere('billingcode_status = 0');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
 echo db_error();
 $nums = 0;
-if ($ptrc)
+if ($ptrc) {
 	$nums=db_num_rows($ptrc);
+}
 for ($x=0; $x < $nums; $x++) {
-        $row = db_fetch_assoc( $ptrc );
-        $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
+	$row = db_fetch_assoc( $ptrc );
+	$task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
 }
 
 // Pull data
 $sql = "SELECT *
         FROM helpdesk_items
-        WHERE item_id = '$item_id'";
+        WHERE item_id = '{$item_id}'";
 
-db_loadHash( $sql, $hditem );
+db_loadHash($sql, $hditem);
 
 // Check permissions for this record
 if ($item_id) {
-  // Already existing item
-  $canEdit = $perms->checkModuleItem($m, 'edit', $item_id);
+	// Already existing item
+	$canEdit = $perms->checkModuleItem($m, 'edit', $item_id);
 } else {
-  $canEdit = $perms->checkModule($m, 'add');
+	$canEdit = $perms->checkModule($m, 'add');
 }
 
-if(!$canEdit){
-  $AppUI->redirect( "m=public&a=access_denied" );
+if (!$canEdit) {
+	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
-if(!@$hditem["item_assigned_to"] && $HELPDESK_CONFIG['default_assigned_to_current_user']){
-  @$hditem["item_assigned_to"] = $AppUI->user_id;
-  @$hditem["item_status"] = 1;
+if (!@$hditem["item_assigned_to"] && $HELPDESK_CONFIG['default_assigned_to_current_user']) {
+	@$hditem["item_assigned_to"] = $AppUI->user_id;
+	@$hditem["item_status"] = 1;
 }
 
-if(!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_company']){
-  @$hditem["item_company_id"] = $AppUI->user_company;
+if (!@$hditem["item_company_id"] && $HELPDESK_CONFIG['default_company_current_company']) {
+	@$hditem["item_company_id"] = $AppUI->user_company;
 }
 
 $users = getAllowedUsers();
@@ -59,7 +60,7 @@ $sql = "SELECT company_id, company_name
      . getCompanyPerms("company_id")
      . " ORDER BY company_name";
 
-$companies = arrayMerge( array( 0 => '' ), db_loadHashList( $sql ) );
+$companies = arrayMerge(array(0 => ''), db_loadHashList($sql));
 
 $sql = "
 	SELECT 
@@ -74,37 +75,38 @@ $sql = "
         	item_id = ".$item_id."
         ORDER BY contact_last_name, contact_first_name";
 
-$watchers = db_loadHashList( $sql );
+$watchers = db_loadHashList($sql);
 
 
 // Setup the title block
 $ttl = $item_id ? 'Editing Help Desk Item' : 'Adding Help Desk Item';
 
-$titleBlock = new CTitleBlock( $ttl, 'helpdesk.png', $m, "$m.$a" );
-$titleBlock->addCrumb( "?m=helpdesk", 'home' );
-$titleBlock->addCrumb( "?m=helpdesk&a=list", 'list');
+$titleBlock = new CTitleBlock($ttl, 'helpdesk.png', $m, "$m.$a");
+$titleBlock->addCrumb("?m=helpdesk", 'home');
+$titleBlock->addCrumb("?m=helpdesk&a=list", 'list');
 
 if ($item_id) {
-  $titleBlock->addCrumb( "?m=helpdesk&a=view&item_id=$item_id", 'view this item' );
+	$titleBlock->addCrumb("?m=helpdesk&a=view&item_id={$item_id}", 'view this item');
 }
 
 $titleBlock->show();
 
-if ($item_id) { 
-  $df = $AppUI->getPref('SHDATEFORMAT');
-  $tf = $AppUI->getPref('TIMEFORMAT');
-  $item_date = new CDate( $hditem["item_created"] );
-  $tc = $item_date->format( "$df $tf" );
+if ($item_id) {
+	$df = $AppUI->getPref('SHDATEFORMAT');
+	$tf = $AppUI->getPref('TIMEFORMAT');
+	$item_date = new CDate($hditem["item_created"]);
+	$tc = $item_date->format("$df $tf");
 } else {
 //  $hditem["item_created"] = db_unix2dateTime(time());
 //  $hditem["item_created"] = date('Y-m-d H:i:s'); 
-  $item_date = new CDate();
-  $item_date = $item_date->format( FMT_DATETIME_MYSQL );
-  $hditem["item_created"] = $item_date;
+	$item_date = new CDate();
+	$item_date = $item_date->format(FMT_DATETIME_MYSQL);
+	$hditem["item_created"] = $item_date;
 }
 
 ?>
-<script language="javascript">
+<script language="javascript" type="text/javascript">
+<!--
 function submitIt() {
   var f   = document.frmHelpDeskItem;
   var msg = '';
@@ -209,23 +211,23 @@ print ")";
 // Dynamic project list handling functions
 
 function emptyList( list ) {
-<?php if ($isMoz) { ?>
+<?php if ($isMoz): ?>
   list.options.length = 0;
-<?php } else { ?>
+<?php else: ?>
   while( list.options.length > 0 )
     list.options.remove(0);
-<?php } ?>
+<?php endif; ?>
 }
 
 function addToList( list, text, value ) {
-<?php if ($isMoz) { ?>
+<?php if ($isMoz): ?>
   list.options[list.options.length] = new Option(text, value);
-<?php } else { ?>
+<?php else: ?>
   var newOption = document.createElement("OPTION");
   newOption.text = text;
   newOption.value = value;
   list.add( newOption, 0 );
-<?php } ?>
+<?php endif; ?>
 }
 
 function changeList( listName, source, target ) {
@@ -257,10 +259,12 @@ function selectList( listName, target ) {
     }
   }
 }
+// -->
 </script>
 
 <!-- TIMER RELATED SCRIPTS -->
-<script language="JavaScript">
+<script language="JavaScript" type="text/javascript">
+<!--
 	// please keep these lines on when you copy the source
 	// made by: Nicolas - http://www.javascript-page.com
 	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
@@ -318,7 +322,7 @@ function selectList( listName, target ) {
     fld_date.value = idate; 
     fld_fdate.value = fdate;
   }
-  
+// -->
 </script>
 <!-- END OF TIMER RELATED SCRIPTS -->
 
@@ -472,12 +476,13 @@ function selectList( listName, target ) {
   <td>&nbsp;&nbsp;</td>
       <td>
       <select name="watchers_select" size="14" class="text" id="watchers_select" multiple="multiple"><?php
-	      foreach($users as $id => $name){
-		echo "<option value=\"{$id}\"";
-		if(array_key_exists($id,$watchers))
-			echo " selected";
-		echo ">{$name}</option>";
-	      }
+		foreach ($users as $id => $name) {
+			echo "<option value=\"{$id}\"";
+			if (array_key_exists($id,$watchers)) {
+				echo " selected";
+			}
+			echo ">{$name}</option>";
+		}
       ?></select>
       <input type="hidden" name="watchers" value="" /></td>
 </tr></table>
@@ -526,20 +531,22 @@ function selectList( listName, target ) {
      If we have a project but not a company (version <0.2) do a reverse
      lookup.
      Else, select nothing */
-  if (@$hditem['item_company_id']) {
-    $target = $hditem['item_company_id'];
-  } else if (@$hditem['item_project_id']) {
-    $target = $reverse[$hditem['item_project_id']];
-  } else {
-    $target = 0;
-  }
+	if (@$hditem['item_company_id']) {
+		$target = $hditem['item_company_id'];
+	} else if (@$hditem['item_project_id']) {
+		$target = $reverse[$hditem['item_project_id']];
+	} else {
+		$target = 0;
+	}
 
-  /* Select the project from the list */
-  $select = @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;
+	/* Select the project from the list */
+	$select = @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;
 ?>
 
-<script language="javascript">
-selectList('item_company_id',<?php echo $target?>);
-changeList('item_project_id', projects, <?php echo $target?>);
-selectList('item_project_id',<?php echo $select?>);
+<script language="javascript" type="text/javascript">
+<!--
+selectList('item_company_id',<?php echo $target; ?>);
+changeList('item_project_id', projects, <?php echo $target; ?>);
+selectList('item_project_id',<?php echo $select; ?>);
+-->
 </script>
