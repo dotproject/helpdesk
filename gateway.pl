@@ -1,8 +1,8 @@
-#!c:\programme\perl\bin\perl.exe -w
+#!/usr/bin/perl
 # You may have to edit the above line to reflect your system
 # E.g. the typical UNIX/Linux system will require #!/usr/bin/perl
 
-# $Id: gateway.pl,v 1.3 2005/04/08 20:32:25 bloaterpaste Exp $ #
+# $Id: gateway.pl,v 1.4 2005/04/14 17:34:53 gatny Exp $ #
 
 # send email report upon receipt (1 = yes, 0 = no)
 $send_email_report = 1;
@@ -96,7 +96,8 @@ $attach_count = 0;
 $mime_alternative = 0;
 &check_attachments($attachment_info, $first_message_line, $#message);
 &get_body();
-&insert_message();
+#&insert_message(); #not using ticketsmith
+&insert_hd_message(); #using helpdesk instead
 &insert_attachments() if ($save_attachments);
 &mail_report() if ($send_email_report);
 &mail_acknowledgement() if ($send_acknowledge);
@@ -428,6 +429,8 @@ sub insert_message {
     $address = $dbh->quote($address);
     $subject = $dbh->quote($header{'Subject'});
     $body = $dbh->quote($body);
+    $type = $dbh->quote($type);
+    $cc = $dbh->quote($header{'Cc'});
     $assignment = $dbh->quote($assignment);
     $item_status = $dbh->quote(0); #Always status 0, Unassigned
     $item_source = $dbh->quote(1); #Always source 1, email
@@ -443,6 +446,118 @@ sub insert_message {
     $ticket = $sth->{'mysql_insertid'};
     $sth->finish();
     $dbh->disconnect();
+}
+
+sub insert_hd_message {
+
+if ($debug) {
+print "insert_message not run, parent = $parent\n";
+print "author=" . $header{'From'} . "\n";
+print "subject=" . $header{'Subject'} . "\n";
+print "cc=" . $header{'Cc'} . "\n";
+$author = $header{'From'};
+$subject = $header{'Subject'};
+$cc = $header{'Cc'};
+return;
+}
+# connect to database
+$dbh = DBI->connect("DBI:mysql:$config{'dbname'}:$config{'dbhost'}", $config{'dbuser'}, $config{'dbpass'});
+
+#parse out the components of the email addess.
+$hdauthor = $header{'From'};
+if($hdauthor=~/([^<]+)<([^>]+)>/){
+($hdname, $hdaddress) = ($1, $2);
+} elsif($source_address=~/((\w+)@[\w\.]+)/){
+($hdaddress, $hdname) = ($1, $2);
+} else {
+$hdname = $hdauthor;
+$hdaddress = $hdauthor;
+}
+
+# trim whitespace
+($hdname = $hdname) =~ s/^\s+//;
+($hdname = $hdname) =~ s/\s+$//;
+($hdaddress = $hdaddress) =~ s/^\s+//;
+($hdaddress = $hdaddress) =~ s/\s+$//;
+
+# quote all fields
+$hdname = $dbh->quote($hdname);
+$hdaddress = $dbh->quote($hdaddress);
+$hdsubject = $dbh->quote($header{'Subject'});
+# $hdbody = $dbh->quote($body);
+#$hdbody = $body;
+$hdbody = $dbh->quote($body);
+$hdassignment = $dbh->quote($assignment);
+$hditem_status = $dbh->quote(0); #Always status 0, Unassigned
+$hditem_source = $dbh->quote(1); #Always source 1, email
+$hditem_company_id = $dbh->quote(1);
+$hdattachment = $dbh->quote($attachment);
+
+$hdbody2 = "Auto inserted support message\nFrom:\n" . $hdname . " " . $hdaddress . "\nSays:\n" . $body;
+
+$hdbody2 =  $dbh->quote($hdbody2);
+#compatibility
+ # quote all fields
+    $db_parent = $dbh->quote($parent);
+    $attachment = $dbh->quote($attachment);
+    $author = $dbh->quote($header{'From'});
+    $subject = $dbh->quote($header{'Subject'});
+    $body = $dbh->quote($body);
+    $type = $dbh->quote($type);
+    $cc = $dbh->quote($header{'Cc'});
+    $assignment = $dbh->quote($assignment);
+	$simon_company_id = 0;
+
+#see if there is a better company match based on email address
+$company_query= "SELECT contact_company FROM contacts where contact_email = $hdaddress or contact_email2 = $hdaddress limit 1;";
+$sth = $dbh->prepare($company_query);
+$sth->execute();
+while (@row = $sth->fetchrow_array() ){
+       $hditem_company_id = $dbh->quote($row['contact_company']);
+	$simon_company_id = $row['contact_company'];
+}
+
+
+
+$sth->finish();
+if($simon_company_id>0){ }else{$hditem_company_id= $dbh->quote(1);}
+
+# update parent activity
+if ($parent) {
+$type = "Client Followup";
+$assignment = "9999";
+
+#insert into task log and reopen helpdesk item. actually going for unassigned at moment
+$activity_query = "UPDATE helpdesk_items SET item_status=0, item_updated = now()  WHERE item_id = '$parent'";
+$sth = $dbh->prepare($activity_query);
+$sth->execute();
+$sth->finish();
+
+
+
+#we need to capture email address etc!
+$activity_query = "INSERT INTO task_log (task_log_id, task_log_task, task_log_help_desk_id, task_log_name, task_log_description, task_log_creator, task_log_hours, task_log_date, task_log_costcode, task_log_problem, task_log_reference, task_log_related_url) VALUES (NULL,0,$parent,$hdsubject,$hdbody2,0,0,now(),'',0,0,NULL);";
+$sth = $dbh->prepare($activity_query);
+$sth->execute();
+$sth->finish();
+$ticket = $parent;
+}
+else {
+#create new helpdesk item
+$type = "Open";
+$assignment = "0";
+# do insertion
+$insert_hd_query = "INSERT INTO helpdesk_items (item_created, item_requestor, item_requestor_email, item_title, item_summary, item_status, item_source, item_company_id, item_os, item_application ) ";
+$insert_hd_query .= "VALUES ( NOW(), $hdname, $hdaddress, $hdsubject, $hdbody, $hditem_status, $hditem_source, $hditem_company_id, 'Not Applicable', 'Not Applicable')";
+
+$sth = $dbh->prepare($insert_hd_query);
+$sth->execute();
+ $ticket = $sth->{'mysql_insertid'};
+ $sth->finish();
+}
+
+
+$dbh->disconnect();
 
 }
 
@@ -615,7 +730,7 @@ sub mail_report {
 	print MAIL "Ticket ID: $ticket\n";
 	print MAIL "Author   : $author\n";
 	print MAIL "Subject  : $subject\n";
-	print MAIL "View     : $app_root/index.php?m=ticketsmith&a=view&ticket=$ticket\n";
+	print MAIL "View     : $app_root/index.php?m=helpdesk&a=view&item_id==$ticket\n";
 	print MAIL "\n--$boundary\n";
 	print MAIL "Content-disposition: inline\n";
 	print MAIL "Content-type: text/html\n\n";
@@ -665,7 +780,7 @@ sub mail_report {
 	print MAIL "	</tr>\n";
 	print MAIL "	<TR>\n";
 	print MAIL "		<TD bgcolor=white nowrap class=td>View:</TD>\n";
-	print MAIL "		<TD bgcolor=white nowrap class=td><a href=$app_root/index.php?m=ticketsmith&a=view&ticket=$ticket>$app_root/index.php?m=ticketsmith&a=view&ticket=$ticket</a></TD>\n";
+	print MAIL "		<TD bgcolor=white nowrap class=td><a href=$app_root/index.php?m=helpdesk&a=view&item_id=$ticket>$app_root/index.php?m=helpdesk&a=view&item_id=$ticket</a></TD>\n";
 	print MAIL "	</tr>\n";
 	print MAIL "</TABLE>\n";
 	print MAIL "</body>\n";
@@ -773,5 +888,3 @@ sub mail_acknowledgement {
 	close(MAIL);
 
 }
-
-
