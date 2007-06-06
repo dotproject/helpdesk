@@ -173,7 +173,7 @@ function hditemPerm($hditem, $perm_type) {
 
   switch($perm_type) {
     case PERM_READ:
-      $company_perm = $perms->checkModuleItem('companies', 'view', $company_id);
+      $company_perm = $perms->checkModuleItem('companies', 'access', $company_id);
       break;
     case PERM_EDIT:
       // If the item is not assigned to a company, figure out if we can edit it
@@ -184,7 +184,7 @@ function hditemPerm($hditem, $perm_type) {
           $company_perm = 0;
         }
       } else {
-      $company_perm = $perms->checkModuleItem('companies', 'view', $company_id);
+      $company_perm = $perms->checkModuleItem('companies', 'access', $company_id);
       }
       break;
     default:
