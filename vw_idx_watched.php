@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: list.php,v 1.42 2004/05/06 14:16:55 agorski Exp $ */
+<?php /* HELPDESK $Id: vw_idx_watched.php,v 1.1 2005/04/07 22:20:29 bloaterpaste Exp $ */
 
 $sql = "SELECT hi.*,
        CONCAT(contact_first_name,' ',contact_last_name) assigned_fullname,
@@ -6,12 +6,12 @@ $sql = "SELECT hi.*,
         p.project_id,
         p.project_name,
         p.project_color_identifier
-        FROM helpdesk_items hi, helpdesk_item_watchers
+        FROM helpdesk_items hi
+        INNER JOIN helpdesk_item_watchers hiw ON hiw.item_id = hi.item_id
         LEFT JOIN users u2 ON u2.user_id = helpdesk_item_watchers.user_id
         LEFT JOIN contacts ON u2.user_contact = contacts.contact_id
         LEFT JOIN projects p ON p.project_id = hi.item_project_id
-	WHERE helpdesk_item_watchers.item_id = hi.item_id
-	AND helpdesk_item_watchers.user_id = $AppUI->user_id
+	WHERE hiw.user_id = $AppUI->user_id
 	";
 	
 #print $sql;
