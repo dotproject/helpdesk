@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: helpdesk.class.php,v 1.65 2005/11/10 22:06:24 pedroix Exp $ */
+<?php /* HELPDESK $Id: helpdesk.class.php,v 1.66 2006/07/15 02:26:05 pedroix Exp $ */
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 include_once("helpdesk.functions.php");
@@ -312,7 +312,7 @@ class CHelpDeskItem extends CDpObject {
 		  }
 
 		  $body .= $AppUI->_('Link')
-			 . ": {$dPconfig['base_url']}index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			 . ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			 . "\n"
 			 . $AppUI->_('Summary')
 			 . ":\n"
@@ -325,7 +325,7 @@ class CHelpDeskItem extends CDpObject {
 			. $log['task_log_name']
 			. "\n"
 			. $AppUI->_('Link')
-			. ": {$dPconfig['base_url']}index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
+			. ": {$dPconfig['base_url']}/index.php?m=helpdesk&a=view&item_id={$this->item_id}\n"
 			. "\n"
 			. $AppUI->_('Comments')
 			. ":\n" 
