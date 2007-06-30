@@ -1,4 +1,4 @@
-<?php /* PROJECTS $Id: reports.php,v 1.13 2005/06/07 14:05:47 cyberhorse dead $ */
+<?php /* PROJECTS $Id: reports.php,v 1.1 2005/11/10 21:59:02 pedroix Exp $ */
 //error_reporting( E_ALL );
 require_once( $AppUI->getModuleClass( 'companies' ) );
 require_once( $AppUI->getModuleClass( 'projects' ) );
@@ -44,7 +44,7 @@ $q->clear();
 $obj = new CProject();
 $q = new DBQuery;
 $q->addTable('projects');
-$q->addQuery('project_id, project_active, project_status, project_name, project_description, project_short_name');                     
+$q->addQuery('project_id, project_status, project_name, project_description, project_short_name');                     
 $q->addGroup('project_id');
 $q->addOrder('project_short_name');
 $obj->setAllowedSQL($AppUI->user_id, $q);
