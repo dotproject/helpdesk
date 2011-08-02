@@ -1,8 +1,13 @@
-<?php /* PROJECTS $Id: reports.php,v 1.1 2005/11/10 21:59:02 pedroix Exp $ */
-//error_reporting( E_ALL );
+<?php /* PROJECTS $Id: reports.php,v 1.2 2007/06/30 15:27:11 caseydk Exp $ */
+
+if (!defined('DP_BASE_DIR')){
+  die('You should not access this file directly.');
+}
+
 require_once( $AppUI->getModuleClass( 'companies' ) );
 require_once( $AppUI->getModuleClass( 'projects' ) );
 
+$company_id = intval( dPgetParam( $_REQUEST, "company_id", 0 ) );
 $project_id = intval( dPgetParam( $_REQUEST, "project_id", 0 ) );
 $report_type = dPgetParam( $_REQUEST, "report_type", '' );
 
@@ -13,13 +18,6 @@ $canRead = $perms->checkModule( $m, 'view' );
 if (!$canRead) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
-
-$can_view_reports = $HELPDESK_CONFIG['minimum_report_level']>=$AppUI->user_type;
-if (!$can_view_reports)
-{
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
-
 
 $obj = new CCompany();
 $q = new DBQuery;
@@ -44,7 +42,10 @@ $q->clear();
 $obj = new CProject();
 $q = new DBQuery;
 $q->addTable('projects');
-$q->addQuery('project_id, project_status, project_name, project_description, project_short_name');                     
+$q->addQuery('project_id, project_status, project_name, project_description, project_short_name');
+if ($company_id) {
+	$q->addWhere('project_company = '.$company_id);
+}
 $q->addGroup('project_id');
 $q->addOrder('project_short_name');
 $obj->setAllowedSQL($AppUI->user_id, $q);
@@ -68,12 +69,12 @@ function changeIt(obj) {
         var f=document.changeMe;
         if (obj.name == "company_id") {
         	if (obj.value>0) {
-        		f.project_id.value = 0;
+        		f.company_id.value = obj.value;
         	}
         }
         if (obj.name == "project_id") {
         	if (obj.value>0) {
-        		f.company_id.value = 0;
+        		f.project_id.value = obj.value;
         	}
         }
         f.submit();
@@ -89,8 +90,8 @@ $reports = $AppUI->readFiles( dPgetConfig( 'root_dir' )."/modules/$m/reports", "
 
 // setup the title block
 if (! $suppressHeaders) {
-	$titleBlock = new CTitleBlock( 'Helpdesk Reports', 'applet3-48.png', $m, "$m.$a" );
-	$titleBlock->addCrumb( "?m=helpdesk", "home" );
+	$titleBlock = new CTitleBlock( 'Issue Management Reports', 'helpdesk.png', $m, "$m.$a" );
+	$titleBlock->addCrumb( "?m=helpdesk", 'home' );
 	$titleBlock->addCrumb( "?m=helpdesk&a=list", "list" );
 	if ($report_type) {
 		$titleBlock->addCrumb( "?m=helpdesk&a=reports&project_id=$project_id", "reports index" );

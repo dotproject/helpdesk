@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.22 2005/10/07 16:09:30 pedroix Exp $*/
+<?php /* HELPDESK $Id: vw_idx_handler.php,v 1.23 2005/12/28 20:05:45 theideaman Exp $*/
+
+if (!defined('DP_BASE_DIR')){
+  die('You should not access this file directly.');
+}
 
   /*
    * opened = 0
@@ -6,30 +10,26 @@
    * mine = 2
    */
 function vw_idx_handler ($type) {
+  include ("./modules/helpdesk/config.php");
   global $m, $ipr, $ist, $AppUI;
 
   $where = $date_field_name = $date_field_title = "";
 
   switch($type){
-  	case 0:// Opened
+  	case 0:// newly created open ticket today
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-		  $where .= "(TO_DAYS(NOW()) - TO_DAYS(hi.item_updated) = 0)
-		             AND his.status_code = 0";
+		$where .= "(TO_DAYS(NOW()) - TO_DAYS(his.status_date) = 0) AND item_status != ".$HELPDESK_CONFIG['closed_status_id']." AND (his.status_code = 0)";
   		break;
-  	case 1:// Closed
+  	case 1:// Closed today
   		$date_field_title = $AppUI->_('Closed On');
   		$date_field_name = "status_date";
-		$where .= "item_status=2
-        	     AND status_code=11
-        	     AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0)";
+		$where .= "item_status=".$HELPDESK_CONFIG['closed_status_id']." AND (TO_DAYS(NOW()) - TO_DAYS(status_date) = 0) AND status_code=11";
   		break;
-  	case 2: // Mine
+  	case 2: // Mine open
   		$date_field_title = $AppUI->_('Opened On');
   		$date_field_name = "item_created";
-      		$where .= "item_assigned_to={$AppUI->user_id}
-                 AND item_status !=2
-                 AND his.status_code = 0";
+      		$where .= "item_assigned_to=".$AppUI->user_id." AND item_status !=".$HELPDESK_CONFIG['closed_status_id'];
   		break;
   	default:
       print "Shouldn't be here (for now)";
@@ -51,24 +51,25 @@ function vw_idx_handler ($type) {
    
   $item_perms = getItemPerms();
 
-  $sql = "SELECT hi.*,
-          CONCAT(co.contact_first_name,' ',co.contact_last_name) assigned_fullname,
-          co.contact_email as assigned_email,
-          p.project_id,
-          p.project_name,
-          p.project_color_identifier,
-          his.status_date sd
-          FROM helpdesk_items hi
-          LEFT JOIN helpdesk_item_status his ON his.status_item_id = hi.item_id
-          LEFT JOIN users u ON u.user_id = hi.item_assigned_to
-          LEFT JOIN contacts co ON co.contact_id = u.user_contact
-          LEFT JOIN projects p ON p.project_id = hi.item_project_id
-          WHERE $where
-          AND $item_perms
-          GROUP BY item_id
-          ORDER BY item_id";
+//ANDY - add company filter
+	global $company_id;
+	if ($company_id != 'all') {
+		$item_perms = $item_perms . ' and item_company_id = ' . intval($company_id);
+	}
 
-  $items = db_loadList( $sql );
+  $q = new DBQuery; 
+  $q->addQuery('hi.*, CONCAT(co.contact_first_name,\' \',co.contact_last_name) assigned_fullname');
+  $q->addQuery('co.contact_email as assigned_email,p.project_id,p.project_name,p.project_color_identifier,his.status_date sd');
+  $q->addTable('helpdesk_items','hi');
+  $q->addJoin('helpdesk_item_status','his','his.status_item_id = hi.item_id');
+  $q->addJoin('users','u','u.user_id = hi.item_assigned_to');
+  $q->addJoin('contacts','co','co.contact_id = u.user_contact');
+  $q->addJoin('projects','p','p.project_id = hi.item_project_id');
+  $q->addWhere($where . ' AND ' . $item_perms);
+  $q->addGroup('item_id');
+  $q->addOrder('item_id');
+
+  $items = $q->loadList();
 
   ?>
   <table cellspacing="1" cellpadding="2" border="0" width="100%" class="tbl">
@@ -76,6 +77,7 @@ function vw_idx_handler ($type) {
     <th><?php echo $AppUI->_('Number'); ?></th>
     <th><?php echo $AppUI->_('Requestor'); ?></th>
     <th><?php echo $AppUI->_('Title'); ?></th>
+    <th ><?php echo $AppUI->_('Summary'); ?></th>
     <th nowrap="nowrap"><?php echo $AppUI->_('Assigned To'); ?></th>
     <th><?php echo $AppUI->_('Status'); ?></th>
     <th><?php echo $AppUI->_('Priority'); ?></th>
@@ -84,11 +86,12 @@ function vw_idx_handler ($type) {
     <th nowrap="nowrap"><?php echo $date_field_title?></th>
   </tr>
   <?php
+  $tmp=0;
   foreach ($items as $row) {
     /* We need to check if the user who requested the item is still in the
        system. Just because we have a requestor id does not mean we'll be
        able to retrieve a full name */
-
+    	
     if ($row[$date_field_name]) {
       $date = new CDate( $row[$date_field_name] );
       $tc = $date->format( $format );
@@ -108,14 +111,16 @@ function vw_idx_handler ($type) {
           <?php echo dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, ''); ?></td>
       <td nowrap=\"nowrap\">
       <?php
-      if ($row["item_requestor_email"]) {
-        print "<a href=\"mailto: ".$row["item_requestor_email"]."\">".$row['item_requestor']."</a>";
+      if ($row['item_requestor_email']) {
+        print "<a href=\"mailto:".$row['item_requestor_email']."\">".$row['item_requestor']."</a>";
       } else {
         print $row['item_requestor'];
       }
       ?>
       </td>
-      <td width="80%"><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo $row['item_title']?></a></td>
+      <td width="20%"><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo $row['item_title']?></a></td>
+      <td width="80%"><?php echo substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),80)) . '</td>'; ?></td>
+
       <td align="center" nowrap="nowrap">
       <?php
       if ($row['assigned_email']) {
@@ -125,12 +130,12 @@ function vw_idx_handler ($type) {
       }
       ?>
       </td>
-      <td align="center" nowrap><?php echo $AppUI->_($ist[@$row["item_status"]]); ?></td>
-      <td align="center" nowrap><?php echo $AppUI->_($ipr[@$row["item_priority"]]); ?></td>
+      <td align="center" nowrap><?php echo $AppUI->_($ist[@$row['item_status']]); ?></td>
+      <td align="center" nowrap><?php echo $AppUI->_($ipr[@$row['item_priority']]); ?></td>
       <td align="center" nowrap><?php echo @$sd?></td>
       <td align="center" style="background-color: #<?php echo $row['project_color_identifier']?>;" nowrap>
       <?php if ($row['project_id']) { ?>
-        <a href="./index.php?m=projects&a=view&project_id=<?php echo $row['project_id']?>" style="color: <?php echo  bestColor( $row["project_color_identifier"] ) ?>;"><?php echo $row['project_name']?></a>
+        <a href="./index.php?m=projects&a=view&project_id=<?php echo $row['project_id']?>" style="color: <?php echo  bestColor( $row['project_color_identifier'] ) ?>;"><?php echo $row['project_name']?></a>
       <?php } else { ?>
         -
       <?php } ?>
@@ -141,3 +146,5 @@ function vw_idx_handler ($type) {
   </table>
 <?php
 }
+
+

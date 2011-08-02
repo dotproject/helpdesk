@@ -1,90 +1,41 @@
-$Id: README,v 1.8 2004/06/02 17:00:01 agorski Exp $
+           -=     Help Desk 1.0.1 Release Notes     =-
 
-IMPORTANT
-    
-    Help Desk requires dotProject CVS release dated June 2nd, 2004 or later.
-    It will not work with the stable 1.0.2 release. It will also not work
-    with any earlier CVS releases.
+This module has been HEAVILY overhauled to support many new features
+of dotProject 2.1.3 and above.  The following are some of the changes.
+----------------------------------------------------------------------
 
-	See UPGRADE for version changes and information
+Icons in the images folder can be mapped to issue types, the format is
+"ct" followed by the issue type number.  So for issue type 1 which is
+"Application Error" you would have a file named "ct1.png"  The png file
+should be 15 x 17 pixels to fit properly in the lists.
 
-ABOUT
+Database prefixes are now supported and all database routines are
+now run through dotProject's built in query functions.
 
-    This is the dotProject Help Desk Module.  If you would like to contribute
-    to this project, please contact dotmods-helpdesk@lists.sourceforge.net.
+Reporting functionality is new and is still under development.
 
-PERMISSIONS
+File uploading is integrated with dotProject 2.1.5 and depends on
+the updates to the "Files" module that are included and can be found at:
+http://dotproject.svn.sourceforge.net/viewvc/dotproject/branches/stable_2/dotproject/modules/files/
 
-    The Help Desk uses built in dotProject permissions to its best abilities.
-    The permission system is layed out as follows. Please note that company
-    pormissions aren't that of the Companies module, but those of the Help
-    Desk module. When editing a user's permissions, select the Help Desk
-    module, not the Companies module, to assign permissions.
+E-mail notification system now utilizes dotProject's mail routine and
+has been completely overhauled.  The plain text email notifications 
+that are sent out are not the prettiest, but focus on providing all
+information related to the item and HTML notifications are forthcoming.
 
-    Let our example user be Joe
+English translation files included.
 
-    1. Joe will always have read and write permissions to items he created, was
-    assigned to or was the requestor for.
+----------------------------------------------------------------------
+       * When upgrading from a previous Help Desk module *
 
-    2. Jow will have read access to items for company X if he has read access
-    to company X for the Help Desk module.
+1.) Remember to go back into the module configuration to setup new
+    configuration parameters!  A number of additions and changes
+    have been made to the configuration pane that require you to
+    verify all the new settings and save them before the module
+    will operate properly.
 
-    3. Joe will have write access to items for company X if he has write access
-    to company X for the Help Desk module.
+----------------------------------------------------------------------
+This module was updated and is currently being maintained by HaTaX.
 
-    4. Joe will be able to create items only if he has write permissions for at
-    least one company in the Help Desk module.
-
-    5. Joe will be able to assign items to people in companies he has write
-    access for in the Help Desk module. He will also be able to assign items to
-    people in the company which hosts the Help Desk, if the company was
-    selected on the Help Desk module configuration screen.
-
-    6. Joe will be able to select an item requestor from a list of users from
-    companies he has write access to in the Help Desk module.
-
-
-MAINTAINERS
- 
-	The developers can be reached at dotmods-helpdesk@list.sourceforge.net:
- 
-    Dana Cordes <bloaterpaste@users.sourceforge.net>
-    Mike Gatny  <gatny@users.sourceforge.net> 
-    Ziba Scott  <zibas@users.sourceforge.net> 
-    Adam Gorski <agorski@users.sourceforge.net>
-
-
-COPYRIGHT
-
-    (C) 2003-2005 The Linux Box Corp.
-    206 S. Fifth Avenue Suite 150
-    Ann Arbor, MI 48104
-    http://www.linuxbox.com
-
-    Based on the original HelpDesk module by Andrew Eddie,
-    Copyright (C) 2003 The dotProject Development Team
-    http://sourceforge.net/projects/dotproject/
-
-
-LICENSE
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License (docs/COPYING) for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-
-BUGS
-
-	Email bugs to: dotmods-helpdesk@list.sourceforge.net
-
-
+If you have questions or comments on this module, please join us at
+the dotProject forums :   http://forums.dotproject.net

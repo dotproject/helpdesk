@@ -16,35 +16,29 @@ if (isset($_GET['page'])) {
 
 $page = $AppUI->getState('HelpDeskLogPage') ? $AppUI->getState('HelpDeskLogPage') : 0;
 
-// Load status log
-$sql = "SELECT *,
-        TRIM(CONCAT(co.contact_first_name,' ',co.contact_last_name)) modified_by,
-        co.contact_email as email
-        FROM helpdesk_item_status h
-        LEFT OUTER JOIN users u ON u.user_id = h.status_modified_by
-        LEFT OUTER JOIN contacts co  ON u.user_contact = co.contact_id
-        WHERE h.status_item_id='{$hditem['item_id']}'
-        ORDER BY h.status_date";
+$q = new DBQuery; 
+$q->addQuery('*,TRIM(CONCAT(co.contact_first_name,\' \',co.contact_last_name)) modified_by,co.contact_email as email');
+$q->addTable('helpdesk_item_status','h');
+$q->addJoin('users','u','u.user_id = h.status_modified_by');
+$q->addJoin('contacts','co','u.user_contact = co.contact_id');
+$q->addWhere('h.status_item_id='.$hditem['item_id']);
+$q->addOrder('h.status_date');
 
 // Pagination
 $status_log_items_per_page = $HELPDESK_CONFIG['status_log_items_per_page'];
-
-// Figure out number of total log entries
-$total_logs = db_num_rows(db_exec($sql));
-
+// Figure out number of total results, but do not retrieve
+$total_logs = db_num_rows($q->exec());
 // Now lets do the offset
 $offset = $page * $status_log_items_per_page;
+$q->setLimit($status_log_items_per_page,$offset);
+// Get the actual, paginated results
+$status_log = $q->loadList();
 
-// Limit the results to enable pagination
-$sql .= " LIMIT $offset,$status_log_items_per_page";
-
-$status_log = db_loadList($sql);
-  
 ?>
 
 <table border="0" cellpadding="4" cellspacing="0" width="100%" >
 <tr>
-  <td><b><?=$AppUI->_('Item History')?></b></td>
+  <td><b><?php echo $AppUI->_('Item History')?></b></td>
   <td align="right">
     <?php
     if ($total_logs > $status_log_items_per_page) {
@@ -96,7 +90,7 @@ if (is_array($status_log)) {
       $last_date = $date;
     ?>
     <tr>
-      <th nowrap="nowrap" colspan="3"><?=$date?>:</th>
+      <th nowrap="nowrap" colspan="3"><?php echo $date?>:</th>
     </tr>
     <?php
     }
@@ -104,10 +98,11 @@ if (is_array($status_log)) {
     $time = $log_date->format( $tf );
     ?>
     <tr>
-      <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
-      <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+      <td class="hilite" nowrap="nowrap" width="1%"><?php echo $time?></td>
+      <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
       <td class="hilite" width="98%"><?php
-        if($log['status_code']==0 || $log['status_code']==17){
+
+        if($log['status_code']==0 || $log['status_code']==18){	//ANDY 17 -> 18
           // Created or Deleted
           print $AppUI->_($isa[$log['status_code']]);
         } else if ($log['status_code'] == 16) {

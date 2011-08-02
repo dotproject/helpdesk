@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_new.php,v 1.7 2004/04/21 15:09:03 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_new.php 161 2006-10-26 14:10:50Z kang $*/
 require_once("vw_idx_handler.php");
 
 // Show opened items

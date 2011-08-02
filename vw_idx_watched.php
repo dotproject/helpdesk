@@ -1,22 +1,19 @@
-<?php /* HELPDESK $Id: vw_idx_watched.php,v 1.2 2007/06/07 14:54:24 cyberhorse Exp $ */
+<?php /* HELPDESK $Id: vw_idx_watched.php,v 1.3 2011-6-25 HaTaX $ */
 
-$sql = "SELECT hi.*,
-       CONCAT(contact_first_name,' ',contact_last_name) assigned_fullname,
-       contact_email as assigned_email,
-        p.project_id,
-        p.project_name,
-        p.project_color_identifier
-        FROM helpdesk_items hi
-        INNER JOIN helpdesk_item_watchers hiw ON hiw.item_id = hi.item_id
-        LEFT JOIN users u2 ON u2.user_id = hiw.user_id
-        LEFT JOIN contacts ON u2.user_contact = contacts.contact_id
-        LEFT JOIN projects p ON p.project_id = hi.item_project_id
-	WHERE hiw.user_id = $AppUI->user_id
-	";
-	
-#print $sql;
+  include ("./modules/helpdesk/config.php");
+  global $m, $AppUI;
 
-$rows = db_loadlist($sql);
+  $q = new DBQuery; 
+  $q->addQuery('hi.*, CONCAT(contact_first_name,\' \',contact_last_name) as assigned_fullname, contact_email as assigned_email,
+                p.project_id, p.project_name, p.project_color_identifier');
+  $q->addTable('helpdesk_items','hi');
+  $q->innerJoin('helpdesk_item_watchers','hiw','hiw.item_id = hi.item_id');
+  $q->leftJoin('users','u2','u2.user_id = hiw.user_id');
+  $q->leftJoin('contacts','','u2.user_contact = contacts.contact_id');
+  $q->leftJoin('projects','p','p.project_id = hi.item_project_id');
+  $q->addWhere('hiw.user_id = '.$AppUI->user_id);
+  $q->addWhere('hi.item_status != '.$HELPDESK_CONFIG['closed_status_id']);
+  $rows = $q->loadList();
 
 ?>
 <script language="javascript">
@@ -24,20 +21,21 @@ function changeList() {
 	document.filterFrm.submit();
 }
 </script>
-<? 
+<?php 
 $ipr = dPgetSysVal('HelpDeskPriority');
 $ist = dPgetSysVal('HelpDeskStatus');
 ?>
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr>
 	<!--<td align="right" nowrap>&nbsp;</td>-->
-	<th nowrap="nowrap"><? echo $AppUI->_('Number')?></th>
-	<th nowrap="nowrap"><? echo $AppUI->_('Requestor')?></th>
-	<th nowrap="nowrap"><? echo $AppUI->_('Title')?></th>
-	<!--<th nowrap="nowrap"><?=sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>-->
-	<th nowrap="nowrap"><? echo $AppUI->_('Status')?></th>
-	<th nowrap="nowrap"><? echo $AppUI->_('Priority')?></th>
-	<th nowrap="nowrap"><? echo $AppUI->_('Project')?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Number')?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Requestor')?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Title')?></th>
+	<th ><?php echo $AppUI->_('Summary'); ?></th>
+	<th nowrap="nowrap"><?php echo sort_header("item_assigned_to", $AppUI->_('Assigned To'))?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Status')?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Priority')?></th>
+	<th nowrap="nowrap"><?php echo $AppUI->_('Project')?></th>
 </tr>
 <?php
 $s = '';
@@ -61,17 +59,17 @@ foreach ($rows as $row) {
 
 	#$s .= $CR . '</td>';
 	$s .= $CR . '<td><a href="./index.php?m=helpdesk&a=view&item_id='
-            . $row["item_id"]
+            . $row['item_id']
             . '">'
-		        . '<strong>'
-            . $row["item_id"]
-            . '</strong></a> '
-	    . '-'
+		        . '<b>'
+            . $row['item_id']
+            . '</b></a> '
+	    . dPshowImage (dPfindImage( 'ct'.$row["item_calltype"].'.png', $m ), 15, 17, '')
             . '</td>';
 
 	$s .= $CR . "<td nowrap align=\"center\">";
-	if ($row["item_requestor_email"]) {
-		$s .= $CR . "<a href=\"mailto:".$row["item_requestor_email"]."\">"
+	if ($row['item_requestor_email']) {
+		$s .= $CR . "<a href=\"mailto:".$row['item_requestor_email']."\">"
               . $row['item_requestor']
               . "</a>";
 	} else {
@@ -79,22 +77,25 @@ foreach ($rows as $row) {
 	}
 	$s .= $CR . "</td>";
 
-	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
-            . $row["item_id"]
+	$s .= $CR . '<td width="20%"><a href="?m=helpdesk&a=view&item_id='
+            . $row['item_id']
             . '">'
-		        . $row["item_title"]
+		        . $row['item_title']
             . '</a></td>';
-	#$s .= $CR . "<td nowrap align=\"center\">";
-	#if ($row["assigned_email"]) {
-	#	$s .= $CR . "<a href=\"mailto:".$row["assigned_email"]."\">"
-        #      . $row['assigned_fullname']
-        #      . "</a>";
-	#} else {
-	#	$s .= $CR . $row['assigned_fullname'];
-	#}
-	#$s .= $CR . "</td>";
-	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
-	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
+  $s .= $CR . '<td width="80%">' 
+            . substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),100))
+            . ' </td>';
+  $s .= $CR . "<td nowrap align=\"center\">";
+	if ($row['assigned_email']) {
+		$s .= $CR . "<a href=\"mailto:".$row['assigned_email']."\">"
+              . $row['assigned_fullname']
+              . "</a>";
+	} else {
+		$s .= $CR . $row['assigned_fullname'];
+	}
+	$s .= $CR . "</td>";
+	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row['item_status']] . '</td>';
+	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row['item_priority']] . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'
 		    . $row['project_color_identifier']
@@ -132,3 +133,5 @@ function sort_header($field, $name) {
   return $link;
 }
 ?>
+
+

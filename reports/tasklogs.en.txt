@@ -1,2 +1,2 @@
-Helpdesk Task Log
-View the user task logs for helpdesk items
+Issue Task Log
+View the user task logs for issue items

@@ -1,18 +1,21 @@
-<?php /* HELPDESK $Id: selector.php,v 1.12 2005/05/20 16:45:09 zibas Exp $ */
+<?php /* HELPDESK $Id: selector.php,v 1.14 2006-12-14 12:55 Kang Exp $ */
+
+if (!defined('DP_BASE_DIR')){
+  die('You should not access this file directly.');
+}
 
 function selPermWhere( $table, $idfld ) {
 	global $AppUI;
 
 	// get any companies denied from viewing
-	$sql = "SELECT $idfld"
-		."\nFROM $table, permissions"
-		."\nWHERE permission_user = $AppUI->user_id"
-		."\n	AND permission_grant_on = '$table'"
-		."\n	AND permission_item = $idfld"
-		."\n	AND permission_value = 0";
-
-	$deny = db_loadColumn( $sql );
-	echo db_error();
+	$q = new DBQuery;
+	$q->addQuery($table, 'permissions');
+	$q->addWhere('permission_user = '.$AppUI->user_id);
+	$q->addWhere('permission_grant_on = '.$table);
+	$q->addWhere('permission_item = '.$idfld);
+	$q->addWhere('permission_value = 0');
+	$deny = $q->loadColumn();
+	$q->clear();
 
 	return "permission_user = $AppUI->user_id"
 		."\nAND permission_value <> 0"
@@ -27,6 +30,7 @@ function selPermWhere( $table, $idfld ) {
 $debug = false;
 $callback = dPgetParam( $_GET, 'callback', 0 );
 $table = dPgetParam( $_GET, 'table', 0 );
+$comp=dPgetParam($_GET, 'comp', 0);
 
 $ok = $callback & $table;
 
@@ -92,20 +96,18 @@ case 'tasks':
 	break;
 case 'users':
 	$title = 'User';
-	/*
-	$select = "user_id,CONCAT_WS(' ',user_first_name,user_last_name)";
-	$order = 'user_last_name, user_first_name';
-	$where = getCompanyPerms("user_company", NULL, PERM_EDIT);
-	*/
-	$templist = getAllowedUsers();
-	foreach($templist as $key=>$value){
+	$tempuserlist = getAllowedUsers($comp, 1);
+	foreach($tempuserlist as $key=>$value){
 		$list[$key]=$value;
 	}
 	break;
 case 'contacts':
-	$title = 'Contacts';
+	$title = 'Contact';
 	$select = "contact_id,CONCAT_WS(' ',contact_first_name,contact_last_name)";
 	$order = "CONCAT_WS(' ',contact_first_name,contact_last_name)";
+	if ($comp) {
+		$where = "contact_company = ".$comp;
+	}
 //	$templist = getAllowedUsers();
 //	foreach($templist as $key=>$value){
 //		$list[$key]=$value;
@@ -125,11 +127,20 @@ if (!$ok) {
 	}
 } else {
 	if(!isset($list)){
-		$sql = "SELECT $select FROM $table";
-		$sql .= $where ? " WHERE $where" : '';
-		$sql .= $order ? " ORDER BY $order" : '';
+///		$sql = "SELECT $select FROM $table";
+///		$sql .= $where ? " WHERE $where" : '';
+///		$sql .= $order ? " ORDER BY $order" : '';
+///		$list = arrayMerge( array( 0=>''), db_loadHashList( $sql ) );
 
-		$list = arrayMerge( array( 0=>''), db_loadHashList( $sql ) );
+    $q = new DBQuery; 
+    $q->addQuery($select);
+    $q->addTable($table);
+    if ($where) {
+      $q->addWhere($where);
+    }
+    $q->addOrder($order);
+ 		$list = arrayMerge( array( 0=>''), $q->loadHashList());
+
 	}
 	echo db_error();
 ?>
@@ -169,3 +180,4 @@ if (!$ok) {
 </table>
 
 <?php } ?>
+

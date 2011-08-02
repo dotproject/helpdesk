@@ -1,7 +1,8 @@
-<?php /* $Id: vw_log_update.php,v 1.11 2005/11/10 21:57:59 pedroix Exp $ */
+<?php /* $Id$ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
-
+//New style for date selection--KZHAO 9-11-2006
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
+
 // check permissions
 //$canEdit = !getDenyEdit( 'tasks', $item_id );
 //if (!$canEdit) {
@@ -16,11 +17,18 @@ if ($task_log_id) {
 	$log->load( $task_log_id );
 
 	//Prevent users from editing other ppls timecards.
-	$can_edit_task_logs = $HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type;
+	// KZHAO  11-30-2006
+	// Problem: the $HELPDESK_CONFIG['minimum_edit_level'] is based on pre-defined user types in dP/functions/admin_func.php
+	// the user types are not consistent with the user type defined for actual users...
+	// Solution: use hard-coded admin user type 7 here
+	//$can_edit_task_logs = $HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type;
+	if($HELPDESK_CONFIG['minimum_edit_level']>=$AppUI->user_type || $AppUI->user_type==1)
+		$can_edit_task_logs=true;
+
+	//echo "---".$AppUI->user_type.">".$HELPDESK_CONFIG['minimum_edit_level']."!!!!";
 	if (!$can_edit_task_logs)
-	{
-		if($log->task_log_creator!= $AppUI->user_id)
-		{
+	{	
+		if($log->task_log_creator!= $AppUI->user_id){
 			$AppUI->redirect( "m=public&a=access_denied" );
 		}
 	}
@@ -28,9 +36,9 @@ if ($task_log_id) {
 	$log->task_log_help_desk_id = $item_id;
 	$log->task_log_name = $hditem['item_title'];
 }
-
+// Disable cost codes--KZHAO 2-11-2007
 // Lets check cost codes
-$q = new DBQuery;
+/*$q = new DBQuery;
 $q->addTable('billingcode');
 $q->addQuery('billingcode_id, billingcode_name');
 $q->addWhere('billingcode_status=0');
@@ -47,7 +55,7 @@ for ($x=0; $x < $nums; $x++) {
         $row = db_fetch_assoc( $ptrc );
         $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
 }
-
+*/
 //if ($canEdit) {
 // Task Update Form
 	$df = $AppUI->getPref( 'SHDATEFORMAT' );
@@ -99,6 +107,7 @@ for ($x=0; $x < $nums; $x++) {
 			timerStop();
 		}
 	}
+
 	
 	function timerStop() {
 	   if(timerID) {
@@ -116,7 +125,7 @@ for ($x=0; $x < $nums; $x++) {
   function popCalendar( field ){
     calendarField = field;
     idate = eval( 'document.editFrm.task_' + field + '.value' );
-    window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=251, height=220, scollbars=false' );
+    window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=270,height=250,scollbars=false' );
   }
 
   function setCalendar( idate, fdate ) {
@@ -126,17 +135,18 @@ for ($x=0; $x < $nums; $x++) {
     fld_fdate.value = fdate;
   }
   
+  //FIXME
   function updateStatus(obj){
     var f = document.editFrm;
-
-  	if(obj.options[obj.selectedIndex].value>0){
+    if(obj.options[obj.selectedIndex].value>0){
       if(f.item_status.selectedIndex==0){
-    	f.item_status.selectedIndex=1;
+    	f.item_status.selectedIndex=<?php echo $HELPDESK_CONFIG['assigned_status_id'];?>;
       }
     }
   }	
 
 </script>
+
 <!-- END OF TIMER RELATED SCRIPTS -->
 
 
@@ -156,7 +166,7 @@ for ($x=0; $x < $nums; $x++) {
 	<!-- patch by rowan  bug #890841 against v1.0.2-1   email: bitter at sourceforge dot net -->
 		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL ); ?>">
 	<!-- end patch #890841 -->
-		<input type="text" name="log_date" value="<?php echo $log_date->format( $df ); ?>" class="text" disabled="disabled">
+		<input type="text" name="log_date" value="<?php echo $log_date->format( $df ); ?>" class="disabledText" disabled="disabled">
 		<a href="#" onClick="popCalendar('log_date')">
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -164,42 +174,52 @@ for ($x=0; $x < $nums; $x++) {
 	<td><?php echo $AppUI->_('Summary'); ?>:<br />
 		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name; ?>" maxlength="255" size="30" />
 	</td>
+
 </tr>
 <tr>
-      <td><?=$AppUI->_('Status')?>:<br /><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"], true )?></td>
+      <td><?php echo $AppUI->_('Status')?>:<br />
+	  <?php 
+		//ANDY allowed status ; workflow - need more testing
+		//require_once DP_BASE_DIR . '/modules/helpdesk/custom/workflow.inc.php';
+		foreach($ist as $key => $value) { $lv_ist[$key] = $value; }
+		
+		echo arraySelect( $lv_ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"], true )
+	  ?>
+	  </td>
 	<td rowspan="3">
 	<?php echo $AppUI->_('Description'); ?>:<br />
-		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description; ?></textarea>
+		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description; ?></textarea>
 	</td>
 </tr>
-<tr>
-	<td>
-		<?php echo $AppUI->_('Hours Worked'); ?><br />
-		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours; ?>" maxlength="8" size="6" /> 
-		<input type='button' class="button" value='<?php echo $AppUI->_('Start'); ?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
-		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
-		<span id='timerStatus'></span>
-	</td>
-</tr>
-<tr>
-	<td>
-		<?php echo $AppUI->_('Cost Code'); ?>:<br />
+<!--tr-->
+  <!--Disable the cost code  by KZHAO 2-12-2007-->
+	<!--td>
+		<?php //echo $AppUI->_('Cost Code'); ?>:<br /-->
 <?php
-		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
+		//echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
 ?>
-		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode; ?>" maxlength="8" size="8" />
-	</td>
-</tr>
+		<!--&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode; ?>" maxlength="8" size="8" />
+	</td-->
+<!--/tr-->
 <tr>
 	<td>
-		<?php echo $AppUI->_('Assigned to'); ?>:<br />
-      <?php echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
-                          @$hditem["item_assigned_to"] ); ?>
+		<?php echo $AppUI->_('Assigned To'); ?>:<br />
+      <?php 
+			//ANDY not allowed to change assign to after assigned status; 0-new, 1-assigned
+// Removed by HaTaX - Why would we want this?
+//			if ($hditem["item_status"] > 1) {
+//				$lv_users = array( $hditem["item_assigned_to"] => $users[$hditem["item_assigned_to"]] );
+//				echo arraySelect( $lv_users, 'item_assigned_to', 'size="1" class="text" id="iat" ', @$hditem["item_assigned_to"] ); 
+//			} else {
+		        echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+                          @$hditem["item_assigned_to"] ); 
+//			}
+	?>
 	</td>
 </tr>
 <tr>
 	<td colspan="2" valign="bottom" align="right">
-		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log'); ?>" onclick="" />
+		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'Create Task Log'); ?>" onclick="" />
 	</td>
 </tr>
 
@@ -207,3 +227,5 @@ for ($x=0; $x < $nums; $x++) {
 </table>
 <?php //}
 ?>
+
+

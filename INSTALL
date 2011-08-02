@@ -1,94 +1,21 @@
-Installing gateway.pl for dotProject.  Gateway.pl is a Perl executable
-that takes incoming email to a specific mail address and forwards it
-to the ticketsmith module.
+This is an instruction on how to install/upgrade the helpdesk module
+Kang Zhao.  kang@linuxbox.com
+The LinuxBox Corp, Ann Arbor, MI 48104, USA.
 
-QUICK START:
+1) Ensure that you have a current backup of your current dotProject database. This step isn't strictly needed but is never a bad idea.
 
-1. Make sure gateway.pl (which is in the dotproject/includes directory)
-   is executable:
+2) Untar the downloaded compressed file and place the "helpdesk" folder in the "module" folder of your dotproject directory.
 
-       chmod a+x gateway.pl
+3) Go to "System Admin-->View Modules", you should be able to see a list of modules, including the Helpdesk.
 
-2. Check the first line of gateway.pl and make sure it matches your system,
-   on UNIX/Linux systems it should read:
+4) For upgraders only: the line for the Helpdesk should have been marked with a green button. Please click on the "upgrade" link.
 
-       #!/usr/bin/perl -w
+5) For new users only: the line for the Helpdesk should have been marked with a grey button. Please click on the "install" link (the only link available for the Helpdesk at this moment). Then, the Helpdesk should have a green button. 
 
-   or whatever the path to your Perl executable is.
+6) If you see a blinking yellow button for the Helpdesk, please click on the "disabled" link. If you see a blinking red button for the Helpdesk, please click on the "hidden" link in the rightmost column.
 
-   Windows systems need a windows path, which includes a drive letter
-   and backslash path separators (as in the supplied file).
+7) In order to create helpdesk items from emails, it is necessary to configure the "newgateway.pl" manually. Please refer to the comments in the script (mainly in the "System Setting Section" and the "Configuration Section").
+   You may also have to configure your mail server to pipe emails to the perl script. For example, you can add a new alias in "/etc/aliases" by adding the following line: (we assume you use support@yourcompany.com as the address to receive and send helpdesk items emails).
+    support: "|/your_helpdesk_directory/newgateway.pl /your_dotproject_direcotory/includes/config.php /your_helpdesk_directory/config.php".
 
-   The -w is optional and forces perl to report all warnings.
-
-3. Configure your MDA (Mail Delivery Agent) or MTA (Mail Transport Agent)
-   to pipe mail for your support mail address to gateway.pl.
-
-   Example 1:  Procmail recipe
-
-      :0
-      * ^TO.*support
-      | /path/to/dotproject/includes/gateway.pl /path/to/dotproject/includes/config.php
-
-   Example 2:  Using sendmail aliases
-
-      support:	"| /path/to/dotproject/includes/gateway.pl /path/to/dotproject/includes/config.php"
-
-
-PREREQUISITES:
-
-1.	A working mail system that can pass email to the standard input
-	of a program.  Sendmail, procmail, traditional UNIX mail systems
-	all are capable of this.  I have no experience of Windows email
-	systems and so cannot comment on their abilities.
-
-2.	Mimencode - the command line utility required to extract MIME
-	message components.  Only required if you are saving attachments.
-
-
-GATEWAY OPTIONS:
-
-In the top of gateway.pl you will find several optional flags that can be
-set to control the operation of tickets.
-
-These options are:
-
-$send_email_report
-	If set to a non-zero value an email will be sent to the
-	$report_to_address with a URL link to the ticket within
-	dotproject.  Highly recommended.
-
-$send_acknowledge
-	If set to a non-zero value an email will be sent to the
-	sender of the ticket email, acknowledging the receipt.
-
-$save_attachments
-	If set to a non-zero value, email attachments will be
-	stored as files in the dotProject Files module, under
-	project 0.  If set to zero, attachments will be stripped.
-
-	If saving attachments, mimencode must be on the system
-	and in the execution path.
-
-$skip_mime_prefix
-	If set to a non-zero value MIME emails with non-mime portions
-	will have them removed.  Otherwise non-MIME portions will be
-	included as part of the message.
-
-$report_to_address
-	A partial or full email address of the user who should
-	receive notifications of incoming tickets.  If it includes
-	an '@' symbol, the entire string should be in single quotes
-	and the email address will be used as-is.  If not, the
-	dotproject site_domain will be added to the address.
-
-$report_from_address
-	A partial or full email address of the sender for email
-	reports. Same rules as $report_to_address
-
-
-$mailprog
-	Full pathname of a mail transport agent that accepts -t
-	to allow it to take a pre-formatted email and send it
-	to the recipient(s) named in the headers.  Typically this
-	is sendmail.
+Now, you are good to go!

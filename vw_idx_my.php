@@ -1,4 +1,4 @@
-<?php /* HELPDESK $Id: vw_idx_my.php,v 1.2 2004/05/06 13:22:53 agorski Exp $*/
+<?php /* HELPDESK $Id: vw_idx_my.php,v 1.3 2004/08/03 03:27:05 cyberhorse Exp $*/
 
 require_once($dPconfig['root_dir'] . "/modules/helpdesk/helpdesk.functions.php");
 require_once($dPconfig['root_dir'] . "/modules/helpdesk/vw_idx_handler.php");
@@ -6,3 +6,5 @@ require_once($dPconfig['root_dir'] . "/modules/helpdesk/vw_idx_handler.php");
 // Show my items
 vw_idx_handler(2);
 ?>
+
+

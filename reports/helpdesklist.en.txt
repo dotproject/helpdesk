@@ -1,2 +1,2 @@
-Helpdesk List
-View the Projects Helpdesk List
+Help Desk Issue List
+View the Help Desk Issue List
